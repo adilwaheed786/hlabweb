@@ -1,0 +1,9 @@
+CustomerID,FirstName,LastName,PrimaryEmail,PrimaryPhone,Postal,LabPackage,TotalRequestAmount,Payment1,Amount1,Payment2,Amount2,Payment3,Amount3,Coupon,Project,SampleID,SampleType,LegalLocation,Town,Municipality,CollectDate,CollectTime,SubmittedDate,SubmittedTime,SubmittedBy,ReceivedBy,ReceivedDate,ReceivedTime,TestDate,Temperature,Tax,InsertResult
+10217,,,,,,B1 Non-Subsidy,35,Cash,20,VISA,15,,,,Regular Subsidy,Kitchen 1,Raw,L23 B01,Praire,Thompson,03/30/2021,1530,03/31/2021,1630,,TZ,04/01/2021,1730,04/02/2021,22,5,
+,,,,,,EXP2,,,,,,,,,,,,,,,,,,,,,,,,,,
+10220,,,,,,B1Subsidy,165.5,Cash,50,VISA,50,MC,15,,WIWCD WWI,Kitchen 3,Treated,J16 B03,Alona,West St. Paul,01/17/2021,836,01/18/2021,936,Mark Tan,PL,01/19/2021,1036,01/20/2021,75,5,
+,,,,,,Mi12HL,,,,,,,,,Regular Subsidy,Kitchen 4,Treated,K13 B04,Dufresne,Yellowhead,01/29/2021,935,01/28/2021,1035,,TZ2,01/29/2021,1135,01/30/2021,65,5,
+,,,,,,TM29,,,,,,,,,Regular Subsidy,Kitchen 5,Treated,P01 B05,Erickson,Ste. Rose,03/01/2021,1025,03/02/2021,1125,,KK,03/03/2021,1225,03/04/2021,50,5,
+4529,,,,,,B1 Non-Subsidy,28.5,Cash,28.5,,,,,,EICD Regular Subsidy,Kitchen 6,Treated,L23 B06,Vista,Two Borders,02/02/2021,1918,02/03/2021,1917,Andy Weibe,JP,02/04/2021,2017,02/05/2021,25.05,5,
+6697,,,,,,B1 Subsidy,23.75,Re-Test Coupon,,,,,,3185,EICD Regular Subsidy,Kitchen 7,Treated,L23 B07,Winkler,Reynolds,03/15/2021,1532,03/16/2021,1632,,LL,03/17/2021,1732,03/18/2021,17.05,5,
+,Mario,Luigi,mario@luigi.com,2044352289,RT4567,,,,,,,,,,,,,,,,,,,,,,,,,,,

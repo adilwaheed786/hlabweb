@@ -1,0 +1,282 @@
+﻿
+@model HorizonLabAdmin.Models.Forms.TestResultPageViewModel
+@{ string orderid = "", analysis = "", dateorder = "", recievedby = "", price = "", labcode = "", hl_code = "", html_disable = null;}
+@{ bool disabled = false; int admin_access = 1;}
+@if (ViewBag.orderitemview != null)
+{
+    orderid = string.Format("{0:00000000}", ViewBag.orderitemview.order_id);
+    analysis = ViewBag.orderitemview.analysis;
+    dateorder = ViewBag.orderitemview.order_date?.ToString("dd/MM/yyyy");
+    recievedby = ViewBag.orderitemview.received_by;
+    price = string.Format("{0:0.00}", ViewBag.orderitemview.amount);
+    labcode = ViewBag.orderitemview.lab_code;
+    hl_code = ViewBag.orderitemview.hl_code;
+
+    @if (ViewBag.orderitemview.pkg_id == 1)
+    { //if package id is subsidy
+        disabled = true;
+    }
+    if (Model.trans_details.publish && ViewBag.user_access_id != admin_access)
+    {
+        html_disable = "disabled";
+    }
+}
+<!--<button type="button" class="accordion" data-toggle="collapse" data-target="#test_sample_info" aria-expanded="false" aria-controls="test_sample_info">Test Sample Information</button>
+<div class="collapse" id="test_sample_info">-->
+    <div class="panel panel-success ">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-2">
+                    <b>U.I.D: </b><br />
+                    @hl_code
+                </div>
+                <div class="col-sm-2">
+                    <b>Sample ID: </b><br />
+                    <input asp-for="@Model.trans_details.idnty_location" type="text" style="width:100%;" id="form_sampleid" value="@Model.trans_details.idnty_location" tabindex="1" disabled="@html_disable">
+                </div>
+                <div class="col-sm-2">
+                    <b>Sample Type: </b><br />
+                    <select asp-for="@Model.trans_details.sample_type_id" asp-items="@Model.selectSampleTypeList" style="width:100%;" id="form_sampletype" disabled="@(disabled ? "disabled" : null)" tabindex="2" class="dropdownfield" disabled="@html_disable"></select>
+                </div>
+                <div class="col-sm-2">
+                    <b>Legal Location: </b><br />
+                    <input asp-for="@Model.trans_details.sample_legal_loc" type="text" style="width:100%;" id="form_sample_legal_loc" value="@Model.trans_details.sample_legal_loc" disabled="@(disabled ? "disabled" : null)" tabindex="3" disabled="@html_disable">
+                </div>
+                <div class="col-sm-2">
+                    <b>Town: </b><br />
+                    <select asp-for="@Model.trans_details.town" asp-items="@Model.selectTown" id="select_town" class="dropdownfield" tabindex="4" disabled="@(disabled ? "disabled" : null)"></select>
+
+                    <button type="button" class="btn btn-sm btn-outline-success text-left" id="addTown" tabindex="999" disabled="@(disabled ? "disabled" : null)">
+                        <span class="glyphicon glyphicon-plus-sign" style="font-size:1.7rem;"></span>
+                    </button>
+                </div>
+                <div class="col-sm-2">
+                    <b>Municipality: </b><br />
+                    <select asp-for="@Model.trans_details.rm_id" asp-items="@Model.selectMunicipalityList" style="width:100%;" id="form_municipality" tabindex="5" class="dropdownfield" disabled="@(disabled ? "disabled" : null)"></select>
+                    <button type="button" class="btn btn-sm btn-outline-success text-left" id="addMunicipality" tabindex="999" disabled="@(disabled ? "disabled" : null)">
+                        <span class="glyphicon glyphicon-plus-sign" style="font-size:1.7rem;"></span>
+                    </button>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-sm-2">
+                    <div class=""><b>Latitude: </b></div>
+                    <div class=""><input asp-for="@Model.trans_details.latitude" type="text" style="width:100%;" value="@Model.trans_details.latitude" id="database_latitude" disabled="@html_disable"></div>
+                </div>
+                <div class="col-sm-2">
+                    <div class=""><b>Longitude: </b></div>
+                    <div class=""><input asp-for="@Model.trans_details.longitude" type="text" style="width:100%;" value="@Model.trans_details.longitude" id="database_longitude" disabled="@html_disable"></div>
+                </div>
+                <div class="col-sm-2">
+                    <div class=""><b>UTM X: </b></div>
+                    <div class=""><input asp-for="@Model.trans_details.utm_x" type="text" style="width:100%;" value="@Model.trans_details.utm_x" id="database_utm_x" disabled="@html_disable"></div>
+                </div>
+                <div class="col-sm-2">
+                    <div class=""><b>UTM Y: </b></div>
+                    <div class=""><input asp-for="@Model.trans_details.utm_y" type="text" style="width:100%;" value="@Model.trans_details.utm_y" id="database_utm_y" disabled="@html_disable"></div>
+                </div>
+                <div class="col-sm-2">
+                    <div class=""><b>Existence: </b></div>
+                    <div class=""><select asp-for="@Model.trans_details.existence" asp-items="@Model.selectExistence" style="width:100%;" id="database_existence" class="dropdownfield" disabled="@html_disable"></select></div>
+                </div>
+                <div class="col-sm-2">
+                    <div class=""><b>Zone: </b></div>
+                    <div class=""><input asp-for="@Model.trans_details.zone" type="text" style="width:100%;" value="@Model.trans_details.zone" disabled="@(disabled ? "disabled" : null)" id="database_zone" disabled="@html_disable"></div>
+                </div>
+            </div>
+            <hr />
+            @{ string collect_day = "", collect_month = "", collect_year = DateTime.Now.Year.ToString(), collect_hour = "", collect_minute = "";}
+            @{ string submit_day = "", submit_month = "", submit_year = DateTime.Now.Year.ToString(), submit_hour = "", submit_minute = "";}
+            @{ string receive_day = "", receive_month = "", receive_year = DateTime.Now.Year.ToString(), receive_hour = "", receive_minute = "";}
+            @{ string collect_date = "", collect_date2 = "", submitted_date = "", received_date = "";}
+            @{ string collect_time = "", submitted_time = "", received_time = "";}
+
+            @if (@Model.trans_details.collect_datetime != null)
+            {
+                collect_day = Model.trans_details.collect_datetime.Value.Day.ToString("D2");
+                collect_month = Model.trans_details.collect_datetime.Value.Month.ToString("D2");
+                collect_year = Model.trans_details.collect_datetime.Value.Year.ToString("D2");
+                collect_hour = Model.trans_details.collect_datetime.Value.Hour.ToString("D2");
+                collect_minute = Model.trans_details.collect_datetime.Value.Minute.ToString("D2");
+                collect_date = $"{collect_year}-{collect_month}-{collect_day}";
+                collect_date2 = $"{collect_day}/{collect_month}/{collect_year}";
+                collect_time = $"{collect_hour}:{collect_minute}";
+            }
+
+            @if (@Model.trans_details.submtd_datetime != null)
+            {
+                submit_day = Model.trans_details.submtd_datetime.Value.Day.ToString("D2");
+                submit_month = Model.trans_details.submtd_datetime.Value.Month.ToString("D2");
+                submit_year = Model.trans_details.submtd_datetime.Value.Year.ToString("D2");
+                submit_hour = Model.trans_details.submtd_datetime.Value.Hour.ToString("D2");
+                submit_minute = Model.trans_details.submtd_datetime.Value.Minute.ToString("D2");
+                submitted_date = $"{submit_year}-{submit_month}-{submit_day}";
+                submitted_time = $"{submit_hour}:{submit_minute}";
+
+            }
+
+            @if (@Model.trans_details.rcv_date != null)
+            {
+                receive_day = Model.trans_details.rcv_date.Value.Day.ToString("D2");
+                receive_month = Model.trans_details.rcv_date.Value.Month.ToString("D2");
+                receive_year = Model.trans_details.rcv_date.Value.Year.ToString("D2");
+                receive_hour = Model.trans_details.rcv_date.Value.Hour.ToString("D2");
+                receive_minute = Model.trans_details.rcv_date.Value.Minute.ToString("D2");
+                received_date = $"{receive_year}-{receive_month}-{receive_day}";
+                received_time = $"{receive_hour}:{receive_minute}";
+            }
+
+            <div class="row" style="padding-top:5px;">
+                <div class="col-sm-3">
+                    <b>COLLECT</b>
+                    <div class="row" style="margin-top:2px;">
+                        <div class="col-sm-1">Date: </div>
+                        <div class="col-sm-10">
+                            <input type="text" id="input_collectdate" value="@collect_date" tabindex="6" disabled="@html_disable">
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:2px;">
+                        <div class="col-sm-1">Time:</div>
+                        <div class="col-sm-10">
+                            <input type="text" id="input_collecttime" style="width:40%;" value="@collect_time" tabindex="7" disabled="@html_disable" class="input_time">
+                            <input asp-for="@Model.trans_details.collect_datetime" type="hidden" autocomplete="off" class="" id="collectdate">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <b>SUBMITTED</b>
+                    <div class="row">
+                        <div class="col-sm-1 text-right">By:</div>
+                        <div class="col-sm-10">
+                            <input asp-for="@Model.trans_details.submtd_by" type="text" value="@Model.trans_details.submtd_by" tabindex="8" id="form_submittedby" disabled="@html_disable">
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:2px;">
+                        <div class="col-sm-1">Date: </div>
+                        <div class="col-sm-10">
+                            <input type="text" id="input_submitdate" value="@submitted_date" tabindex="9" disabled="@html_disable">
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:2px;">
+                        <div class="col-sm-1">Time:</div>
+                        <div class="col-sm-10">
+                            <input type="text" id="input_submittime" value="@submitted_time" style="width:40%;" tabindex="10" autocomplete="off" disabled="@html_disable" class="input_time">
+                            <input asp-for="@Model.trans_details.submtd_datetime" class="form-control" type="hidden" autocomplete="off" id="submitdate">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <b>RECEIVED</b>
+                    <div class="row">
+                        <div class="col-sm-1 text-right">By:</div>
+                        <div class="col-sm-10">
+                            <select asp-for="@Model.trans_details.rcv_by_id" asp-items="@Model.selectReceiversList" style="width:100%;" id="form_receivedby" tabindex="11" class="dropdownfield" disabled="@html_disable"></select>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:2px;">
+                        <div class="col-sm-1">Date: </div>
+                        <div class="col-sm-10">
+                            <input type="text" id="input_receiveddate" value="@received_date" tabindex="12" disabled="@html_disable">
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:2px;">
+                        <div class="col-sm-1">Time: </div>
+                        <div class="col-sm-10">
+                            <input type="text" id="input_receivedtime" value="@received_time" style="width:40%;" tabindex="13" autocomplete="off" disabled="@html_disable" class="input_time">
+                            <input asp-for="@Model.trans_details.rcv_date" class="form-control" type="hidden" id="receivedate">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <b>Temperature:</b>
+                    <div class="row" style="margin-top:2px;">
+                        <div class="col-sm-1 text-right">&nbsp;</div>
+                        <div class="col-sm-10">
+                            <input asp-for="@Model.trans_details.temp" type="text" style="width:100%;" id="form_temperature" value="@Model.trans_details.temp" tabindex="15" disabled="@html_disable">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @{ string test_date = "", test_day = "", test_month = "", test_year = DateTime.Now.Year.ToString();}
+    @{ string report_day = "", report_month = "", report_year = DateTime.Now.Year.ToString(), report_date = "";}
+    @if (@Model.trans_details.test_date != null)
+    {
+        test_day = Model.trans_details.test_date.Value.Day.ToString("D2");
+        test_month = Model.trans_details.test_date.Value.Month.ToString("D2");
+        test_year = Model.trans_details.test_date.Value.Year.ToString("D2");
+        test_date = $"{test_year}-{test_month}-{test_day}";
+    }
+    @if (@Model.trans_details.work_date != null)
+    {
+        report_day = Model.trans_details.work_date.Value.Day.ToString("D2");
+        report_month = Model.trans_details.work_date.Value.Month.ToString("D2");
+        report_year = Model.trans_details.work_date.Value.Year.ToString("D2");
+        report_date = $"{report_year}-{report_month}-{report_day}";
+    }
+
+    <div class="panel panel-success">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    <div>
+                        Test Date:<br />
+                        <input type="text" id="input_testdate" class="" value="@test_date" tabindex="14">
+                        <input asp-for="@Model.trans_details.test_date" type="hidden" autocomplete="off" style="width:100%;" id="testdate" disabled="@html_disable">
+                    </div>
+                    <div>
+                        Report Date:<br />
+                        <input type="text" id="input_reportdate" class="" value="@report_date" tabindex="17" autocomplete="off">
+                        <input asp-for="@Model.trans_details.work_date" type="hidden" autocomplete="off" class="form-control" id="reportdate" disabled="@html_disable">
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div>
+                        Report:
+                        <select asp-for="@Model.trans_details.report_type_id" asp-items="@Model.selectReportTypeList" style="width:100%;" id="form_reporttype" class="dropdownfield" disabled="@html_disable"></select>
+                    </div>
+                    <div>
+                        Lab Code:
+                        <select asp-for="@Model.trans_details.test_pkg_id" asp-items="@Model.selectTestPackageList" style="width:100%;" id="database_test_pkg_id" class="dropdownfield" disabled="@html_disable"></select>
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="">Generated Coupon</div>
+                    <div class="">
+                        <input asp-for="@Model.trans_details.gen_coupon" type="text" style="width:70%;" value="@Model.trans_details.gen_coupon" id="generated_coupon" disabled>
+                    </div>
+                    <div class="allownace_top">
+                        @{ string gendisplay = "none";}
+                        @{ string deldisplay = "none";}
+                        @{ int B1N = 1;}
+                        @if (Model.trans_details.gen_coupon == 0 && Model.trans_details.test_pkg_id!=B1N && Model.trans_details.assigned_coupon==0)
+                        {
+                            gendisplay = "block";
+                        }
+                        
+                        @if (Model.trans_details.gen_coupon != 0)
+                        {
+                            deldisplay = "block";
+                        }
+
+                        <button type="button" class="btn btn-success" id="generate_coupon" style="display:@gendisplay;" disabled="@html_disable">Generate Coupon</button>
+                        <button type="button" class="btn btn-warning" id="delete_coupon" style="display:@deldisplay;" disabled="@html_disable">Delete Coupon</button>
+                    </div>
+                </div>
+                
+                <div class="col-sm-3">
+                    <div>
+                        <div class="">Assigned Coupon</div>   
+                        @Model.trans_details.assigned_coupon
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+<!--</div>-->

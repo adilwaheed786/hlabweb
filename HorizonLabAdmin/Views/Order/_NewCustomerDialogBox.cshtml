@@ -1,0 +1,120 @@
+﻿<div id="add_new_customer" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content" style="width:55%; font-size:1.2rem;">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-lg-10 text-left"><b>New Customer Form</b></div>
+                    <div class="col-lg-2"><button class="close" value="" id="close_customer_form" onclick="">&times;</button></div>
+                </div>
+            </div>
+            <div class="panel-body" style="height:650px; overflow:auto;">
+                <div class="row allownace_top">
+                    <div class="col-sm-2 text-right">Customer ID</div>
+                    <div class="col-sm-4">&nbsp;</div>
+                    <div class="col-sm-2 text-right">Company Name</div>
+                    <div class="col-sm-4"><input class="form-control input-sm" type="text" id="input_compname" tabindex="-1"></div>
+                </div>
+
+                <div class="row allownace_top">
+                    <div class="col-sm-2 text-right">First Name</div>
+                    <div class="col-sm-4"><input class="form-control input-sm" type="text" id="input_firstname" tabindex="1" autocomplete="off"></div>
+                    <div class="col-sm-2 text-right">Last Name</div>
+                    <div class="col-sm-4"><input class="form-control input-sm" type="text" id="input_lastname" tabindex="2" autocomplete="off"></div>
+                </div>
+
+                <div class="row allownace_top">
+                    <div class="col-sm-2 text-right">Address</div>
+                    <div class="col-sm-4"><input class="form-control input-sm" type="text" id="input_street" tabindex="3"></div>
+                    <div class="col-sm-2 text-right">Town</div>
+                    <div class="col-sm-4">
+                        <div class="row">
+                            <div class="col-sm-9"><select asp-items="@Model.city_selectlist_item" class="form-control dropdownfield" id="select_city" tabindex="4"></select></div>
+                            <div class="col-sm-3">
+                                <button type="button" class="btn btn-sm btn-outline-success" value="" id="addcity" tabindex="999">
+                                    <span class="glyphicon glyphicon-plus-sign" style="font-size:1.7rem;"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row allownace_top">
+                    <div class="col-sm-2 text-right">Producer Number</div>
+                    <div class="col-sm-4"><input class="form-control input-sm number_only" type="text" id="input_producer_number" autocomplete="off"></div>
+                </div>
+                <div class="row allownace_top">
+                    <div class="col-sm-2 text-right">Province</div>
+                    <div class="col-sm-4"><select asp-items="@Model.province_selectlist_item" class="form-control dropdownfield" id="input_province" autocomplete="off"></select></div>
+                    <div class="col-sm-2 text-right">Postal Code</div>
+                    <div class="col-sm-4"><input class="form-control input-sm" type="text" id="input_postal_code" tabindex="5" style="text-transform: uppercase;" autocomplete="off"></div>
+                </div>
+                <div class="row allownace_top">
+                    <div class="col-sm-2 text-right">Fax</div>
+                    <div class="col-sm-4"><input class="form-control input-sm" type="text" id="input_fax" autocomplete="off"></div>
+                    <div class="col-sm-2 text-right">&nbsp;</div>
+                    <div class="col-sm-4 text-right" style="font-size:1rem;color:red;">*Postal Code should be in six(6) digits, all-caps letters and should be in this format: A1A1A1</div>
+                </div>
+                <hr />
+
+                <div class="row allownace_top">
+                    <div class="col-sm-2 text-right">Phone Number(s)<br />(999-999-9999)</div>
+                    <div class="col-sm-4">
+                        <input class="form-control input-sm allownace_top mask_phone input_phone" id="input_primary_phone" type="text" tabindex="6" autocomplete="off">
+                        <input class="form-control input-sm allownace_top input_phone" type="text" id="input_phone1" tabindex="7" autocomplete="off">
+                        <input class="form-control input-sm allownace_top input_phone" type="text" id="input_phone2" autocomplete="off">
+                        <input class="form-control input-sm allownace_top input_phone" type="text" id="input_phone3" autocomplete="off">
+                        <input class="form-control input-sm allownace_top input_phone" type="text" id="input_phone4" autocomplete="off">
+                    </div>
+
+                    <div class="col-sm-2 text-right">Email Address</div>
+                    <div class="col-sm-4">
+                        <div class="row">
+                            <div class="col-sm-2 text-right" style="padding-top:15px;font-size:1.2rem;color:green;">Primary</div>
+                            <div class="col-sm-10"><input class="form-control input-sm allownace_top customer_email primary_email" id="input_primary_email" type="text" tabindex="8" autocomplete="off"></div>
+                        </div>
+                        <input class="form-control input-sm allownace_top customer_email" type="text" id="input_email1" tabindex="9" autocomplete="off">
+                        <input class="form-control input-sm allownace_top customer_email" type="text" id="input_email2" autocomplete="off">
+                        <input class="form-control input-sm allownace_top customer_email" type="text" id="input_email3" autocomplete="off">
+                        <input class="form-control input-sm allownace_top customer_email" type="text" id="input_email4" autocomplete="off">
+                    </div>
+                </div>
+                <hr />
+
+                <div class="row allownace_top">
+                    <div class="col-sm-2 text-right">Public</div>
+                    <div class="col-sm-4"><select asp-items="@Model.truefalse_selectlist_item" class="form-control dropdownfield" id="input_ispublic"></select></div>
+                    <div class="col-sm-2 text-right">Semi Public</div>
+                    <div class="col-sm-4"><select asp-items="@Model.truefalse_selectlist_item" class="form-control dropdownfield" id="input_issemipublic"></select></div>
+                </div>
+
+                <div class="row allownace_top">
+                    <div class="col-sm-2 text-right">Real Estate</div>
+                    <div class="col-sm-4"><select asp-items="@Model.truefalse_selectlist_item" class="form-control dropdownfield" id="input_isrealestate"></select></div>
+                    <div class="col-sm-2 text-right">Approve For Financing</div>
+                    <div class="col-sm-4"><select asp-items="@Model.truefalse_selectlist_item" class="form-control dropdownfield" id="input_isapproveforfinancing"></select></div>
+                </div>
+                <hr />
+                <div class="row allownace_top">
+                    <div class="col-sm-2 text-right">Environment District</div>
+                    <div class="col-sm-4"><input class="form-control input-sm" type="text" id="input_environment_district"></div>
+                    <div class="col-sm-2 text-right">Com Code</div>
+                    <div class="col-sm-4"><input class="form-control input-sm" type="text" id="input_com_code"></div>
+                </div>
+                <div class="row allownace_top">
+                    <div class="col-sm-2 text-right">DW Officer</div>
+                    <div class="col-sm-4"><input class="form-control input-sm" type="text" id="input_dwofficer"></div>
+                    <div class="col-sm-2 text-right">DW Phone</div>
+                    <div class="col-sm-4"><input class="form-control input-sm" type="text" id="input_dwphone"></div>
+                </div>
+                <div class="row allownace_top">
+                    <div class="col-sm-8">&nbsp;</div>
+                    <div class="col-sm-4 text-right">
+                        <button type="button" class="btn btn-success" id="submit_new_customer" tabindex="9">SAVE</button>
+                        <button type="button" class="btn btn-default close_modal" value="add_new_customer" id="">CANCEL</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

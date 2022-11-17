@@ -1,0 +1,88 @@
+﻿
+@{
+    ViewData["PageTitle"] = "User Account Form";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+@model HorizonLabAdmin.Models.Forms.UserAccountForm
+<div class="main_content">
+    <div style="padding:40px 30px 40px 30px;">
+        @{
+            string fname = "", lname = "", email = "", username = "", password = "";
+            int access_id = 0, userid = 0;
+            if (ViewBag.user != null)
+            {
+                fname = ViewBag.user.fname;
+                lname = ViewBag.user.lname;
+                email = ViewBag.user.email;                
+                username = ViewBag.user.username;
+                password = ViewBag.user.password;
+                access_id = ViewBag.user.access_id;
+                userid = ViewBag.user.user_id;
+            }
+        }
+        <form asp-action="@ViewBag.asp_action" asp-controller="UserAccount" method="post" class="" id="new_user_form">
+            <input asp-for="@Model.user.user_id" type="hidden" value="@userid">
+            <div class="panel panel-success">
+                <div class="panel-heading">Information</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-xs-2" style="text-align:right;">First Name</div>
+                        <div class="col-xs-4"><input asp-for="@Model.user.fname"  class="form-control" id="fname" placeholder="First Name" value="@fname"></div>
+                        <div class="col-xs-2" style="text-align:right;">Last Name</div>
+                        <div class="col-xs-4"><input  asp-for="@Model.user.lname" class="form-control" id="lname" placeholder="Last Name" value="@lname"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-success">
+                <div class="panel-heading">Contacts</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-xs-2" style="text-align:right;">Email</div>
+                        <div class="col-xs-4"><input  asp-for="@Model.user.email" class="form-control" id="email" placeholder="Email Address" value="@email"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-success">
+                <div class="panel-heading">Login Info</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-xs-2" style="text-align:right;">Username</div>
+                        <div class="col-xs-4"><input  asp-for="@Model.user.username" type="text" class="form-control" id="username" placeholder="Username" value="@username"></div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-xs-2" style="text-align:right;">Password</div>
+                        <div class="col-xs-4"><input type="password" class="form-control" id="password" name="password" placeholder="Type New Password here.." value="@password"></div>
+                        <div class="col-xs-2" style="text-align:right;">User Type</div>
+                        <div class="col-xs-4">
+                            <select asp-for="@Model.user.access_id" asp-items="@ViewBag.user_access_list" class="form-control" id="access_id"></select> 
+                        </div>
+
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-xs-2" style="text-align:right;">Re-type password</div>
+                        <div class="col-xs-4"><input  asp-for="@Model.user.password" type="password" class="form-control" id="repassword" placeholder="Re-Type New Password here.." value="@password"></div>
+                    </div>
+                </div>
+            </div>
+
+            <br />
+            <div class="row">
+                <div class="col-xs-6">&nbsp;</div>
+                <div class="col-xs-6" style="text-align:right;margin-right:0px;">
+                    <div class="btn-group" role="group" aria-label="">
+                        <input type="button" class="btn btn-success" value="Save" id="save_new_user">
+                        <button type="button" class="btn btn-success" onclick="window.location.href='/UserAccount/ActiveAccountsPage'">Active Accounts</button>
+                        <button type="button" class="btn btn-success" onclick="window.location.href='/UserAccount/InactiveAccountsPage'">InActive Accounts</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="col-lg-4"></div>
+
+<script src="~/js/user_account_events.js"></script>

@@ -1,0 +1,151 @@
+﻿@model HorizonLabLibrary.Entities.horizonlabcustomerview
+@{
+    if (ViewBag.customerstatus.ToLower() == "true")
+    {
+        ViewData["PageTitle"] = "Active Customer Records";
+    }
+    else
+    {
+        ViewData["PageTitle"] = "InActive Customer Records";
+    }
+
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+
+
+<link href="~/css/jquery-ui.css" rel="stylesheet" />
+<script src="~/js/jquery-ui.js"></script>
+<script src="~/js/general_functions.js"></script>
+<script src="~/js/customer_events.js"></script>
+
+<!--<h2>Customer Records</h2>-->
+<br />
+<form asp-action="SearchCustomer" asp-controller="Customer" method="post" class="" id="customer_search">
+    @{
+        var customer_id = "";
+        if (Model.customer_id != 0) { customer_id = Model.customer_id.ToString(); }
+    }
+    <div class="row" style="font-size:1.3rem; color:#606060;">
+        <div class="col-sm-11">
+            <div class="row">
+                <input asp-for="@Model.status" class="" type="hidden" id="" value="@ViewBag.customerstatus">
+                <div class="col-sm-2">
+                    Customer ID
+                    <input asp-for="@customer_id" class="form-control input-sm number_only" type="text" id="input_customerid" value="@customer_id" autocomplete="off">
+                </div>
+
+                <div class="col-sm-2">
+                    First Name
+                    <input asp-for="@Model.first_name" class="form-control input-sm" type="text" id="input_firstname" value="@Model.first_name" autocomplete="off">
+                </div>
+
+                <div class="col-sm-2">
+                    Last Name
+                    <input asp-for="@Model.last_name" class="form-control input-sm" type="text" id="input_lastname" value="@Model.last_name" autocomplete="off">
+                </div>
+
+                <div class="col-sm-2">
+                    Company
+                    <input asp-for="@Model.company_name" class="form-control input-sm" type="text" id="input_companyname" value="@Model.company_name" autocomplete="off">
+                </div>
+
+                <div class="col-sm-2">
+                    Email
+                    <input asp-for="@Model.email" class="form-control input-sm" type="text" id="input_email" value="@Model.email" autocomplete="off">
+                </div>
+
+                <div class="col-sm-2">
+                    Street Address
+                    <input asp-for="@Model.street" class="form-control input-sm" type="text" id="input_address" value="@Model.street">
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-1" style="text-align:right;">
+            <button type="submit" class="btn btn-sm btn-outline-success" value="search_modal"><span class="glyphicon glyphicon-search" style="font-size:2rem;"></span></button>
+            <a type="submit" class="btn btn-sm btn-outline-success" href="@Url.Action("NewCustomerForm", "Customer")"><span class="glyphicon glyphicon-plus" style="font-size:2rem;"></span></a>
+        </div>
+    </div>
+</form>
+<span style="font-color:blue;font-size:1.0rem;">@ViewBag.CustomerMessage</span>
+<br />
+<p style="font-size:0.75em;color:#4A6ABF;font-weight:bold;">@ViewBag.Message</p><!--Message here-->
+<div style="background-color:white;font-size:1.3rem;">
+    <div class="table_fix_header">
+        <table class="table table-striped">
+            <thead class="data_table_header">
+                <tr>
+                    <th class="data_table_header"></th>
+                    <th class="data_table_header">ID</th>
+                    <th class="data_table_header"><a href="@Url.Action("ViewCustomerListPage","Customer", new { status=ViewBag.customerstatus, sort_customer_name = ViewBag.sort_customer_name} )">Customer Name</a></th>
+                    <th class="data_table_header">Email Address</th>
+                    <th class="data_table_header">Phone</th>
+                    <th class="data_table_header"><a href="@Url.Action("ViewCustomerListPage","Customer", new { status=ViewBag.customerstatus, sort_customer_name = ViewBag.sort_customer_name, sort_town = ViewBag.sort_town} )">Address</a></th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ string postal_code = "";}
+                @foreach (var customer in ViewBag.customer_list)
+                {
+                    string customername = customer.first_name + " " + customer.last_name;
+                    if (!string.IsNullOrEmpty(customer.postal_code))
+                    {
+                        postal_code = customer.postal_code.ToUpper();
+
+                        if(postal_code.Length > 3)
+                        {
+                            char mid = postal_code[3];
+                            if(mid!=' ')
+                            {
+                                postal_code = postal_code.Insert(3, " ");
+                            }
+                        }
+                    }
+                    string address = $"{customer.city}, {customer.street} {postal_code}, {customer.province}";
+                    <tr>
+                        <td>
+                            <!--<button type="button" class="btn btn-sm btn-outline-success goto_placeorderform" value="@customer.customer_id"><span class="glyphicon glyphicon-open-file" style="font-size:1.3rem;"></span></button>-->
+                            <button type="button" class="btn btn-sm btn-outline-info view_customer" value="@customer.customer_id"><span class="glyphicon glyphicon-info-sign" style="font-size:1.3rem;"></span></button>
+                            <button type="button" class="btn btn-sm btn-outline-success edit_customer" value="@customer.customer_id"><span class="glyphicon glyphicon-pencil" style="font-size:1.3rem;"></span></button>
+
+                            @if (ViewBag.customerstatus == "true")
+                            {
+                                <button type="button" class="btn btn-sm btn-outline-danger deactivate_customer" value="@customer.customer_id"><span class="glyphicon glyphicon-remove" style="font-size:1.3rem;"></span></button>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("ActivateCustomer", "Customer", new { customerid = customer.customer_id})" type="button" class="btn btn-sm btn-outline-success" value="@customer.customer_id"><span class="glyphicon glyphicon-ok" style="font-size:1.3rem;"></span></a>
+                            }
+                        </td>
+                        <td><a href="@Url.Action("TestRequestPage","Order", new { customerid=customer.customer_id })">@String.Format("{0:00000000}", customer.customer_id)</a></td>
+                        <td>@customername</td>
+                        <td>@customer.email</td>
+                        <td>@customer.phone</td>
+                        <td>@address</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<form asp-action="NavigateCustomer" asp-controller="Customer" method="post" class="" id="customer_nav">
+    <div class="row" style="padding-top:10px;">
+        @{ var rec_count = string.Format("{0:#,0}", @ViewBag.rec_count);}
+        <div class="col-sm-4" style="text-align:left;"> <span style="font-size:1.1rem;font-weight:bold;">@rec_count record(s) found</span></div>
+        <div class="col-sm-4" style="text-align:center;">
+            <button type="button" class="btn btn-sm btn-outline-success" id="first_btn"><span class="glyphicon glyphicon-fast-backward" style="font-size:2rem;"></span></button>
+            <button type="button" class="btn btn-sm btn-outline-success" id="back_btn"><span class="glyphicon glyphicon-backward" style="font-size:2rem;"></span></button>
+            <input type="hidden" value="@ViewBag.rec_start" name="customer_rec_start" id="customer_rec_start" />
+            <input type="hidden" value="@ViewBag.rec_end" name="customer_rec_end" id="customer_rec_end" />
+            <input type="hidden" value="@ViewBag.rec_count" name="customer_rec_count" id="customer_rec_count" />
+            <button type="button" class="btn btn-sm btn-outline-success" id="next_btn"><span class="glyphicon glyphicon-forward" style="font-size:2rem;"></span></button>
+            <button type="button" class="btn btn-sm btn-outline-success" id="last_btn"><span class="glyphicon glyphicon-fast-forward" style="font-size:2rem;"></span></button>
+        </div>
+        <div class="col-sm-4" style="text-align:right;">
+            @{ var start = string.Format("{0:#,0}", ViewBag.rec_start + 1); }
+            @{ var end = string.Format("{0:#,0}", ViewBag.rec_end + 1); }
+            @if (ViewBag.rec_end >= ViewBag.rec_count) { end = ViewBag.rec_count; }
+            <span style="font-size:1.5rem;font-weight:bold;">@start to @end Record(s)</span>
+        </div>
+    </div>
+</form>

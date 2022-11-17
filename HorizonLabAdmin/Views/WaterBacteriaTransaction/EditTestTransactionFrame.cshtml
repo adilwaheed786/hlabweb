@@ -1,0 +1,316 @@
+﻿@model HorizonLabAdmin.Models.Forms.TestResultPageViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<style>
+    .accordion {
+        background-color: #eee;
+        color: #444;
+        cursor: pointer;
+        padding: 10px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+        transition: 0.4s;
+        border: 1px solid #57BF5A;
+        border-radius: 5px;
+    }
+
+    input[type=text]:focus {
+        outline: 2px solid orange; /* oranges! yey */
+    }
+
+    .dropdownfield:focus {
+        outline: 2px solid orange; /* oranges! yey */
+    }
+</style>
+
+<link href="~/css/horizonlab_style.css" rel="stylesheet" />
+<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+<link href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
+<link href="~/css/jquery.datetextentry.css" rel="stylesheet" />
+<link href="~/css/jquery-ui.css" rel="stylesheet" />
+<link href="~/css/modal_style.css" rel="stylesheet" />
+
+<script src="~/js/core/jquery.min.js"></script>
+<script src="~/js/jquery-ui.js"></script>
+<script src="~/js/core/popper.min.js"></script>
+<script src="~/js/core/bootstrap-material-design.min.js"></script>
+<script src="~/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+<script src="~/js/css-icons.js"></script>
+<script src="~/js/jquery.datetextentry.js"></script>
+<script src="~/js/fm.timetator.jquery.js"></script>
+<script src="~/js/modal_events.js"></script>
+
+<script src="~/js/edit_transaction_events.js"></script>
+<script src="~/js/general_functions.js"></script>
+<script src="~/js/api_events.js"></script>
+<script src="~/js/test_request_events.js"></script>
+<script src="~/js/test_request_helpers.js"></script>
+<script src="~/js/new_water_sample_events.js"></script>
+
+<script>
+    $(function () {
+        $('#input_collectdate').datetextentry({ field_order: 'DMY', year_id: 'collectdate_year' });
+        $('#input_submitdate').datetextentry({ field_order: 'DMY', year_id: 'submitdate_year' });
+        $('#input_receiveddate').datetextentry({ field_order: 'DMY', year_id: 'receiveddate_year' });
+        $('#input_testdate').datetextentry({
+            field_order: 'DMY',
+            year_id: 'testdate_year',
+            on_blur: function () {
+                //$("#input_collecttime").focus();
+            }
+        });
+        $('#input_reportdate').datetextentry({ field_order: 'DMY', year_id: 'reportdate_year' });
+        $('#input_datereceived').datetextentry({ field_order: 'DMY' });
+        $('#input_sampleddate').datetextentry({ field_order: 'DMY' });
+
+        $('#input_collecttime').timetator({ useCap: true });
+        $('#input_submittime').timetator({ useCap: true });
+        $('#input_receivedtime').timetator({ useCap: true });
+        $('#input_sampledtime').timetator({ useCap: true });
+        $('#input_timereceived').timetator({ useCap: true });
+
+        $("#collectdate_year").focusout(function () {
+            $('#input_collecttime').focus();
+        });
+
+        $("#submitdate_year").focusout(function () {
+            $('#input_submittime').focus();
+        });
+
+        $("#receiveddate_year").focusout(function () {
+            $('#input_receivedtime').focus();
+        });
+
+        $("#input_receivedtime").focusout(function () {
+            $('#form_temperature').focus();
+        });
+
+        $("#reportdate_year").focusout(function () {
+            $('#form_reporttype').focus();
+        });
+        
+        $(".jq-dte-year").focusout(function () {
+            if ($(this).val() == "") {
+                var year = new Date().getFullYear();
+                $(this).val(year);
+            }
+        });
+
+        $("#database_project_id").focusout(function () {
+            $('#form_sampleid').focus();
+        });
+    });
+</script>
+
+@{string msg_color = "green", page_message = "";}
+@if (!string.IsNullOrEmpty(ViewBag.PageMessage))
+{
+    var message = ViewBag.PageMessage.Split(":");
+    if (message[0] == "Error")
+    {
+        msg_color = "red";
+    }
+    page_message = message[1];
+}
+<div align="left"><span style="font-size:15px;color:@msg_color;">@page_message</span></div>
+<body style="padding:20px 20px 20px 20px;">
+    <div style="font-size:1.3rem; width:980px;">        
+        @{ string orderid = "", analysis = "", dateorder = "", recievedby = "", price = "", labcode = "", html_disable = null;}
+        @{ bool disabled = false; int admin_access = 1;}
+        @if (ViewBag.orderitemview != null)
+        {
+            orderid = string.Format("{0:00000000}", ViewBag.orderitemview.order_id);
+            analysis = ViewBag.orderitemview.analysis;
+            dateorder = ViewBag.orderitemview.order_date?.ToString("dd/MM/yyyy");
+            recievedby = ViewBag.orderitemview.received_by;
+            price = string.Format("{0:0.00}", ViewBag.orderitemview.amount);
+            labcode = ViewBag.orderitemview.lab_code;
+
+            @if (ViewBag.orderitemview.pkg_id == 1)
+            { //if package id is subsidy
+                disabled = true;
+            }
+            if (Model.trans_details.publish && ViewBag.user_access_id != admin_access)
+            {
+                html_disable = "disabled";
+            }
+        }
+
+        <form asp-action="UpdateTransactionInfo" asp-controller="WaterBacteriaPostTransactions" method="post" class="" id="edit_transaction_info" enctype="multipart/form-data">
+            <input type="hidden" asp-for="@Model.refresh" id="isParentRefresh" value="@Model.refresh">
+            <input type="hidden" asp-for="@Model.ispageframe" value="true">
+            <input type="hidden" asp-for="@Model.goto_viewpage" value="EditTestTransactionFrame">
+            <div class="row">
+                <div class="col-sm-3">
+                    <div>
+                        <b>Customer ID:</b>
+                        <input asp-for="@Model.trans_details.customer_id" type="text" class="number_only" id="customer_select" value="@Model.trans_details.customer_id" style="width:100px;" disabled="@html_disable">
+                        @*@String.Format("{0:00000000}", Model.trans_details.customer_id)*@
+                    </div>
+                    <div><b>Customer:</b> @Model.trans_details.first_name @Model.trans_details.last_name</div>
+                    <div>
+                        <b>Address: </b><br />
+                        @if (!string.IsNullOrEmpty(Model.trans_details.street))
+                        {
+                            @Model.trans_details.street<br />
+                            <span>@Model.trans_details.city,</span> @Model.trans_details.province<br />
+
+                            @if (!string.IsNullOrEmpty(Model.trans_details.postal_code))
+                            {
+                                @Model.trans_details.postal_code.ToUpper()
+                            }
+                        }
+                    </div>
+                    <div>
+                        <a href="@Url.Action("EditCustomerForm","Customer", new { cid=Model.trans_details.customer_id })" target="_blank" type="button" class="btn btn-sm btn-success" value=""><span class="" style="font-size:0.75rem;" disabled="@html_disable">EDIT</span></a>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div><b>Transaction ID:</b> #@string.Format("{0:00000000}", Model.trans_details.trans_id)</div>
+                    <div><b>Email:</b> @Model.customer_primary_email</div>
+                    <div><b>Phone:</b> @Model.customer_primary_phone</div>
+                </div>
+                <div class="col-sm-3">
+                    <div><b>Public: </b>@Model.trans_details.is_public</div>
+                    <div><b>Semi Public: </b>@Model.trans_details.is_semi_public</div>
+                    <div><b>Financing: </b>@Model.trans_details.is_approve_financing</div>
+                </div>
+                <div class="col-sm-3">
+                    <div>
+                        <b>Susbsidy Form:</b> <br />
+                        <input asp-for="@Model.trans_details.subsidyimage_id" type="hidden" value="@Model.trans_details.subsidyimage_id" disabled="@html_disable">
+                        <div><a href="~/scan_subsidy_forms/@Model.trans_details.scan_image_filename" target="_blank"><span id="attachment">@Model.trans_details.scan_image_filename</span></a></div>
+                        <div><input type="file" name="scan_subsidy_image" id="scan_subsidy_image" class="" disabled="@html_disable"></div>
+
+                        @if (!string.IsNullOrEmpty(Model.trans_details.scan_image_filename))
+                        {
+                            <button class="btn btn-sm btn-warning" value="@Model.trans_details.subsidyimage_id" id="deleted_attachment">DELETE</button>
+                            <br />
+                        }
+
+                    </div>
+                    <div style="padding-top:2px;">
+                        <b>Coupon:</b>
+                        <input asp-for="@Model.trans_details.assigned_coupon" type="text" class="number_only" id="database_assigned_coupon" style="width:60%;" value="@Model.trans_details.assigned_coupon" disabled="@html_disable">
+                    </div>
+                </div>
+            </div>
+            <hr/>
+            <div class="row" style="border:1px solid #EDEDED; height:400px;overflow:auto; padding:5px 5px 5px 5px; border-radius:5px;">
+                @Html.Partial("_EditTestTransactionFrameSection1", Model)
+                @Html.Partial("_EditTestTransactionFrameSection2", Model)
+                @Html.Partial("_EditTestTransactionFrameSection3", Model)
+            </div>
+
+            <div class="row">
+                <div class="col-sm-9">
+                    @if (Model.refresh == 0)
+                    {
+                        <button type="button" class="btn btn-success " id="save_test_details_btn" disabled="@html_disable">SAVE CHANGES</button>
+                    }
+                    else
+                    {
+                        <button type="button" class="" id="save_test_details_btn" style="background:white;color:white;border:none;"></button>
+                    }
+
+                </div>
+                <div class="col-sm-3">
+                    <input type="checkbox" asp-for="@Model.trans_details.publish" disabled="@html_disable">
+                    <b>&nbsp; Review Data</b>
+                </div>
+            </div>
+        </form>
+     
+        
+    </div>
+</body>
+
+@Html.Partial("_ProcessingModalDialogBox")
+
+<div id="edittestresult" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content" style="width:25%;">
+        <div><h3><span id="service" style="float:left;">Edit Test Result</span></h3><button class="close closeditform" value="edittestresult" onclick="">&times;</button></div>
+        <br />
+        <form asp-action="UpdateTestResult" asp-controller="WaterBacteriaPostTransactions" method="post" class="" id="edit_transaction">
+            <input asp-for="@Model.hlab_test_result.result_id" type="hidden" class="form-control " value="" id="editResultId">
+            <input asp-for="@Model.hlab_test_result.trans_id" type="hidden" class="form-control " value="" id="editTransId">           
+            <div class="row allownace_top">
+                <div class="col-sm-5 text-right"><b>Parameter:</b></div>
+                <div class="col-sm-5"><select asp-for="@Model.hlab_test_result.param_id" asp-items="@Model.selectTestParameters" class="form-control" id="editParam"></select></div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-5 text-right"><b>Note:</b></div>
+                <div class="col-sm-5"><input asp-for="@Model.hlab_test_result.test_note" type="text" class="form-control" value="" id="editNote"></div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-5 text-right"><b>Result:</b></div>
+                <div class="col-sm-5"><input asp-for="@Model.hlab_test_result.result" type="text" class="form-control" value="" id="editResult"></div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-5 text-right"><b>Unit Of Measurement:</b></div>
+                <div class="col-sm-5"><select asp-for="@Model.hlab_test_result.unit_id" asp-items="@Model.selectUnitMeasurements" class="form-control" id="editUnit"></select></div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-5 text-right"><b>Accepted:</b></div>
+                <div class="col-sm-5">
+                    <select asp-for="@Model.hlab_test_result.is_failed" class="form-control dropdownfield" id="editPassFail">
+                        <option value="true">True</option>
+                        <option value="false">False</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-5 text-right">&nbsp;</div>
+                <div class="col-sm-5 text-right"><button type="button" class="btn btn-success" id="save_test_result_btn">SAVE CHANGES</button></div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="addtestresult" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content" style="width:25%;">
+        <div><h3><span id="service" style="float:left;">Add Test Result</span></h3><button class="close close_modal" value="addtestresult" onclick="">&times;</button></div>
+        <br />
+        <form asp-action="AddTestResult" asp-controller="WaterBacteriaPostTransactions" method="post" class="" id="add_test_result_form">
+            <input asp-for="@Model.hlab_test_result.trans_id" type="hidden" class="form-control " value="@Model.trans_details.trans_id" id="">
+            <div class="row allownace_top">
+                <div class="col-sm-5 text-right"><b>Parameter:</b></div>
+                <div class="col-sm-5"><select asp-for="@Model.hlab_test_result.param_id" asp-items="@Model.selectTestParameters" class="form-control dropdownfield" id="editParam"></select></div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-5 text-right"><b>Note:</b></div>
+                <div class="col-sm-5"><input asp-for="@Model.hlab_test_result.test_note" type="text" class="form-control" value="" id=""></div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-5 text-right"><b>Result:</b></div>
+                <div class="col-sm-5"><input asp-for="@Model.hlab_test_result.result" type="text" class="form-control" value="" id=""></div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-5 text-right"><b>Unit Of Measurement:</b></div>
+                <div class="col-sm-5"><select asp-for="@Model.hlab_test_result.unit_id" asp-items="@Model.selectUnitMeasurements" class="form-control dropdownfield" id=""></select></div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-5 text-right"><b>Accepted:</b></div>
+                <div class="col-sm-5">
+                    <select asp-for="@Model.hlab_test_result.is_failed" class="form-control dropdownfield" id="">
+                        <option value="true">True</option>
+                        <option value="false">False</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-5 text-right">&nbsp;</div>
+                <div class="col-sm-5 text-right"><button type="button" class="btn btn-success" id="add_test_result_btn">SAVE</button></div>
+            </div>
+        </form>
+    </div>
+</div>
+

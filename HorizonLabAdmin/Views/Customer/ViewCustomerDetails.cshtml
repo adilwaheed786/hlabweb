@@ -1,0 +1,97 @@
+﻿@model HorizonLabLibrary.Entities.horizonlabcustomerview
+@{
+    ViewData["Title"] = "Customer: " + Model.first_name + " " + Model.last_name;
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+<script src="~/js/customer_events.js"></script>
+<p style="font-size:0.85rem;color:#4A6ABF;font-weight:bold;">@ViewBag.Message</p>
+<div class="row" style="font-size:1.3rem;">
+    <div class="col-lg-1"></div>
+    <div class="col-lg-10">
+        <div class="panel panel-success">
+            <div class="panel-heading">Customer Information</div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <p><b>Customer ID:</b> @String.Format("{0:00000000}", Model.customer_id)</p>
+                        <p><b>Customer Name: </b> @Model.first_name @Model.last_name</p>
+                        <p><b>Company Name: </b> @Model.company_name</p>
+                        <p><b>Producer Number: </b> @Model.producer_number</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <p>
+                            <b>Address</b>
+                            <br />
+
+                            @{ string postal_code = "";}
+                            @if (!string.IsNullOrEmpty(Model.postal_code))
+                            {
+                                postal_code = Model.postal_code.ToUpper();
+
+                                if(postal_code.Length > 3)
+                                {
+                                    char mid = postal_code[3];
+                                    if(mid!=' ')
+                                    {
+                                        postal_code = postal_code.Insert(3, " ");
+                                    }
+                                }
+                            }
+
+                            @Model.street @Model.city <br />
+                            @Model.province , @Model.postal_code
+                        </p>
+                        <p><b>Email Address: </b></p>
+                        <ul style="list-style:none;">
+                            @foreach (var email in ViewBag.emaillist)
+                            {
+                                <li>
+                                    @{ 
+                                        if (email.is_primary)
+                                        {
+                                            <span style="color:green;">Primary&nbsp;</span>
+                                        }
+                                     }
+                                    @email.email
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                    <div class="col-sm-4">
+                        <p><b>Contact Number(s): </b></p>
+                        <ul style="list-style:none;">
+                            @foreach (var phone in ViewBag.phonelist)
+                            {
+                                <li>@phone.phone</li>
+                            }
+                        </ul>
+                        <p><b>Fax: </b> @Model.fax</p>
+                        <p><b>Date Registered: </b>@Model.date_registered?.ToString("dd/MM/yyyy")</p>
+                    </div>
+                </div>
+                <hr />
+
+                <div class="row">
+                    <div class="col-sm-4">
+                        <p><b>Approved for Financing: </b>@Model.is_approve_financing</p>
+                        <p><b>Public: </b>@Model.is_public</p>
+                        <p><b>Semi Public: </b>@Model.is_semi_public</p>
+                        <p><b>Coupon: </b>@Model.coupon</p>
+                        <p><b>Coupon Date Issued: </b>@Model.coupon_issued_date</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <p><b>Location:</b> @String.Format("{0:00000000}", Model.customer_id)</p>
+                        <p><b>Environment District: </b> @Model.env_distr</p>
+                        <p><b>DW Officer: </b> @Model.dw_officer</p>
+                        <p><b>DW Phone: </b> @Model.dw_phone</p>
+                        <p><b>Com Code: </b> @Model.com_code</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-success" onclick="window.location='/Customer/ViewCustomerListPage'">CUSTOMER LIST PAGE</button>
+        <!--<button type="button" class="btn btn-success goto_placeorderform" id="@Model.customer_id">ADD NEW WATER TEST SAMPLE</button>-->
+        <button type="button" class="btn btn-success" onclick="window.location='/Customer/EditCustomerForm?cid=@Model.customer_id'">EDIT CUSTOMER</button>
+    </div>
+    <div class="col-lg-1"></div>
+</div>

@@ -1,0 +1,33 @@
+﻿    #service_intro {
+        border: 1px solid #C8C6C5;
+        border-radius: 20px;
+        padding: 2% 2% 2% 2%;
+        background: white;
+        text-align: center;
+    }
+
+    .note {
+        color: green;
+        font-size:12px;
+    }
+
+    .service_ul {
+        list-style: none;
+        padding: 0;
+    }
+
+        .service_ul li {
+            padding: 5px 10px;
+            background-color: #EEEEEE;
+            border: 1px solid #DDDDDD;
+        }
+
+    .service_link {
+        color: #7A7A7C;
+        text-decoration: none;
+    }
+
+        .service_link:hover {
+            color: #3C3E3C;
+            text-decoration: underline;
+        }

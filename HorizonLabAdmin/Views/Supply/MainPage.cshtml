@@ -1,0 +1,179 @@
+﻿
+@{
+    ViewData["Title"] = "Test Package Supply";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+
+@model HorizonLabAdmin.Helpers.Containers.SupplyViewDataObject
+
+<link href="~/css/jquery-ui.css" rel="stylesheet" />
+<script src="~/js/jquery-ui.js"></script>
+<script src="~/js/general_functions.js"></script>
+<script src="~/js/supply_events.js"></script>
+
+<b>Test Package Supplies</b>
+
+<div style="padding:20px 20px 20px 20px; background:white; border:1px solid #B6B6B6; border-radius:10px; height:800px;overflow:auto;font-size:1.3rem;">
+    <form asp-action="UpdateSupplies" asp-controller="Supply" method="post" class="" id="supply_list">        
+        <div class="row">
+            <div class="col-lg-5">
+                <b>SUPPLIES</b>
+                <div class="panel panel-success" style="height:650px; overflow:auto;">
+                    <div class="panel-body">
+                        <input asp-for="@Model.SelectedSupply_id" type="hidden" id="selected_supply_id" class="" value="@Model.SelectedSupply_id">
+                        @if (!string.IsNullOrEmpty(Model.SelectedTestPackage))
+                        {
+                            <p>Supplies For <b>@Model.SelectedTestPackage</b></p>
+                        }
+                        @if (Model.TestPackageSupplyList != null && Model.TestPackageSupplyList.Count > 0)
+                        {
+                            int counter = 0;
+                            string color = "#BCFFD4";
+                            DateTime todays = DateTime.Now;
+                            <table style="width:70%;">
+                                <tr>
+                                    <th>&nbsp;</th>
+                                    <th>&nbsp;</th>
+                                    <th>Name</th>
+                                    <th>Lot</th>
+                                    <th>Expiry Date</th>
+                                    <th colspan="2">Incubation tolerance (hours)</th>
+                                </tr>
+                                <tr>
+                                    <th colspan="5"></th>
+                                    <th style="text-align:center;">Start</th>
+                                    <th style="text-align:center;">Stop</th>
+                                </tr>
+                                @foreach (var supply in Model.TestPackageSupplyList)
+                                {
+                                    TimeSpan difference = supply.expiry_date - todays;
+                                    int intdaysdiff = (int)difference.TotalDays;
+                                    color = "#BCFFD4";
+
+                                    if (todays.ToString("dd/MM/yyyy") == supply.expiry_date.ToString("dd/MM/yyyy"))
+                                    {
+                                        color = "#FED18A";
+                                    }
+                                    else if (intdaysdiff > 0 && intdaysdiff <= 14)
+                                    {
+                                        color = "#FED18A";
+                                    }
+                                    else if (intdaysdiff <= 0)
+                                    {
+                                        color = "#FB8F7C";
+                                    }
+
+                                    <tr>
+                                        <td>
+                                            <input type="hidden" asp-for="@Model.TestPackageSupplyList[counter].id" id="" class="" value="@supply.id">
+                                            <input type="hidden" asp-for="@Model.TestPackageSupplyList[counter].status" id="" class="" value="@supply.status">
+                                        </td>
+                                        <td style="padding: 2px 2px 2px 2px;background:@color;">
+                                            @{ string radio_check = "";}
+                                            @if (supply.id == Model.SelectedSupply_id)
+                                            {
+                                                radio_check = "checked";
+                                            }
+                                            <input type="radio" name="supplyid" value="@supply.id" class="rd_supplyid" onclick="location.href='@Url.Action("MainPage", "Supply", new { sid=supply.id})'" @radio_check>
+                                        </td>
+                                        <td style="padding: 2px 2px 2px 2px;background:@color;"><input type="text" style="width:130px;" asp-for="@Model.TestPackageSupplyList[counter].name" id="" class="" value="@supply.name" autocomplete="off"></td>
+                                        <td style="padding: 2px 2px 2px 2px;background:@color;"><input type="text" style="width:130px;" asp-for="@Model.TestPackageSupplyList[counter].lot" id="" class="" value="@supply.lot" autocomplete="off"></td>
+                                        <td style="padding: 2px 2px 2px 2px;background:@color;"><input type="text" style="width:130px;" asp-for="@Model.TestPackageSupplyList[counter].expiry_date" id="" class="expiry_date" value="@supply.expiry_date.ToString("dd/MM/yyyy")" autocomplete="off"></td>
+                                        <td style="padding: 2px 2px 2px 2px;background:@color;"><input type="text" style="width:85px;" asp-for="@Model.TestPackageSupplyList[counter].hours_tolerance_start" id="" class="number_only" value="@supply.hours_tolerance_start" autocomplete="off"></td>
+                                        <td style="padding: 2px 2px 2px 2px;background:@color;"><input type="text" style="width:85px;" asp-for="@Model.TestPackageSupplyList[counter].hours_tolerance_end" id="" class="number_only" value="@supply.hours_tolerance_end" autocomplete="off"></td>
+                                    </tr>
+                                    counter++;
+                                }
+                            </table>
+                        }
+                    </div>
+                </div>
+                <button type="button" class="btn btn-sm btn-success" value="" id="new_supply_button" style="font-size:1.15rem;">ADD NEW SUPPLY</button>
+                <button type="button" class="btn btn-sm btn-success" value="" id="save_supply_changes" style="font-size:1.15rem;">SAVE CHANGES</button>
+                <!--<button type="button" class="btn btn-sm btn-success" value="" id="delete_supply" style="font-size:1.15rem;">DELETE SUPPLY</button>-->
+            </div>
+
+            <div class="col-lg-7">
+                <b>TEST PACKAGES</b>
+                <div class="panel panel-success" style="height:650px; overflow:auto;">
+                    <div class="panel-body">
+                        <table class="table-striped" style="width:70%;">
+                            @if (Model.TestPackageList != null)
+                            {
+                                @foreach (var pkg in Model.TestPackageList)
+                                {
+                                    string check = "";
+
+                                    foreach (var asgn in Model.AssignedTestPakcageSupplyList)
+                                    {
+                                        if (pkg.id == asgn.pkg_id)
+                                        {
+                                            check = "checked";
+                                        }
+                                    }
+
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" @check name="pkg_id_list" value="@pkg.id" />
+                                            @pkg.lab_code
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!--DIALOG BOX-->
+<div id="add_new_supply" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content" style="width:25%; font-size:1.2rem;">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-lg-10 text-left">New Test Package Supply</div>
+                    <div class="col-lg-2"><button class="close" value="" id="close_new_supply_box" onclick="">&times;</button></div>
+                </div>
+            </div>
+            <div class="panel-body" style="height:350px; overflow:auto;">
+                <form asp-action="SaveNewSupply" asp-controller="Supply" method="post" class="" id="new_supply_form">
+                    <table>
+                        <tr>
+                            <td><b>Name</b>: </td>
+                            <td><input type="text" asp-for="@Model.hlab_supplies.name" id="modal_name" class="" value="" autocomplete="off"></td>
+                        </tr>
+                        <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+                        <tr>
+                            <td><b>Lot</b>: </td>
+                            <td><input type="text" asp-for="@Model.hlab_supplies.lot" id="modal_lot" class="" value="" autocomplete="off"></td>
+                        </tr>
+                        <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+                        <tr>
+                            <td><b>Expiry Date</b>:</td>
+                            <td><input type="text" asp-for="@Model.hlab_supplies.expiry_date" id="" class="expiry_date" value="" autocomplete="off"></td>
+                        </tr>
+                        <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+                        <tr>
+                            <td><b>Incubation Tolerance (hours)</b>:</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>
+                                In: <input type="text" asp-for="@Model.hlab_supplies.hours_tolerance_start" id="" class="number_only" value="" autocomplete="off"><br /><br />
+                                Out: <input type="text" asp-for="@Model.hlab_supplies.hours_tolerance_end" id="" class="number_only" value="" autocomplete="off">
+                            </td>
+                        </tr>
+                    </table>
+
+                    <button type="button" class="btn btn-sm btn-success" value="" id="save_supply_button" style="font-size:1.15rem;">SAVE</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

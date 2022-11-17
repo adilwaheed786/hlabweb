@@ -1,0 +1,71 @@
+﻿@{
+    ViewData["PageTitle"] = "Test Package Categorization";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+<link href="~/css/jquery-ui.css" rel="stylesheet" />
+<script src="~/js/jquery-ui.js"></script>
+<script src="~/js/test_package_events.js"></script>
+<script src="~/js/general_functions.js"></script>
+@model HorizonLabAdmin.Models.Forms.TestPackage
+<div clsss="row">
+    @{ if (!string.IsNullOrEmpty(ViewBag.Message))
+        {
+            var msg_details = ViewBag.Message.Split(':');
+            if (msg_details[0] == "success")
+            {
+                <p style="color:green;font-size:.75em;">@msg_details[1]</p>
+            }
+            else
+            {
+                <p style="color:red;font-size:.75em;">@msg_details[1]</p>
+            }
+        }
+    }
+
+    <div class="col-sm-12">
+        
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-sm-8">Test Package Categorization</div>
+                        <div class="col-sm-4" style="text-align:right;"></div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <form asp-action="TestPackageCategorization" asp-controller="Settings" method="get" id="select_category_form">
+                        <div class="row">
+                            <div class="col-sm-6" style="margin-top:10px;">
+                                <select asp-items="@ViewBag.selectCategoryList" name="categoryid" class="form-control" id="select_category"></select>
+                            </div>
+                            <div class="col-sm-6" style="margin-top:10px;">
+                                <select asp-items="@ViewBag.selectPackageClass" name="classid" class="form-control" id="select_class"></select>
+                            </div>
+                        </div>
+                    </form>
+                
+                    <div class="row" style="margin-top:10px;margin-bottom:10px;">
+                        <div class="col-sm-6">
+                            <b>@ViewBag.selectedCategoryName</b>
+                            <form asp-action="DeleteTestPackageCategorization" asp-controller="Settings" method="post" class="" id="deletecategorizationform">
+                                <select class="form-control" asp-items="@ViewBag.selectPackageListByCategory" style="height:300px;" multiple name="delete_package_id" id="delete_package_id"></select>
+                                <input type="hidden" name="delete_category_id" id="" value="@ViewBag.selectedCategoryId">
+                                <button type="button" class="btn btn-sm btn-outline-success" value="" id="deletepackage" data-toggle='tooltip' title='Remove'>
+                                    <span class="glyphicon glyphicon-off" style="font-size:1.7rem;"></span>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="col-sm-6">
+                            <b>Horizon Lab Test Packages</b>
+                            <form asp-action="AddTestPackageCategorization" asp-controller="Settings" method="post" class="" id="addcategorizationform">
+                                <select class="form-control" asp-items="@ViewBag.selectPackageList" style="height:300px;" multiple name="add_package_id" id="add_package_id"></select>
+                                <input type="hidden" name="add_category_id" id="" value="@ViewBag.selectedCategoryId">
+                                <button type="button" class="btn btn-sm btn-outline-success" value="" id="addpackage" data-toggle='tooltip' title='Add'>
+                                    <span class="glyphicon glyphicon-plus" style="font-size:1.7rem;"></span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>

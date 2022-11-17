@@ -1,0 +1,156 @@
+﻿@{
+    Layout = null;
+}
+@model HorizonLabAdmin.Helpers.Containers.CouponCertificate
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="~/images/horizonlab_icon.png">
+    <title>Horizon Lab Admin</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <link rel="stylesheet" href="~/css/font-awesome.min.css">
+    <!--<link href="~/css/style.css" rel="stylesheet" />-->
+    <link href="~/css/horizonlab_style.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+
+    <script src="~/js/core/jquery.min.js"></script>
+    <script src="~/js/core/popper.min.js"></script>
+    <script src="~/js/core/bootstrap-material-design.min.js"></script>
+    <script src="~/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+    <script src="~/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>
+    <link rel="stylesheet" href="~/css/modal_style.css" />
+    <script src="~/js/css-icons.js"></script>
+</head>
+<body>
+    @foreach (var data in Model.records)
+    {
+        <div class="wrapper">
+            <div class="content">
+                <div class="container-fluid" style="width:100%;font-size:0.9em;">
+                    <div class="row" style="margin-top:3%;">
+                        <div class="col-sm-2"><img src="~/images/horizonlab_logo.png" class="img-fluid" alt="" width="250" height="130" /></div>
+                        <div class="col-sm-4"></div>
+                    </div>
+                    <hr />
+                    <p class="text-center" style="padding:5px 5px 5px 5px;color:#6E6E6E;">
+                        <center>
+                            <h3>PRIVATE SUBSIDY PROGRAM</h3>
+                            <h3>FREE RE-TEST COUPON</h3>
+                        </center>
+                    </p>
+
+                    <br />
+                    <br />
+
+                    <p>
+                        <h3>VALID ONLY FOR ONE (1) FREE RE-TEST (Coliform and Ecoli)</h3>
+                    </p>
+
+                    <table style="width:100%;">
+                        <tr>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td><span style="font-weight:bold;text-align:right;">Coupon Number:</span></td>
+                                        <td>@string.Format("{0:00000000}", data.coupon)</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td><span style="font-weight:bold;text-align:right;">Date of Last Test Report:</span></td>
+                                        <td>@data.coupon_issued_date.Value.ToString("MMMMM, dd yyyy")</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2"><hr/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span style="font-weight:bold;text-align:right;">Expiry Date:</span></td>
+                                        <td>
+                                            @if (data.coupon_issued_date != null)
+                                            {
+                                                <span>@data.coupon_issued_date.Value.AddMonths(3).ToString("MMMMM, dd yyyy")</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td><span style="font-weight:bold;text-align:right;">Customer ID:</span></td>
+                                        <td>@string.Format("{0:00000000}", data.customer_id)</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td><span style="font-weight:bold;text-align:right;">Customer:</span></td>
+                                        <td>@data.first_name @data.last_name</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td><span style="font-weight:bold;text-align:right;">Address:</span></td>
+                                        <td>
+                                            @{
+                                                string postal_code = "";
+                                                if (!string.IsNullOrEmpty(data.postal_code))
+                                                {
+                                                    postal_code = data.postal_code.ToUpper();
+                                                    if (postal_code.Length > 3)
+                                                    {
+                                                        char mid = postal_code[3];
+                                                        if (mid != ' ')
+                                                        {
+                                                            postal_code = postal_code.Insert(3, " ");
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            @data.street @data.city <br />
+                                            @data.province @postal_code
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td><span style="font-weight:bold;text-align:right;">Email:</span></td>
+                                        <td>@data.email</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table>
+                        <tr>
+                            <td>
+                                <span style="font-weight:bold;text-align:right;">Issued By:</span>
+                                <br />
+                                <img src="~/images/admin_signatures/@ViewBag.SignatureImage" class="img-fluid" alt="" width="70" height="50" /><br />
+                                <span class="print_grey bottom_font" bottom_font>@ViewBag.UserFirstName @ViewBag.UserLastName</span><br />
+                                <span class="print_grey bottom_font" bottom_font>@ViewBag.UserRole</span>
+                                <br />
+                                <br />
+                            </td>
+                        </tr>
+                    </table>
+
+                    <p>FOR LAB USE ONLY:</p>
+                    <table>
+                        <tr><td>Date for coupon's reception(dd-mm-yyyy):<input type="text" value=""></td></tr>
+                        <tr><td>Chain of Custody complete, information in COC matches with database: <input type="checkbox">&nbsp;Yes &nbsp;&nbsp; <input type="checkbox">&nbsp;No</td></tr>
+                        <tr><td>Data entry in Horizon Lab's system (please check): <input type="checkbox">&nbsp;Yes</td></tr>
+                        <tr><td>Received By (lab staff's initials): <input type="text" value=""></td></tr>
+                    </table>
+                    <p style="page-break-after: always;"></p>
+                </div>
+            </div>
+        </div>
+    }
+</body>
+</html>

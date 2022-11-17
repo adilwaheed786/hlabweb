@@ -1,0 +1,85 @@
+﻿
+@{
+    ViewData["Title"] = "TestPackageDefaultParameters";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+<link href="~/css/jquery-ui.css" rel="stylesheet" />
+<script src="~/js/jquery-ui.js"></script>
+<script src="~/js/test_package_events.js"></script>
+<div class="row">
+    <div class="col-sm-7">
+        <form asp-action="" asp-controller="" method="post" class="" id="">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-sm-8"><h3>@ViewBag.package_name</h3></div>
+                        <div class="col-sm-4" style="text-align:right;">
+                            <a type="button" href="@Url.Action("TestPackageSettings", "Settings")" class="btn btn-sm btn-outline-success" value="" id="" data-toggle='tooltip' title='back to Test Packages'>
+                                <span class="glyphicon glyphicon-arrow-left" style="font-size:1.7rem;"></span>
+                            </a>
+                            <button type="button" class="btn btn-sm btn-outline-success open_modal" value="addnewparameter" id="" data-toggle='tooltip' title='add new parameter'>
+                                <span class="glyphicon glyphicon-plus" style="font-size:1.7rem;"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th style="width:2%;">&nbsp;</th>
+                                <th>Parameter Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var param in ViewBag.defaults)
+                            {
+                                <tr>
+                                    <td>
+                                        <button type="button" href="#" class="btn btn-sm btn-outline-warning delete_defaultparameter" value="@Url.Action("DeleteDefaultParameter", "Settings", new { defaultparamid = param.defaultparam_id, packageid=param.package_id})" id="" data-toggle='tooltip' title='remove parameter'>
+                                            <span class="glyphicon glyphicon-floppy-remove" style="font-size:1.7rem;"></span>
+                                        </button>
+                                    </td>
+                                    <td>@param.param_name</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="addnewparameter" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content" style="width:35%; height:450px;overflow:auto;">
+        <div><h3><span id="service" style="float:left;">Add New Default Parameter</span></h3><button class="close close_modal" value="addnewparameter" onclick="">&times;</button></div>
+        <br />
+        <form asp-action="AddDefaultParameter" asp-controller="Settings" method="post" class="" id="addnewparamform">
+            <div style="height:280px;overflow:auto">
+                <input type="hidden" name="package_id" value="@ViewBag.package_id">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th style="width:2%;">&nbsp;</th>
+                            <th>Parameter Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var param in ViewBag.all_parameters)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="SelectedParameters" class="defparam" value="@param.Value">
+                                </td>
+                                <td>@param.Text</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <button type="button" class="btn btn-success" value="" id="submit_param">SUBMIT</button>
+        </form>
+    </div>
+</div>

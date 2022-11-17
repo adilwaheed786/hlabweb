@@ -1,0 +1,6 @@
+Ask Ken for the ff:
+
+1. Verify AllCutomerWorks > TestType and AllCustomerResults > TestType
+2. Verify in CustomerInfo form if the Code is : B1, B2, N, MiL, etc...
+3. Analyze if hlab_test_types should be retained
+4. Analyze relationship of hlab_test_procedure, hlab_test_params, hlab_test_pkgs

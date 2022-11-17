@@ -1,0 +1,216 @@
+﻿@{
+    ViewData["PageTitle"] = "Edit Water Chemical Form";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+
+@model HorizonLabAdmin.Models.Forms.TestResultPageViewModel
+
+<link href="~/css/jquery-ui.css" rel="stylesheet" />
+<link href="~/css/jquery.datetextentry.css" rel="stylesheet" />
+<script src="~/js/core/jquery.min.js"></script>
+<script src="~/js/jquery.datetextentry.js"></script>
+<script src="~/js/jquery-ui.js"></script>
+<script src="~/js/general_functions.js"></script>
+<script src="~/js/new_water_sample_events.js"></script>
+<script>
+    $(function () {
+        $('#input_datereceived').datetextentry({ field_order: 'MDY' });
+        $('#input_sampleddate').datetextentry({ field_order: 'MDY' });
+        $('#input_sampledtime').timetator({ useCap: true });
+        $('#input_timereceived').timetator({ useCap: true });
+    });
+</script>
+
+<div style="padding:20px 20px 20px 20px; background:white; border:1px solid #B6B6B6; border-radius:10px; height:800px;overflow:auto;font-size:1.3rem;">
+    <form asp-action="UpdateWaterChem" asp-controller="WaterChemicalTransaction" method="post" class="" id="water_chemical_form" enctype="multipart/form-data">
+        <div class="panel panel-success">
+            @{ string orderid = "", analysis = "", dateorder = "", recievedby = "", price = "", labcode = "";}
+            @{ string collect_day = "", collect_month = "", collect_year = DateTime.Now.Year.ToString(), collect_hour = "", collect_minute = "";}
+            @{ string receive_day = "", receive_month = "", receive_year = DateTime.Now.Year.ToString(), receive_hour = "", receive_minute = "";}
+            @{ string collect_date = "", received_date = "";}
+            @{ string collect_time = "", received_time = "";}
+            @if (Model.orderitemview != null)
+            {
+                orderid = string.Format("{0:00000000}", Model.orderitemview.order_id);
+                analysis = Model.orderitemview.analysis;
+                dateorder = Model.orderitemview.order_date?.ToString("dd/MM/yyyy");
+                recievedby = Model.orderitemview.received_by;
+                price = string.Format("{0:0.00}", Model.orderitemview.amount);
+                labcode = Model.orderitemview.lab_code;
+
+                @if (@Model.trans_details.collect_datetime != null)
+                {
+                    collect_day = Model.trans_details.collect_datetime.Value.Day.ToString("D2");
+                    collect_month = Model.trans_details.collect_datetime.Value.Month.ToString("D2");
+                    collect_year = Model.trans_details.collect_datetime.Value.Year.ToString("D2");
+                    collect_hour = Model.trans_details.collect_datetime.Value.Hour.ToString("D2");
+                    collect_minute = Model.trans_details.collect_datetime.Value.Minute.ToString("D2");
+                    collect_date = $"{collect_year}-{collect_month}-{collect_day}";
+                    collect_time = $"{collect_hour}:{collect_minute}";
+                }
+
+                @if (@Model.trans_details.rcv_date != null)
+                {
+                    receive_day = Model.trans_details.rcv_date.Value.Day.ToString("D2");
+                    receive_month = Model.trans_details.rcv_date.Value.Month.ToString("D2");
+                    receive_year = Model.trans_details.rcv_date.Value.Year.ToString("D2");
+                    receive_hour = Model.trans_details.rcv_date.Value.Hour.ToString("D2");
+                    receive_minute = Model.trans_details.rcv_date.Value.Minute.ToString("D2");
+                    received_date = $"{receive_year}-{receive_month}-{receive_day}";
+                    received_time = $"{receive_hour}:{receive_minute}";
+                }
+            }
+
+            <input type="hidden" asp-for="@Model.hlab_test_transactions.test_pkg_id" value="@Model.orderitemview.pkg_id">
+            <input type="hidden" asp-for="@Model.hlab_test_transactions.customer_id" value="@Model.orderitemview.customer_id">
+            <input type="hidden" asp-for="@Model.hlab_test_transactions.price" value="@price">
+            <input type="hidden" asp-for="@Model.hlab_test_transactions.trans_id" value="@Model.hlab_test_transactions.trans_id">
+            <input type="hidden" asp-for="@Model.hlab_test_transactions.status" value="true">
+
+            <div class="panel-heading">Order Information</div>
+            <div class="panel-body">
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p><b>Order ID:</b> @orderid</p>
+                            <p><b>Lab Code:</b> @labcode</p>
+                        </div>
+                        <div class="col-sm-4">
+                            <p><b>Date Ordered:</b> @dateorder</p>
+                            <p><b>Received By:</b> @recievedby  </p>
+                            <p><b>Order Price:</b> $@price</p>
+                        </div>
+                        <div class="col-sm-4">
+                            <p><b>Analysis:</b> @analysis</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <input type="hidden" class="form-control" value="" id="customerid">
+                            <p><b>Customer ID:</b> <span id="label_customerid">@ViewBag.customer.customer_id</span></p>
+                            <p><b>Customer Name: </b> <span id="label_customername">@ViewBag.customer.first_name @ViewBag.customer.last_name</span></p>
+                        </div>
+                        <div class="col-sm-4">
+                            <p>
+                                <b>Address</b>
+                                <div class="row">
+                                    <span id="label_street">@ViewBag.customer.street</span>
+                                    <span id="label_city">@ViewBag.customer.city</span>
+                                </div>
+                                <div class="row">
+                                    <span id="label_province">@ViewBag.customer.province</span>
+                                    <span id="label_postalcode">@ViewBag.customer.postal_code</span>
+                                </div>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="panel panel-success">
+                    <div class="panel-heading">Sample Information</div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-1 text-right">Description:</div>
+                            <div class="col-sm-7"><input type="text" asp-for="@Model.hlab_test_transactions.notes" class="form-control"></div>
+
+                            <div class="col-sm-2 text-right">Received in good condition:</div>
+                            <div class="col-sm-2"><select asp-for="@Model.hlab_test_transactions.is_good_condition" asp-items="@Model.isGoodCondition" class="form-control" id=""></select></div>
+                        </div>
+                        <div class="row" style="margin-top:10px;">
+                            <div class="col-sm-2 text-right">Received By:</div>
+                            <div class="col-sm-2"><select asp-for="@Model.hlab_test_transactions.rcv_by_id" asp-items="@Model.selectReceiversList" class="form-control" id=""></select></div>
+
+                            <div class="col-sm-2 text-right"><b>Submitted By: </b></div>
+                            <div class="col-sm-2 text-left"><input asp-for="@Model.hlab_test_transactions.submtd_by" type="text" class="form-control" value="@ViewData["UserName"]"></div>
+
+                            <div class="col-sm-2 text-right">Temperature:</div>
+                            <div class="col-sm-2"><input type="text" asp-for="@Model.hlab_test_transactions.temp" class="form-control"></div>
+                        </div>
+
+                        <div class="row" style="margin-top:10px;">
+                            <div class="col-sm-2 text-right"><b>Date Sampled:</b></div>
+                            <div class="col-sm-4 text-left">
+                                <input type="text" id="input_sampleddate" class="" value="@collect_date" tabindex="6">
+                            </div>
+                            <div class="col-sm-2 text-right"><b>Time Sampled:</b></div>
+                            <div class="col-sm-4 text-left">
+                                <input type="text" id="input_sampledtime" class="" value="@collect_time" tabindex="7">
+                                <input asp-for="@Model.hlab_test_transactions.collect_datetime" type="hidden" class="form-control" id="datesampled">
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-top:10px;">
+                            <div class="col-sm-2 text-right"><b>Date Received:</b></div>
+                            <div class="col-sm-4 text-left">
+                                <input type="text" id="input_datereceived" class="" value="@received_date" tabindex="8">
+                            </div>
+                            <div class="col-sm-2 text-right"><b>Time Received:</b></div>
+                            <div class="col-sm-4 text-left">
+                                <input type="text" id="input_timereceived" value="@received_time" class="" tabindex="9">
+                                <input asp-for="@Model.hlab_test_transactions.rcv_date" type="hidden" class="form-control" id="datereceived">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="panel panel-success">
+                    <div class="panel-heading">Payment(s) / Invoice</div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="row allownace_top">
+                                    <div class="col-sm-5 text-right"><b>Price: </b></div>
+                                    <div class="col-sm-5 text-left">$@price</div>
+                                </div>
+                                <div class="row allownace_top">
+                                    <div class="col-sm-5 text-right"><b>Paid: </b></div>
+                                    <div class="col-sm-5"><select asp-for="@Model.hlab_test_transactions.is_paid" asp-items="@Model.isPaid" class="form-control" id=""></select></div>
+                                </div>
+                                <div class="row allownace_top">
+                                    <div class="col-sm-5 text-right"><b>Paid By: </b></div>
+                                    <div class="col-sm-5">@ViewBag.customer.first_name @ViewBag.customer.last_name</div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="col-sm-5 text-right"><b>Payment(s):</b></div>
+                                <div class="col-sm-7">
+                                    @if (Model.customer_order_payment_list.Count > 0)
+                                    {
+                                        foreach (var payment in Model.customer_order_payment_list)
+                                        {
+                                            <p>
+                                                @payment.payment<br />
+                                                $@payment.paid_amount<br />
+                                                @if (payment.payment_date != null)
+                                                {
+                                                    <span>@payment.payment_date.Value.ToString("dd/MM/yyyy")</span>
+                                                }
+                                                <hr />
+                                            </p>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @{Html.RenderPartial("PartialWaterChemTestResult_a");}
+
+        <div class="row">
+            <div class="col-lg-12">
+                <button type="button" class="btn btn-success" onclick="window.location='/WaterBacteriaTransaction/ViewTransactions?pkg_class_id=4'">TRANSACTION VIEW PAGE</button>
+                <button type="button" class="btn btn-success" id="save_water_chemical">SAVE</button>
+            </div>
+        </div>
+    </form>
+</div>

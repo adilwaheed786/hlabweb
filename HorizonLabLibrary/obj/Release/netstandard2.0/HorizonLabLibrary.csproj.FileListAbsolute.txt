@@ -1,0 +1,9 @@
+C:\CODES\HorizonLab\12102021\HorizonLabLibrary\bin\Release\netstandard2.0\HorizonLabLibrary.deps.json
+C:\CODES\HorizonLab\12102021\HorizonLabLibrary\bin\Release\netstandard2.0\HorizonLabLibrary.dll
+C:\CODES\HorizonLab\12102021\HorizonLabLibrary\bin\Release\netstandard2.0\HorizonLabLibrary.pdb
+C:\CODES\HorizonLab\12102021\HorizonLabLibrary\obj\Release\netstandard2.0\HorizonLabLibrary.csproj.CoreCompileInputs.cache
+C:\CODES\HorizonLab\12102021\HorizonLabLibrary\obj\Release\netstandard2.0\HorizonLabLibrary.AssemblyInfoInputs.cache
+C:\CODES\HorizonLab\12102021\HorizonLabLibrary\obj\Release\netstandard2.0\HorizonLabLibrary.AssemblyInfo.cs
+C:\CODES\HorizonLab\12102021\HorizonLabLibrary\obj\Release\netstandard2.0\HorizonLabLibrary.dll
+C:\CODES\HorizonLab\12102021\HorizonLabLibrary\obj\Release\netstandard2.0\HorizonLabLibrary.pdb
+C:\CODES\HorizonLab\12102021\HorizonLabLibrary\obj\Release\netstandard2.0\HorizonLabLibrary.csprojAssemblyReference.cache

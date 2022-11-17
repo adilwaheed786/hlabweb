@@ -1,0 +1,143 @@
+﻿@model HorizonLabAdmin.Models.Forms.TestTransactionSearchParameters
+
+@{
+    ViewData["PageTitle"] = "Water Bacteria Semi Public Report";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link href="~/css/jquery.datetextentry.css" rel="stylesheet" />
+<!--<link href="~/css/jquery-ui.css" rel="stylesheet" />-->
+<script src="~/js/jquery-ui.js"></script>
+<script src="~/js/general_functions.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".datepicker_default").datepicker({ dateFormat: 'dd/mm/yy' });
+
+        $("#export_semipublic_csv").click(function () {
+            $("#semi_public_form").attr('action', '/CsvExporter/SemiPublic');
+        });
+    });
+</script>
+
+<div class="row" style="height:800px; font-size:1.2rem; overflow:auto;">
+    <div class="col-lg-12">
+        <div class="panel panel-success">
+            <div class="panel-heading"><b>Water Semi Public Report</b></div>
+            <div class="panel-body">
+                <form asp-action="SemiPublicReport" asp-controller="Certificate" method="get" class="" id="semi_public_form">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            DATE RECEIVED<br />
+                            <input type="text" id="" name="start" class="form-control datepicker_default" value="@ViewBag.StartReceivedDate.ToString("dd/MM/yyyy")" autocomplete="off">
+                        </div>
+
+                        <div class="col-sm-2">
+                            <br />
+                            <input type="text" id="" name="end" class="form-control datepicker_default" value="@ViewBag.EndReceivedDate.ToString("dd/MM/yyyy")" autocomplete="off">
+                        </div>
+
+                        <div class="col-sm-4">
+                            <br />
+                            <button type="submit" class="btn btn-success" value="" id="">SEARCH</button>
+                            <button type="submit" class="btn btn-success" value="" id="export_semipublic_csv">DOWNLOAD</button>
+                        </div>
+
+                    </div>
+                </form>
+
+                <div style="border:1px solid; border-radius:5px; height:500px; overflow:auto;">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Customer ID</th>
+                                <th>Test Date</th>
+                                <th>Last Name</th>
+                                <th>Environment District</th>
+                                <th>DW Officer</th>
+                                <th>DW Phone</th>
+                                <th>Com Code</th>
+                                <th>Collection Date</th>
+                                <th>Location</th>
+                                <th>Sample Type</th>
+                                <th>Sample ID</th>
+                                <th>Collected By</th>
+                                <th>Loginnum</th>
+                                <th>Sample Number</th>
+                                <th>TC (MPN/100ml)</th>
+                                <th>EC (MPN/100ml)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.semipublic_transaction_list != null && Model.semipublic_transaction_list.Count > 0)
+                            {
+                                int prev_trans_id = 0, total_coliform_id = 9, ecoli_id = 2;
+                                string collect_date = "", test_date = "";
+                                string coliform_result = "", ecoli_result = "";
+                                foreach (var item in Model.semipublic_transaction_list)
+                                {
+                                    coliform_result = ""; ecoli_result = "";
+                                    collect_date = ""; test_date = "";
+                                    if (item.collect_datetime != null)
+                                    {
+                                        collect_date = item.collect_datetime.Value.ToString("yyyy-MM-dd");
+                                    }
+
+                                    if (item.test_date != null)
+                                    {
+                                        test_date = item.test_date.Value.ToString("yyyy-MM-dd");
+                                    }
+
+                                    if (prev_trans_id != item.trans_id)
+                                    {
+                                        <tr>
+                                            <td>@item.customer_id</td>
+                                            <td>@test_date</td>
+                                            <td>@item.last_name</td>
+                                            <td>@item.env_distr</td>
+                                            <td>@item.dw_officer</td>
+                                            <td>@item.dw_phone</td>
+                                            <td>@item.com_code</td>
+                                            <td>@collect_date</td>
+                                            <td>@item.sample_legal_loc</td>
+                                            <td>@item.sample_type</td>
+                                            <td>@item.idnty_location</td>
+                                            <td>@item.submtd_by</td>
+                                            <td></td>
+                                            <td>@item.trans_id</td>
+
+                                           
+                                                @{var results = Model.semipublic_transaction_list.Where(x => x.trans_id == item.trans_id).ToList();}
+                                                @if (results != null && results.Count > 0)
+                                                {
+                                                    if(results.Where(x => x.param_id == total_coliform_id).FirstOrDefault() != null)
+                                                    {
+                                                        coliform_result = results.Where(x => x.param_id == total_coliform_id).FirstOrDefault().result;
+                                                        results.Where(x => x.param_id == total_coliform_id).FirstOrDefault().result = "**processed**";
+                                                    }
+
+                                                    if (results.Where(x => x.param_id == ecoli_id).FirstOrDefault()!=null)
+                                                    {
+                                                        ecoli_result = results.Where(x => x.param_id == ecoli_id).FirstOrDefault().result;
+                                                        results.Where(x => x.param_id == ecoli_id).FirstOrDefault().result = "**processed**";
+                                                    }
+                                                }                                            
+                                            <td>@coliform_result</td>
+                                            <td>@ecoli_result</td>                                        
+
+                                        @foreach (var others in Model.semipublic_transaction_list.Where(x => x.trans_id == item.trans_id && x.result != "**processed**"))
+                                        {
+                                            <td>@others.param_name : @others.result</td>
+                                        }
+                                        </tr>
+                                    }
+                                    prev_trans_id = item.trans_id;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

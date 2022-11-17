@@ -1,0 +1,112 @@
+﻿@model HorizonLabAdmin.Models.Forms.WaterBacteriaBulkUploadObject
+@{
+    ViewData["Title"] = "ParseWaterBacteriaCsv";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+
+<h2>Water Bacteria: Parsed CSV file</h2>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <div class="row">
+                    <form asp-action="ParseWaterBacteriaCsv" asp-controller="WaterBacteriaPostTransactions" method="post" class="" id="" enctype="multipart/form-data">
+                        <div class="col-sm-10"><input type="file" name="waterbacteriacsv" id="waterbacteria_csvfile" class="form-control"></div>
+                        <div class="col-sm-1"><input type="submit" class="btn btn-default" value="UPLOAD"></div>
+                    </form>
+                </div>
+            </div>
+            <div class="panel-body order_panel" style="overflow:auto;height:650px;">
+                <div class="row">
+                    <form asp-action="ProcessWaterBacteriaBulkUploads" asp-controller="WaterBacteriaTransaction" method="post" class="" id="" enctype="multipart/form-data">
+                        <table class="table table-striped" style="font-size:1.15rem;">
+                            <thead>
+                                <tr>
+                                    <th>&nbsp;</th>
+                                    <th><div style="width:70px;">CustomerID</div></th>
+                                    <th><div style="width:150px;">FirstName</div></th>
+                                    <th><div style="width:150px;">LastName</div></th>
+                                    <th><div style="width:120px;">Postal</div></th>
+                                    <th><div style="width:220px;">PrimaryEmail</div></th>
+                                    <th><div style="width:120px;">PrimaryPhone</div></th>
+                                    <th><div style="width:100px;">LabPackage</div></th>
+                                    <th><div style="width:100px;">TotalRequestAmount</div></th>
+                                    <th><div style="width:90px;">Payment1</div></th>
+                                    <th><div style="width:70px;">Amount1</div></th>
+                                    <th><div style="width:90px;">Payment2</div></th>
+                                    <th><div style="width:70px;">Amount2</div></th>
+                                    <th><div style="width:90px;">Payment3</div></th>
+                                    <th><div style="width:70px;">Amount3</div></th>
+                                    <th><div style="width:100px;">Coupon</div></th>
+                                    <th><div style="width:175px;">Project</div></th>
+                                    <th><div style="width:190px;">SampleID</div></th>
+                                    <th><div style="width:100px;">SampleType</div></th>
+                                    <th><div style="width:190px;">LegalLocation</div></th>
+                                    <th><div style="width:150px;">Town</div></th>
+                                    <th><div style="width:170px;">Municipality</div></th>
+                                    <th><div style="width:120px;">CollectDate</div></th>
+                                    <th><div style="width:80px;">CollectTime</div></th>
+                                    <th><div style="width:150px;">SubmittedBy</div></th>
+                                    <th><div style="width:120px;">SubmittedDate</div></th>
+                                    <th><div style="width:80px;">SubmittedTime</div></th>
+                                    <th><div style="width:80px;">ReceivedBy</div></th>
+                                    <th><div style="width:120px;">ReceivedDate</div></th>
+                                    <th><div style="width:80px;">ReceivedTime</div></th>
+                                    <th><div style="width:120px;">TestDate</div></th>
+                                    <th><div style="width:100px;">Temperature</div></th>
+                                    <th><div style="width:60px;">Tax%</div></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.wbf_list.Count; i++)
+                                {
+                                <tr>
+                                    <td><input type="checkbox" class="select_checkbox"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].CustomerID" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].FirstName" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].LastName" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].Postal" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].PrimaryEmail" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].PrimaryPhone" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].LabPackage" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].TotalRequestAmount" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].Payment1" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].Amount1" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].Payment2" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].Amount2" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].Payment3" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].Amount3" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].Coupon" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].Project" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].SampleID" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].SampleType" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].LegalLocation" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].Town" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].Municipality" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].CollectDate" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].CollectTime" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].SubmittedBy" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].SubmittedDate" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].SubmittedTime" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].ReceivedBy" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].ReceivedDate" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].ReceivedTime" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].TestDate" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].Temperature" class="form-control"></td>
+                                    <td><input type="text" asp-for="@Model.wbf_list[i].Tax" class="form-control"></td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <hr/>
+                        <div class="row">
+                            <div class="col-sm-11"></div>
+                            <div class="col-sm-1 text-right"><input type="submit" class="btn btn-success" value="SAVE RECORDS"></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

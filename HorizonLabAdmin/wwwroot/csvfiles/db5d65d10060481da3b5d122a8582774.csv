@@ -1,0 +1,11 @@
+CustomerID,FirstName,LastName,PrimaryEmail,PrimaryPhone,Postal,LabPackage,TotalRequestAmount,Payment1,Amount1,Payment2,Amount2,Payment3,Amount3,Coupon,Project,SampleID,SampleType,LegalLocation,Town,Municipality,CollectDate,CollectTime,SubmittedDate,SubmittedTime,SubmittedBy,ReceivedBy,ReceivedDate,ReceivedTime,TestDate,Temperature,Tax,InsertResult
+375,,,,,,B1 Non-Subsidy,,,,,,,,,,Hall,Raw ,,,,,,,,,,,,,,,
+,,,,,,B1 Non-Subsidy,,,,,,,,,,Firehall,Raw ,,,,,,,,,,,,,,,
+,,,,,,B1 Non-Subsidy,,,,,,,,,,Church,Raw ,,,,,,,,,,,,,,,
+,,,,,,B1 Non-Subsidy,,,,,,,,,,Town,Raw ,,,,,,,,,,,,,,,
+,,,,,,B1 Non-Subsidy,,,,,,,,,,Playground,Raw ,,,,,,,,,,,,,,,
+,,,,,,B1 Non-Subsidy,,,,,,,,,,Well,Raw ,,,,,,,,,,,,,,,
+,,,,,,B1 Non-Subsidy,,,,,,,,,,Office,Raw ,,,,,,,,,,,,,,,
+,,,,,,B1 Non-Subsidy,,,,,,,,,,Municipal Office,Raw ,,,,,,,,,,,,,,,
+,,,,,,B1 Non-Subsidy,,,,,,,,,,Medical Centre,Raw ,,,,,,,,,,,,,,,
+,,,,,,B1 Non-Subsidy,,,,,,,,,,Municipal Well,Raw ,,,,,,,,,,,,,,,

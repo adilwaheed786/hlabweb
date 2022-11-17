@@ -1,0 +1,225 @@
+﻿@{
+    ViewData["PageTitle"] = "Horizon Lab Test Results";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+
+<!--<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+<script src="~/js/core/jquery.min.js"></script>
+<script src="~/js/core/bootstrap-material-design.min.js"></script>-->
+
+@model HorizonLabAdmin.Models.Forms.TestResultPageViewModel
+
+<div style="padding:20px 20px 20px 20px; background:white; border:1px solid #B6B6B6; border-radius:10px; height:800px;overflow:auto;font-size:1.3rem;">
+    <h3>Test results for transaction #@String.Format("{0:00000000}", Model.trans_details.trans_id)</h3>
+    <div class="panel panel-success">
+        <div class="panel-heading">Order Information</div>
+        <div class="panel-body">
+            <div class="col-sm-6">
+                <div class="row">
+                    @{ string orderid = "", analysis = "", dateorder = "", recievedby = "", price = "", labcode = "";}
+                    @if (ViewBag.orderitemview != null)
+                    {
+                        orderid = string.Format("{0:00000000}", ViewBag.orderitemview.order_id);
+                        analysis = ViewBag.orderitemview.analysis;
+                        dateorder = ViewBag.orderitemview.order_date?.ToString("dd/MM/yyyy");
+                        recievedby = ViewBag.orderitemview.received_by;
+                        price = string.Format("{0:0.00}", ViewBag.orderitemview.amount);
+                        labcode = ViewBag.orderitemview.lab_code;
+                    }
+                    <div class="col-sm-4">
+                        <p><b>Order ID:</b> @orderid</p>
+                        <p><b>Lab Code:</b> @labcode</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <p><b>Date Ordered:</b> @dateorder</p>
+                        <p><b>Received By:</b> @recievedby  </p>
+                        <p><b>Order Price:</b> $@price</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <p><b>Analysis:</b> @analysis</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <p><b>Customer ID:</b> @String.Format("{0:00000000}", Model.trans_details.customer_id)</p>
+                        <p><b>Customer Name: </b> @Model.trans_details.first_name @Model.trans_details.last_name</p>
+                        <p><b>Coupon: </b>@Model.trans_details.assigned_coupon</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <p>
+                            <b>Address</b>
+                            <br />
+                            @Model.trans_details.street @Model.trans_details.city <br />
+                            @Model.trans_details.province , @Model.trans_details.postal_code
+                        </p>
+                    </div>
+                    <div class="col-sm-4">
+                        <p><b>Approved for Financing: </b>@Model.trans_details.is_approve_financing</p>
+                        <p><b>Public: </b>@Model.trans_details.is_public</p>
+                        <p><b>Semi Public: </b>@Model.trans_details.is_semi_public</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="panel panel-success">
+                <div class="panel-heading">Invoice</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <p><b>Amount: </b> $@string.Format("{0:0.00}", Model.trans_details.price)</p>
+                            <p><b>Paid: </b> @Model.trans_details.is_paid</p>
+                            <p><b>Coupon: </b> @String.Format("{0:00000000}", @Model.trans_details.assigned_coupon)</p>
+                            @*@foreach (var invoice in Model.hlab_invoice_list)
+                            {
+                                <div style="border:1px solid #E8E8E9; border-radius:5px; padding:5px 5px 5px 5px;">
+                                    <p><b>Invoice Number: </b> @String.Format("{0:00000000}", invoice.invoice_id)</p>
+                                    <p><b>Paid Amount: </b> @string.Format("{0:0.00}", invoice.paid_amount)</p>
+                                    <p><b>Paid By: </b> @invoice.paid_by</p>
+                                    <p><b>Payment Type: </b> @invoice.payment</p>
+                                    <p><b>Payment Option: </b> @invoice.payment_option</p>
+                                </div>
+                            }*@
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="row allowance_top">
+                                <div class="col-sm-5 text-right">
+                                    <b>Susbsidy Form:</b>                                    
+                                </div>
+                                <div class="col-sm-7">
+                                    @Model.trans_details.scan_image_filename
+                                </div>
+                            </div>
+                            <div class="row allowance_top">
+                                <div class="col-sm-5 text-right"><b>Payment(s):</b></div>
+                                <div class="col-sm-7">
+                                    @if (Model.customer_order_payment_list.Count > 0)
+                                    {
+                                        foreach (var payment in Model.customer_order_payment_list)
+                                        {
+                                            <p>
+                                                @payment.payment<br />
+                                                $@payment.paid_amount<br />
+                                                @if (payment.payment_date != null)
+                                                {
+                                                    <span>@payment.payment_date.Value.ToString("dd/MM/yyyy")</span>
+                                                }
+                                                <hr />
+                                            </p>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="panel panel-success">
+                <div class="panel-heading">&nbsp;</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <p><b>Project: </b> @Model.trans_details.project</p>
+                            <p><b>Flood Sample: </b> @Model.trans_details.is_flood_sample</p>
+                            <p><b>Comments: </b> <br />@Model.trans_details.notes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-success">
+        <div class="panel-heading">Other Infromation</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-4">
+                    <p><b>Sample ID: </b> @Model.trans_details.idnty_location</p>
+                    <p><b>Sample Type:</b> @Model.trans_details.sample_type</p>
+                    <p><b>Legal Location: </b> @Model.trans_details.sample_legal_loc</p>
+                    <p><b>Town: </b> @Model.trans_details.town</p>
+                    <p><b>Rural Municipality: </b> @Model.trans_details.rural_municipality</p>                   
+                </div>
+                <div class="col-sm-4">
+                    <p><b>Collect Date: </b> @Model.trans_details.collect_datetime</p>
+                    <p><b>Submitted By: </b> @Model.trans_details.submtd_by</p>
+                    <p><b>Submitted Date: </b> @Model.trans_details.submtd_datetime</p>
+                    <p><b>Received By: </b> @Model.trans_details.receiver</p>
+                    <p><b>Received Date: </b> @Model.trans_details.rcv_date</p>
+                    <p><b>Temperature: </b> @Model.trans_details.temp &#8451;</p>
+                </div>
+                <div class="col-sm-4">
+                    <p><b>Latitude:</b> @Model.trans_details.latitude</p>
+                    <p><b>Longitude: </b> @Model.trans_details.longitude</p>
+                    <p><b>UTM X: </b> @Model.trans_details.utm_x</p>
+                    <p><b>UTM Y: </b> @Model.trans_details.utm_y</p>
+                    <p><b>Existence:</b> @Model.trans_details.existence</p>
+                    <p><b>Zone: </b> @Model.trans_details.zone</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-success">
+        <div class="panel-heading">Report Infromation</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-4">
+                    <p><b>Report:</b> @Model.trans_details.report_type</p>
+                    <p><b>Report Date: </b> @Model.trans_details.work_date?.ToString("dd/MM/yyyy")</p>
+                    <p><b>Test Date: </b> @Model.trans_details.test_date?.ToString("dd/MM/yyyy")</p>
+                    <p><b>Lab Code: </b> @Model.trans_details.lab_code</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-success">
+        <div class="panel-heading">Test Results</div>
+        <div class="panel-body">
+            <div class="row">
+                <table class="table table-striped">
+                    <thead class="">
+                        <tr>
+                            <th class="">Parameter</th>
+                            <th class="">Note</th>
+                            <th class="">Result</th>
+                            <th class="">Unit Of Measurement</th>
+                            <th class="">Pass/Fail</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var result in Model.result_list)
+                        {
+                            <tr>
+                                <td>@result.param_name</td>
+                                <td>@result.test_note</td>
+                                <td>@result.result</td>
+                                <td>@result.unit_of_measurement</td>
+                                <td>
+                                    @if (result.is_failed)
+                                    {
+                                        <span>Pass</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Fail</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+<br/>
+<button type="button" class="btn btn-success" onclick="window.location='/WaterBacteriaTransaction/ViewTransactions'">TRANSACTION VIEW PAGE</button>

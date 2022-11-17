@@ -1,0 +1,149 @@
+﻿@model HorizonLabLibrary.Parameters.customerparameters
+@{
+    ViewData["PageTitle"] = "New Customer Form";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+
+<link href="~/css/jquery-ui.css" rel="stylesheet" />
+<script src="~/js/jquery-ui.js"></script>
+<script src="~/js/api_events.js"></script>
+<script src="~/js/customer_events.js"></script>
+<script src="~/js/general_functions.js"></script>
+<span style="font-size:1.0rem;color:#A1A3A3;">@Html.Raw(ViewBag.Message);</span>
+<div class="row">
+    <div class="col-lg-2"></div>
+    <div class="col-lg-8">
+        <form asp-action="InsertNewCustomer" asp-controller="Customer" method="post" class="" id="customer_form">
+            <input type="hidden" id="form_action" value="@ViewBag.action">
+            <div class="panel panel-success">
+                <div class="panel-heading">Customer Information</div>
+                <div class="panel-body">
+                    <div class="row allownace_top">
+                        <div class="col-sm-2 text-right">Customer ID</div>
+                        <div class="col-sm-4">&nbsp;</div>
+                        <div class="col-sm-2 text-right">Company Name</div>
+                        <div class="col-sm-4"><input asp-for="@Model.hlab_customers.company_name" class="form-control input-sm" type="text" id="input_compname" tabindex="-1"></div>
+                    </div>
+                    <div class="row allownace_top">
+                        <div class="col-sm-2 text-right">First Name</div>
+                        <div class="col-sm-4"><input asp-for="@Model.hlab_customers.first_name" class="form-control input-sm" type="text" id="input_firstname" tabindex="1" autocomplete="off"></div>
+                        <div class="col-sm-2 text-right">Last Name</div>
+                        <div class="col-sm-4"><input asp-for="@Model.hlab_customers.last_name" class="form-control input-sm" type="text" id="input_lastname" tabindex="2" autocomplete="off"></div>
+                    </div>
+                    <div class="row allownace_top">
+                        <div class="col-sm-2 text-right">Address</div>
+                        <div class="col-sm-4"><input asp-for="@Model.hlab_customers.street" class="form-control input-sm" type="text" id="input_street" tabindex="3"></div>
+                        <div class="col-sm-2 text-right">Town</div>
+                        <div class="col-sm-4">
+                            <div class="row">
+                                <div class="col-sm-9"><select asp-for="@Model.hlab_customers.city_id" asp-items="@Model.CitySelectList" class="form-control" id="select_city" tabindex="4"></select></div>
+                                <div class="col-sm-3">
+                                    <button type="button" class="btn btn-sm btn-outline-success" value="" id="addcity" tabindex="999">
+                                        <span class="glyphicon glyphicon-plus-sign" style="font-size:1.7rem;"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row allownace_top">
+                        <div class="col-sm-2 text-right">Producer Number</div>
+                        <div class="col-sm-4"><input asp-for="@Model.hlab_customers.producer_number" class="form-control input-sm number_only" type="text" id=""></div>
+                    </div>
+                    <div class="row allownace_top">
+                        <div class="col-sm-2 text-right">Province</div>
+                        <div class="col-sm-4"><select asp-for="@Model.hlab_customers.province_id" asp-items="@Model.ProvinceSelectList" class="form-control" id=""></select></div>
+                        <div class="col-sm-2 text-right">Postal Code</div>
+                        <div class="col-sm-4"><input asp-for="@Model.hlab_customers.postal_code" class="form-control input-sm" type="text" id="input_postal_code" tabindex="5" style="text-transform: uppercase;"></div>
+                    </div>
+                    <div class="row allownace_top">
+                        <div class="col-sm-2 text-right">Fax</div>
+                        <div class="col-sm-4"><input asp-for="@Model.hlab_customers.fax" class="form-control input-sm" type="text" id="input_fax"></div>
+                        <div class="col-sm-2 text-right">&nbsp;</div>
+                        <div class="col-sm-4 text-right" style="font-size:1rem;color:red;">*Postal Code should be in six(6) digits, all-caps letters and should be in this format: A1A1A1</div>
+                    </div>
+                    <hr />
+
+                    <div class="row allownace_top">
+                        <div class="col-sm-2 text-right">Phone Number(s)<br/>(999-999-9999)</div>
+                        <div class="col-sm-4">
+                            <input asp-for="@Model.phone_list[0].phone" class="form-control input-sm allownace_top mask_phone" type="text" tabindex="6" autocomplete="off">
+                            <input asp-for="@Model.phone_list[1].phone" class="form-control input-sm allownace_top mask_phone" type="text" tabindex="7" autocomplete="off">
+                            <input asp-for="@Model.phone_list[2].phone" class="form-control input-sm allownace_top mask_phone" type="text" autocomplete="off">
+                            <input asp-for="@Model.phone_list[3].phone" class="form-control input-sm allownace_top mask_phone" type="text" autocomplete="off">
+                            <input asp-for="@Model.phone_list[4].phone" class="form-control input-sm allownace_top mask_phone" type="text" autocomplete="off">
+                        </div>
+
+                        <div class="col-sm-2 text-right">Email Address</div>
+                        <div class="col-sm-4">
+                            <div class="row">
+                                <div class="col-sm-2 text-right" style="padding-top:15px;font-size:1.2rem;color:green;">Primary</div>
+                                <div class="col-sm-10"><input asp-for="@Model.email_list[0].email" class="form-control input-sm allownace_top customer_email primary_email" type="text" tabindex="8" id="input_primary_email"></div>
+                                <input asp-for="@Model.email_list[0].is_primary" type="hidden" value="true">
+                            </div>
+                            <input asp-for="@Model.email_list[1].email" class="form-control input-sm allownace_top customer_email" type="text" tabindex="9">
+                            <input asp-for="@Model.email_list[1].is_primary" type="hidden" value="false">
+
+                            <input asp-for="@Model.email_list[2].email" class="form-control input-sm allownace_top customer_email" type="text">
+                            <input asp-for="@Model.email_list[2].is_primary" type="hidden" value="false">
+
+                            <input asp-for="@Model.email_list[3].email" class="form-control input-sm allownace_top customer_email" type="text">
+                            <input asp-for="@Model.email_list[3].is_primary" type="hidden" value="false">
+
+                            <input asp-for="@Model.email_list[4].email" class="form-control input-sm allownace_top customer_email" type="text">
+                            <input asp-for="@Model.email_list[4].is_primary" type="hidden" value="false">
+                        </div>
+                    </div>
+                    <hr />
+
+                    <div class="row allownace_top">
+                        <div class="col-sm-2 text-right">Public</div>
+                        <div class="col-sm-4"><select asp-for="@Model.hlab_customers.is_public" asp-items="@Model.PublicSelectList" class="form-control" id=""></select></div>
+                        <div class="col-sm-2 text-right">Semi Public</div>
+                        <div class="col-sm-4"><select asp-for="@Model.hlab_customers.is_semi_public" asp-items="@Model.SemiPublicSelectList" class="form-control" id=""></select></div>
+                    </div>
+
+                    <div class="row allownace_top">
+                        <div class="col-sm-2 text-right">Real Estate</div>
+                        <div class="col-sm-4"><select asp-for="@Model.hlab_customers.is_realestate" asp-items="@Model.RealEstateSelectList" class="form-control" id=""></select></div>
+                        <div class="col-sm-2 text-right">Approve For Financing</div>
+                        <div class="col-sm-4"><select asp-for="@Model.hlab_customers.is_approve_financing" asp-items="@Model.ApproveFinancingSelectList" class="form-control" id=""></select></div>
+                    </div>
+                    <hr />
+                    <div class="row allownace_top">
+                        <div class="col-sm-2 text-right">Environment District</div>
+                        <div class="col-sm-4"><input asp-for="@Model.hlab_customers.env_distr" class="form-control input-sm" type="text"></div>
+                        <div class="col-sm-2 text-right">Com Code</div>
+                        <div class="col-sm-4"><input asp-for="@Model.hlab_customers.com_code" class="form-control input-sm" type="text"></div>
+                    </div>
+                    <div class="row allownace_top">
+                        <div class="col-sm-2 text-right">DW Officer</div>
+                        <div class="col-sm-4"><input asp-for="@Model.hlab_customers.dw_officer" class="form-control input-sm" type="text"></div>
+                        <div class="col-sm-2 text-right">DW Phone</div>
+                        <div class="col-sm-4"><input asp-for="@Model.hlab_customers.dw_phone" class="form-control input-sm" type="text"></div>
+                    </div>
+                    @*<div class="row allownace_top">
+                        <div class="panel panel-default" style="width:98%;margin-left:1%;">
+                            <div class="panel-heading">Eligible fo Subsidy</div>
+                            <div class="panel-body">
+                                <div class="col-sm-2 text-right">Eligibility</div>
+                                <div class="col-sm-2">
+                                    <select asp-for="@Model.hlab_customers.coupon" class="form-control" id="" tabindex="10">
+                                        <option value="0">No</option>
+                                        <option value="1">Yes</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>*@
+
+                </div>
+                <br />
+            </div>
+            <input asp-for="@Model.save_proceed" type="hidden" id="save_proceed">
+            <button type="button" class="btn btn-success" onclick="window.location='/Customer/ViewCustomerListPage'">CUSTOMER LIST PAGE</button>
+            <button type="button" class="btn btn-success" id="submit_btn">SAVE RECORD</button>
+            <!--<button type="button" class="btn btn-success" id="submit_proceed_btn">SAVE & PROCEED</button>-->
+        </form>
+    </div>
+    <div class="col-lg-2"></div>
+</div>

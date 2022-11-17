@@ -1,0 +1,471 @@
+﻿
+@{
+    Layout = null;
+}
+@model HorizonLabAdmin.Helpers.Containers.F054Data;
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <link rel="icon" href="~/images/horizonlab_icon.png">
+    <title>F125 Presence / Absence Water Test report for Total Coliforms and E.Coli in water using Colilert & Colilert 18</title>
+
+    <link rel="stylesheet" href="~/css/font-awesome.min.css">
+    <!--<link href="~/css/style.css" rel="stylesheet" />-->
+    <link href="~/css/horizonlab_style.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+    <style>
+        body {
+            -webkit-print-color-adjust: exact !important;
+            font-family: system-ui, sans-serif, auto !important;
+        }
+
+        @Html.Raw("@media print{ .vertical{-webkit-transform: rotate(-90deg) !important;} .grey_cell {background-color:#D5D4D4 !important;} .analysis_header{text-align:center;font-weight:bold; !important;} .footer{color: #D5D4D4 !important;}}")
+        .border_cell {
+            border: 1px solid;
+            padding: 2px 2px 2px 2px;
+        }
+        .grey_cell {
+            background: #D5D4D4 !important;
+        }
+        .analysis_header{
+            text-align:center;
+            font-weight:bold;
+        }
+        .footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: #D5D4D4;
+        }
+        .constant_cell1{
+            max-height:17px;
+            max-width:250px;
+        }
+        .constant_cell2{
+            max-height:40px;
+            max-width:120px;
+        }
+        .constant_cell3{
+            max-height:30px;
+            max-width:150px;
+        }
+    </style>
+</head>
+<body>
+    @{
+        string rcvd_date = "", collect_date = "", tolerance_date_start = "", tolerance_date_end = "";
+        string uid = "", supply_name_1 = "", supply_name_2 = "", lot_1 = "", lot_2 = "", exp_date1 = "";
+        string exp_date2 = "", str_uid_counter="", hl_code="", str_uid="", uid_suffix = "";
+        int tolerance_in_1 = 0, tolerance_in_2 = 0, tolerance_out_1 = 0, tolerance_out_2 = 0;
+        int limit_rows = 7, row_counter = 1, limit_row_counter = 0, print_counter = 0;
+        double quotient = 0, sample_count = Model.RequestDetailList.Count;
+        bool produce_header_footer = true;
+        string SampleId = "", str_date_in = "", str_date_out = "", colilert_used = "";
+        DateTime incubation_date_in, incubation_date_out;
+
+        if (sample_count != 0)
+        {
+            quotient = sample_count / limit_rows;
+            print_counter = (int)Math.Ceiling(quotient);
+        }
+
+        if (Model.RequestDetailList.Count > 0 && !string.IsNullOrEmpty(Model.RequestDetailList[0].hl_code))
+        {
+            hl_code = Model.RequestDetailList[0].hl_code;
+            uid = hl_code.Substring(0, hl_code.Length - 2);
+        }
+
+        string SetSampleId()
+        {
+            SampleId = "";
+            if (row_counter <= sample_count && sample_count != 0)
+            {
+                SampleId = Model.RequestDetailList[row_counter - 1].idnty_location;
+            }
+            return SampleId;
+        }
+
+        string GetCurrentHlCode()
+        {
+            str_uid = "";
+            if (row_counter <= sample_count && sample_count != 0)
+            {
+                str_uid = Model.RequestDetailList[row_counter - 1].hl_code;
+            }
+            return str_uid;
+        }
+
+        string GetUIDSuffix()
+        {
+            uid_suffix = "";
+            str_uid = "";
+
+            if (Model.RequestDetailList != null && Model.RequestDetailList.Count > 0)
+            {
+                if (row_counter <= sample_count && sample_count != 0)
+                {
+                    str_uid = Model.RequestDetailList[row_counter - 1].hl_code;
+                    if (!string.IsNullOrEmpty(str_uid))
+                    {
+                        var details = str_uid.Split('-');
+                        uid_suffix = details[3];
+                    }
+                }
+            }
+            return uid_suffix;
+        }
+
+        foreach (var item in Model.RequestDetailList)
+        {
+            if (!string.IsNullOrEmpty(item.lab_code) && item.lab_code.ToLower() == "exp")
+            {
+                Model.RequestInformation.is_rush = true;
+            }
+        }
+
+        if (Model.TestTransaction.is_semi_public != null && Model.TestTransaction.is_semi_public == true)
+        {
+            Model.RequestInformation.is_rush = true;
+        }
+
+        if (string.IsNullOrEmpty(Model.TestTransaction.sample_type))
+        {
+            Model.TestTransaction.sample_type = "Normal";
+        }
+    }
+
+    <div style="width:980px;/*height:720px;*/font-family:Arial;font-size:1.1rem;padding:5px 5px 5px 5px;">
+        @for (int x = 0; x < print_counter; x++)
+        {
+            if (produce_header_footer == true)
+            {
+                <!--HEADER START-->
+                <div style="padding-left:300px;">
+                    <b>Presence/Absence water Test Report for Total Coliforms and E.coli in water using Colilert & Colilert 18</b>
+                    &nbsp;&nbsp;&nbsp;
+                    <img src="~/images/horizonlab_logo.png" class="img-fluid" alt="" width="120" height="20" />
+                </div>
+                <table style="width:960px;">
+                    <tr>
+                        <td style="width:20%;">
+                            @if (Model.RequestInformation.is_rush)
+                            {
+                                <span style="margin-left:20px;font-size:5rem;color:#D5D4D4;"><b>RUSH</b></span>
+                            }
+                            else
+                            {
+                                <span style="margin-left:20px;">
+                                    <span style="color:#D3D0CF;">Sample type:</span>
+                                    <span>@Model.TestTransaction.sample_type</span>
+                                </span>
+                                <br />
+                                <span style="margin-left:50px;font-size:5rem;color:#f31616;">
+                                    <b>P/A</b>
+                                </span>
+                            }
+                        </td>
+                        <td>
+                            <table style="width:100%;">
+                                <tbody>
+                                    <tr>
+                                        <td class="border_cell" colspan="4" style="text-align:center;">CUSTOMER INFORMATION</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border_cell" style="padding-left:5px;width:17%;">&nbsp;Name</td>
+                                        <td class="border_cell" style="width:33%;"><div class="constant_cell1">&nbsp;@Model.RequestDetailList[0].first_name @Model.RequestDetailList[0].last_name</div></td>
+                                        <td class="border_cell" style="width:25%;">HL Batch ID</td>
+                                        <td class="border_cell" style="width:25%;">&nbsp;@uid</td>
+                                    </tr>
+                                    <tr>
+                                        @if (Model.TestTransaction != null && Model.TestTransaction.rcv_date != null)
+                                        {
+                                            rcvd_date = Model.TestTransaction.rcv_date.Value.ToString("dd/MM/yyyy HH:mm");
+                                        }
+
+                                        <td class="border_cell" style="padding-left:5px;">&nbsp;Date & time received</td>
+                                        <td class="border_cell" colspan="3">&nbsp;@rcvd_date</td>
+                                    </tr>
+                                    <tr>
+                                        @if (Model.TestTransaction != null && Model.TestTransaction.collect_datetime != null)
+                                        {
+                                            collect_date = Model.TestTransaction.collect_datetime.Value.ToString("dd/MM/yyyy HH:mm");
+                                        }
+                                        <td class="border_cell" style="padding-left:5px;">&nbsp;Sampling date & time</td>
+                                        <td class="border_cell">&nbsp;@collect_date</td>
+
+                                        @{
+                                            string isYesNo = "N";
+                                            if (Model.RequestInformation.is_condition_met) { isYesNo = "Y"; }
+                                        }
+                                        <td class="border_cell">&nbsp;Sample condition met</td>
+                                        <td class="border_cell">&nbsp;@isYesNo</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+                if (Model.RequestSupplyList != null && Model.RequestSupplyList.Count > 1)
+                {
+                    supply_name_1 = Model.RequestSupplyList[0].name;
+                    lot_1 = Model.RequestSupplyList[0].lot;
+                    exp_date1 = Model.RequestSupplyList[0].expiry_date.Value.ToString("dd/MM/yyyy");
+
+                    supply_name_2 = Model.RequestSupplyList[1].name;
+                    lot_2 = Model.RequestSupplyList[1].lot;
+                    exp_date2 = Model.RequestSupplyList[1].expiry_date.Value.ToString("dd/MM/yyyy");
+                }
+
+                if (Model.ColilertSupply != null)
+                {
+                    tolerance_in_1 = Model.ColilertSupply.hours_tolerance_start;
+                    tolerance_out_1 = Model.ColilertSupply.hours_tolerance_end;
+                    colilert_used = Model.ColilertSupply.name;
+                }
+                <table style="width:960px">
+                    <tr>
+                        <td class="border_cell" colspan="6" style="text-align:center;">TEST INFORMATION</td>
+                    </tr>
+                    <tr>
+                        <td class="border_cell">Incubation Date & Time In</td>
+                        <td class="border_cell">Incubation Date & Time Out</td>
+                        <td class="border_cell">Incubation Temp<br />(35.0+/-0.5oC)</td>
+                        <td class="border_cell" style="width:150px;"><div class="constant_cell3">@supply_name_1 <br />Lot# and Expiry Date </div></td>
+                        <td class="border_cell" style="width:150px;">Colilert Media Used</td>
+                        <td class="border_cell" style="width:150px;"><div class="constant_cell3">@supply_name_2 <br />Lot# and Expiry Date</div></td>
+                    </tr>
+                    @if (Model.RequestInformation.incubation_date_time_in != null)
+                    {
+                        incubation_date_in = Model.RequestInformation.incubation_date_time_in.Value;
+                        str_date_in = incubation_date_in.ToString("dd/MM/yyyy HH:mm");
+                        tolerance_date_start = incubation_date_in.AddHours(tolerance_in_1).ToString("dd/MM/yyyy HH:mm");
+                    }
+
+                    @if (Model.RequestInformation.incubation_date_time_out != null)
+                    {
+                        incubation_date_in = Model.RequestInformation.incubation_date_time_in.Value;
+                        incubation_date_out = Model.RequestInformation.incubation_date_time_in.Value;
+                        str_date_out = incubation_date_in.AddHours(tolerance_in_1).AddHours(tolerance_out_1).ToString("dd/MM/yyyy");
+                        tolerance_date_end = incubation_date_in.AddHours(tolerance_in_1).AddHours(tolerance_out_1).ToString("dd/MM/yyyy HH:mm");
+                    }
+                    <tr>
+                        <td class="border_cell">&nbsp;@str_date_in</td>
+                        <td class="border_cell">&nbsp;@str_date_out</td>
+                        <td class="border_cell">&nbsp;@Model.RequestInformation.incubation_temp</td>
+                        <td class="border_cell">&nbsp;<b>@lot_1</b>&nbsp;&nbsp;&nbsp;@exp_date1</td>
+                        <td class="border_cell">&nbsp;@colilert_used</td>
+                        <td class="border_cell">&nbsp;<b>@lot_2</b>&nbsp;&nbsp;&nbsp;@exp_date2</td>
+                    </tr>
+                    <tr>
+                        <td class="border_cell" colspan="1" style="">Incubation Time Tolerance</td>
+                        <td class="border_cell" colspan="5" style="text-align:center;">@tolerance_date_start &nbsp; <b>to</b> &nbsp; @tolerance_date_end</td>
+                    </tr>
+                </table>
+                <!--HEADER END-->
+            }
+            <div>&nbsp;</div>
+
+            <!--BODY START-->
+            @*<div>&nbsp;</div>*@
+            <div style="text-align:center;">
+                <b>ANALYSIS INFORMATION</b>
+            </div>
+            <table style="width:960px">
+                @if (produce_header_footer == true)
+                {
+                    <tr>
+                        <td class="border_cell analysis_header" rowspan="2" colspan="3">SAMPLE ID &<br />DESCRIPTION</td>
+                        <td class="border_cell analysis_header" rowspan="2" width="100px">Total<br />Coliform<br />(+) / (-)</td>
+                        <td class="border_cell analysis_header" rowspan="2" width="100px">E. Coli<br />(+) / (-)</td>
+                        <td class="border_cell grey_cell analysis_header" colspan="2">Confirmation Count (+ve)</td>
+                        <td class="border_cell grey_cell analysis_header" rowspan="2">Date customer<br />contacted</td>
+                        <td class="border_cell grey_cell analysis_header" rowspan="16" style="padding-bottom:300px;">Comments /Notes</td>
+                    </tr>
+                    <tr>
+                        <td class="border_cell grey_cell analysis_header" width="100px">Total<br />Coliform<br />(+) / (-)</td>
+                        <td class="border_cell grey_cell analysis_header" width="100px">E. Coli<br />(+) / (-)</td>
+                    </tr>
+
+                    SampleId = SetSampleId();
+                    <tr>
+                        <td class="border_cell vertical" rowspan="14" style="width:8%;writing-mode: vertical-lr; font-weight:bold;text-align:center;font-size:1.25rem;">
+                            @uid
+                        </td>
+                        <td class="border_cell" style="width:2%;" rowspan="2">&nbsp;@GetUIDSuffix()</td>
+                        <td class="border_cell" rowspan="2" style="width:13%;"><div class="constant_cell2">&nbsp;@SampleId</div></td>
+                        
+                        <td class="border_cell" rowspan="2">&nbsp;</td>
+                        <td class="border_cell" rowspan="2">&nbsp;</td>
+                        <td class="border_cell" rowspan="2">&nbsp;</td>
+                        <td class="border_cell" rowspan="2">&nbsp;</td>
+
+                        <td class="border_cell">&nbsp;</td>
+
+                    </tr>
+                    <tr>
+                        
+                    </tr>
+                }
+
+                @{row_counter++; }
+                @{SampleId = SetSampleId();}
+                <tr>
+                    <td class="border_cell" rowspan="2">&nbsp;@GetUIDSuffix()</td>
+                    <td class="border_cell" rowspan="2"><div class="constant_cell2">&nbsp;@SampleId</div></td>
+                    
+                    <td class="border_cell" rowspan="2">&nbsp;</td>
+                    <td class="border_cell" rowspan="2">&nbsp;</td>
+                    <td class="border_cell" rowspan="2">&nbsp;</td>
+                    <td class="border_cell" rowspan="2">&nbsp;</td>
+
+                    <td class="border_cell" rowspan="2">&nbsp;</td>
+                </tr>
+                <tr>
+                    
+                </tr>
+
+                @{row_counter++; }
+                @{SampleId = SetSampleId();}
+                <tr>
+                    <td class="border_cell" rowspan="2">&nbsp;@GetUIDSuffix()</td>
+                    <td class="border_cell" rowspan="2"><div class="constant_cell2">&nbsp;@SampleId</div></td>
+                    
+                    <td class="border_cell" rowspan="2">&nbsp;</td>
+                    <td class="border_cell" rowspan="2">&nbsp;</td>
+                    <td class="border_cell" rowspan="2">&nbsp;</td>
+                    <td class="border_cell" rowspan="2">&nbsp;</td>
+
+                    <td class="border_cell">&nbsp;</td>
+                </tr>
+                <tr>
+
+                </tr>
+
+                @{row_counter++; }
+                @{SampleId = SetSampleId();}
+                <tr>
+                    <td class="border_cell" rowspan="2">&nbsp;@GetUIDSuffix()</td>
+                    <td class="border_cell" rowspan="2"><div class="constant_cell2">&nbsp;@SampleId</div></td>
+                    
+                    <td class="border_cell" rowspan="2">&nbsp;</td>
+                    <td class="border_cell" rowspan="2">&nbsp;</td>
+                    <td class="border_cell" rowspan="2">&nbsp;</td>
+                    <td class="border_cell" rowspan="2">&nbsp;</td>
+
+                    <td class="border_cell" rowspan="2">&nbsp;</td>
+                </tr>
+                <tr>
+                    
+                </tr>
+
+                @{row_counter++; }
+                @{SampleId = SetSampleId();}
+                <tr>
+                    <td class="border_cell" rowspan="2">&nbsp;@GetUIDSuffix()</td>
+                    <td class="border_cell" rowspan="2"><div class="constant_cell2">&nbsp;@SampleId</div></td>
+                    
+                    <td class="border_cell" rowspan="2">&nbsp;</td>
+                    <td class="border_cell" rowspan="2">&nbsp;</td>
+                    <td class="border_cell" rowspan="2">&nbsp;</td>
+                    <td class="border_cell" rowspan="2">&nbsp;</td>
+
+                    <td class="border_cell" rowspan="2">&nbsp;</td>
+                </tr>
+                <tr>
+
+                </tr>
+
+                @{row_counter++; }
+                @{SampleId = SetSampleId();}
+                <tr>
+                    <td class="border_cell" rowspan="2">&nbsp;@GetUIDSuffix()</td>
+                    <td class="border_cell" rowspan="2"><div class="constant_cell2">&nbsp;@SampleId</div></td>
+                    
+                    <td class="border_cell" rowspan="2">&nbsp;</td>
+                    <td class="border_cell" rowspan="2">&nbsp;</td>
+                    <td class="border_cell" rowspan="2">&nbsp;</td>
+                    <td class="border_cell" rowspan="2">&nbsp;</td>
+
+                    <td class="border_cell" rowspan="2">&nbsp;</td>
+                </tr>
+                <tr>
+                    
+                </tr>
+
+                @{row_counter++; }
+                @{SampleId = SetSampleId();}
+                <tr>
+                    <td class="border_cell" rowspan="2">&nbsp;@GetUIDSuffix()</td>
+                    <td class="border_cell" rowspan="2"><div class="constant_cell2">&nbsp;@SampleId</div></td>
+                    <td class="border_cell">&nbsp;</td>
+
+                    <td class="border_cell">&nbsp;</td>
+                    <td class="border_cell">&nbsp;</td>
+
+                    <td class="border_cell">&nbsp;</td>
+                    <td class="border_cell">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td class="border_cell">&nbsp;</td>
+
+                    <td class="border_cell">&nbsp;</td>
+                    <td class="border_cell">&nbsp;</td>
+
+                    <td class="border_cell">&nbsp;</td>
+                    <td class="border_cell">&nbsp;</td>
+                </tr>
+                @{row_counter++; }
+            </table>
+            <!--BODY END-->
+            <div>&nbsp;</div>
+
+            @if (produce_header_footer == true)
+            {
+                <!--FOOTER START-->
+                <table style="width:960px;">
+                    <tr>
+                        <td class="border_cell" style="width:14%;">Tech Prep: </td>
+                        <td class="border_cell" style="width:13%;">&nbsp;</td>
+
+                        <td class="border_cell" style="width:11%;">Tech counter: </td>
+                        <td class="border_cell" style="width:13%;">&nbsp;</td>
+
+                        @*<td class="border_cell" style="width:11%;">Tech Prep: </td>
+                        <td class="border_cell" style="width:13%;">&nbsp;</td>*@
+
+                        <td class="border_cell" style="width:12%;">Tech confirmation: </td>
+                        <td class="border_cell" style="width:13%;">&nbsp;</td>
+                    </tr>
+
+                    <tr>
+                        <td class="border_cell">Reviewd By (QAC/QM): </td>
+                        <td class="border_cell">&nbsp;</td>
+
+                        <td class="border_cell">Date Reviewed: </td>
+                        <td class="border_cell" colspan="5">&nbsp;</td>
+                    </tr>
+                </table>
+                <span style="font-size:1.0rem;font-weight:bold;">LS/LD: Attach a copy of the Analysis Report or Certificate of Analysis to this record to indicate that the results were given to the customer.</span>
+                <div class="footer">
+                    <table style="width:960px;">
+                        <tr>
+                            <td style="text-align:left;">F125</td>
+                            <td style="text-align:right;">REV 3</td>
+                        </tr>
+                    </table>
+                </div>
+                <!--FOOTER END-->
+            }
+            <p>&nbsp;</p>
+        }
+    </div>
+
+</body>
+</html>

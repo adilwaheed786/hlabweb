@@ -1,0 +1,133 @@
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.exe
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.deps.json
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.runtimeconfig.json
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.runtimeconfig.dev.json
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.dll
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.pdb
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabLibrary.dll
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabLibrary.pdb
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.csprojAssemblyReference.cache
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.csproj.CoreCompileInputs.cache
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.RazorAssemblyInfo.cache
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.RazorAssemblyInfo.cs
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.AssemblyInfoInputs.cache
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.AssemblyInfo.cs
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.RazorTargetAssemblyInfo.cache
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.csproj.CopyComplete
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.dll
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.pdb
+Z:\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.exe
+Z:\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.deps.json
+Z:\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.runtimeconfig.json
+Z:\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.runtimeconfig.dev.json
+Z:\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.dll
+Z:\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.pdb
+Z:\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabLibrary.dll
+Z:\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabLibrary.pdb
+Z:\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.csprojAssemblyReference.cache
+Z:\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.csproj.CoreCompileInputs.cache
+Z:\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.RazorAssemblyInfo.cache
+Z:\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.RazorAssemblyInfo.cs
+Z:\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.AssemblyInfoInputs.cache
+Z:\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.AssemblyInfo.cs
+Z:\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.RazorTargetAssemblyInfo.cache
+Z:\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.csproj.CopyComplete
+Z:\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.dll
+Z:\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.pdb
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\nlog.config
+Z:\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\nlog.config
+\\MBDFS1\folderred\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\nlog.config
+\\MBDFS1\folderred\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.exe
+\\MBDFS1\folderred\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.deps.json
+\\MBDFS1\folderred\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.runtimeconfig.json
+\\MBDFS1\folderred\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.runtimeconfig.dev.json
+\\MBDFS1\folderred\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.dll
+\\MBDFS1\folderred\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.pdb
+\\MBDFS1\folderred\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabLibrary.dll
+\\MBDFS1\folderred\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabLibrary.pdb
+\\MBDFS1\folderred\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.csprojAssemblyReference.cache
+\\MBDFS1\folderred\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.csproj.CoreCompileInputs.cache
+\\MBDFS1\folderred\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.RazorAssemblyInfo.cache
+\\MBDFS1\folderred\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.RazorAssemblyInfo.cs
+\\MBDFS1\folderred\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.AssemblyInfoInputs.cache
+\\MBDFS1\folderred\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.AssemblyInfo.cs
+\\MBDFS1\folderred\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.RazorTargetAssemblyInfo.cache
+\\MBDFS1\folderred\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.csproj.CopyComplete
+\\MBDFS1\folderred\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.dll
+\\MBDFS1\folderred\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.pdb
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\BackUps\11072021_Refactored\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\nlog.config
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\BackUps\11072021_Refactored\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.exe
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\BackUps\11072021_Refactored\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.deps.json
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\BackUps\11072021_Refactored\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.runtimeconfig.json
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\BackUps\11072021_Refactored\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.runtimeconfig.dev.json
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\BackUps\11072021_Refactored\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.dll
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\BackUps\11072021_Refactored\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.pdb
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\BackUps\11072021_Refactored\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabLibrary.dll
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\BackUps\11072021_Refactored\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabLibrary.pdb
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\BackUps\11072021_Refactored\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.csprojAssemblyReference.cache
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\BackUps\11072021_Refactored\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.csproj.CoreCompileInputs.cache
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\BackUps\11072021_Refactored\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.RazorAssemblyInfo.cache
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\BackUps\11072021_Refactored\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.RazorAssemblyInfo.cs
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\BackUps\11072021_Refactored\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.AssemblyInfoInputs.cache
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\BackUps\11072021_Refactored\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.AssemblyInfo.cs
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\BackUps\11072021_Refactored\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.RazorTargetAssemblyInfo.cache
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\BackUps\11072021_Refactored\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.csproj.CopyComplete
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\BackUps\11072021_Refactored\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.dll
+\\mbdfs1\folderred$\markt\Documents\Horizon Lab Website 2019\web\admin\HorizonLabAdmin\BackUps\11072021_Refactored\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.pdb
+C:\CODES\HorizonLab\12102021\HorizonLabWaterDatabase\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\nlog.config
+C:\CODES\HorizonLab\12102021\HorizonLabWaterDatabase\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.exe
+C:\CODES\HorizonLab\12102021\HorizonLabWaterDatabase\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.deps.json
+C:\CODES\HorizonLab\12102021\HorizonLabWaterDatabase\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.runtimeconfig.json
+C:\CODES\HorizonLab\12102021\HorizonLabWaterDatabase\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.runtimeconfig.dev.json
+C:\CODES\HorizonLab\12102021\HorizonLabWaterDatabase\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.dll
+C:\CODES\HorizonLab\12102021\HorizonLabWaterDatabase\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.pdb
+C:\CODES\HorizonLab\12102021\HorizonLabWaterDatabase\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabLibrary.dll
+C:\CODES\HorizonLab\12102021\HorizonLabWaterDatabase\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabLibrary.pdb
+C:\CODES\HorizonLab\12102021\HorizonLabWaterDatabase\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.csprojAssemblyReference.cache
+C:\CODES\HorizonLab\12102021\HorizonLabWaterDatabase\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.csproj.CoreCompileInputs.cache
+C:\CODES\HorizonLab\12102021\HorizonLabWaterDatabase\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.RazorAssemblyInfo.cache
+C:\CODES\HorizonLab\12102021\HorizonLabWaterDatabase\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.RazorAssemblyInfo.cs
+C:\CODES\HorizonLab\12102021\HorizonLabWaterDatabase\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.AssemblyInfoInputs.cache
+C:\CODES\HorizonLab\12102021\HorizonLabWaterDatabase\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.AssemblyInfo.cs
+C:\CODES\HorizonLab\12102021\HorizonLabWaterDatabase\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.RazorTargetAssemblyInfo.cache
+C:\CODES\HorizonLab\12102021\HorizonLabWaterDatabase\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.csproj.CopyComplete
+C:\CODES\HorizonLab\12102021\HorizonLabWaterDatabase\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.dll
+C:\CODES\HorizonLab\12102021\HorizonLabWaterDatabase\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.pdb
+C:\CODES\HorizonLab\12142021\HorizonLabWaterDatabase\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\nlog.config
+C:\CODES\HorizonLab\12142021\HorizonLabWaterDatabase\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.exe
+C:\CODES\HorizonLab\12142021\HorizonLabWaterDatabase\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.deps.json
+C:\CODES\HorizonLab\12142021\HorizonLabWaterDatabase\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.runtimeconfig.json
+C:\CODES\HorizonLab\12142021\HorizonLabWaterDatabase\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.runtimeconfig.dev.json
+C:\CODES\HorizonLab\12142021\HorizonLabWaterDatabase\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.dll
+C:\CODES\HorizonLab\12142021\HorizonLabWaterDatabase\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.pdb
+C:\CODES\HorizonLab\12142021\HorizonLabWaterDatabase\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabLibrary.dll
+C:\CODES\HorizonLab\12142021\HorizonLabWaterDatabase\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabLibrary.pdb
+C:\CODES\HorizonLab\12142021\HorizonLabWaterDatabase\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.csprojAssemblyReference.cache
+C:\CODES\HorizonLab\12142021\HorizonLabWaterDatabase\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.csproj.CoreCompileInputs.cache
+C:\CODES\HorizonLab\12142021\HorizonLabWaterDatabase\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.RazorAssemblyInfo.cache
+C:\CODES\HorizonLab\12142021\HorizonLabWaterDatabase\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.RazorAssemblyInfo.cs
+C:\CODES\HorizonLab\12142021\HorizonLabWaterDatabase\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.AssemblyInfoInputs.cache
+C:\CODES\HorizonLab\12142021\HorizonLabWaterDatabase\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.AssemblyInfo.cs
+C:\CODES\HorizonLab\12142021\HorizonLabWaterDatabase\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.RazorTargetAssemblyInfo.cache
+C:\CODES\HorizonLab\12142021\HorizonLabWaterDatabase\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.csproj.CopyComplete
+C:\CODES\HorizonLab\12142021\HorizonLabWaterDatabase\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.dll
+C:\CODES\HorizonLab\12142021\HorizonLabWaterDatabase\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.pdb
+C:\CODES\HorizonLab\12102021\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\nlog.config
+C:\CODES\HorizonLab\12102021\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.exe
+C:\CODES\HorizonLab\12102021\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.deps.json
+C:\CODES\HorizonLab\12102021\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.runtimeconfig.json
+C:\CODES\HorizonLab\12102021\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.runtimeconfig.dev.json
+C:\CODES\HorizonLab\12102021\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.dll
+C:\CODES\HorizonLab\12102021\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.pdb
+C:\CODES\HorizonLab\12102021\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabLibrary.dll
+C:\CODES\HorizonLab\12102021\HorizonLabWebApi\bin\Release\netcoreapp2.1\win-x64\HorizonLabLibrary.pdb
+C:\CODES\HorizonLab\12102021\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.csprojAssemblyReference.cache
+C:\CODES\HorizonLab\12102021\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.csproj.CoreCompileInputs.cache
+C:\CODES\HorizonLab\12102021\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.RazorAssemblyInfo.cache
+C:\CODES\HorizonLab\12102021\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.RazorAssemblyInfo.cs
+C:\CODES\HorizonLab\12102021\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.AssemblyInfoInputs.cache
+C:\CODES\HorizonLab\12102021\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.AssemblyInfo.cs
+C:\CODES\HorizonLab\12102021\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.RazorTargetAssemblyInfo.cache
+C:\CODES\HorizonLab\12102021\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.csproj.CopyComplete
+C:\CODES\HorizonLab\12102021\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.dll
+C:\CODES\HorizonLab\12102021\HorizonLabWebApi\obj\Release\netcoreapp2.1\win-x64\HorizonLabWebApi.pdb

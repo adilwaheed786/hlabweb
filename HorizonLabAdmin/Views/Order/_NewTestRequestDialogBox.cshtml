@@ -1,0 +1,134 @@
+﻿
+<div id="add_test_request" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content" style="width:60%;">
+        <input type="hidden" id="form_pkgid" value="">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-lg-10 text-left"><b>New Water Bacteria Test Request <span id="customer_info"></span></b></div>
+                    <div class="col-lg-2"><button class="close close_modal" value="add_test_request" onclick="">&times;</button></div>
+                </div>
+            </div>
+            <div class="panel-body" style="height:700px; overflow:auto;">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <select asp-items="@Model.package_category_selectlist_item" class="form-control" id="category_select" style="height:300px;" multiple></select>
+                    </div>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="pkg_select" style="height:300px;" multiple></select>
+                    </div>
+                    <div class="col-sm-4">
+                        <div style="border:1px solid #D7D7DA; padding:5px 5px 5px 5px;border-radius:5px;color:#9D9D9D;font-size:0.8em;height:260px;overflow:auto;">
+                            <p><b>LAB CODE:</b><span id="pkg_labcode"></span></p>
+                            <p><b>PRICE:</b><span id="pkg_price"></span></p>
+                            <p><b>ANALYSIS:</b><span id="pkg_analysis"></span></p>
+                            <p><b>DESCRIPTION:</b><span id="pkg_desc"></span></p>
+                        </div>
+                        <div class="text-right"><button type="button" class="btn btn-success" value="" id="place_order_btn">Place Request</button></div>
+                    </div>
+                </div>
+                <br />
+                <div class="row" style="font-size:1.2rem;">
+                    <div class="col-sm-8">
+                        <div class="panel panel-success">
+                            <div class="panel-body" style="overflow:auto; height:280px;">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <table class="table" id="order_table">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col" width="3%">&nbsp;</th>
+                                                    <th scope="col" width="5%">Qty</th>
+                                                    <th scope="col" width="20%">Lab Code</th>
+                                                    <th scope="col" width="25%">Analysis</th>
+                                                    <th scope="col" width="15%">Coupon</th>
+                                                    <th scope="col" width="10%">Price</th>
+                                                    <th scope="col" width="10%">Tax%</th>
+                                                    <th scope="col" width="10%">
+                                                        <div class="row">
+                                                            <div class="col-sm-4 text-right">Amt </div>
+                                                            <div class="col-sm-5 text-left">
+                                                                <input type="hidden" value="5" id="input_tax" class="form-control decimal_only">
+                                                            </div>
+                                                        </div>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-11 text-right"><b>GST #:</b></div>
+                                    <div class="col-sm-1"><span id="gst_number"></span></div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-11 text-right"><b>TOTAL:</b></div>
+                                    <div class="col-sm-1"><span id="total_price"></span></div>
+                                    <input type="hidden" id="form_totalamount" value="">
+                                </div>
+                                @for (int x = 0; x <= 30; x++)
+                                {
+                                <input type="hidden" class="form_pkg_id_group">
+                                <input type="hidden" class="form_coupon_group">
+                                <input type="hidden" class="form_amount_group">
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <div class="panel panel-success">
+                            <div class="panel-body" style="overflow:auto; height:280px;">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <table class="table" id="test_request_item">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">&nbsp;</th>
+                                                    <th scope="col">Type</th>
+                                                    <th scope="col">Amount</th>
+                                                    <th scope="col"><span id="coupon_header" style="display:none;">Coupon#</span></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{ int count = 0;}
+                                                @for (int i = 0; i < 5; i++)
+                                                {
+                                                    count = count + 1;
+                                                <tr>
+                                                    <td style="font-size:0.80em;">
+                                                        @count
+                                                    </td>
+                                                    <td><select class="payment_type" asp-items="@Model.payment_type_selectlist_item"></select></td>
+                                                    <td><input type="text" class="payment_amount decimal_only" id="autofill_payment"></td>
+                                                </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-11 text-right"></div>
+                                    <div class="col-sm-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 text-right">
+                        <div class="text-right">
+                            <button type="button" class="btn btn-success" value="" id="submit_request_btn">Submit Request</button>
+                            <button type="button" class="btn btn-default close_modal" value="add_test_request" id="submit_request_btn">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,307 @@
+﻿
+@{
+    ViewData["PageTitle"] = "Horizon Lab Request Page";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+<link href="~/css/jquery-ui.css" rel="stylesheet" />
+<script src="~/js/jquery-ui.js"></script>
+<script src="~/js/api_events.js"></script>
+<script src="~/js/order_helpers.js"></script>
+<script src="~/js/order_events.js"></script>
+<script src="~/js/general_functions.js"></script>
+@model HorizonLabAdmin.Models.Forms.OrderPageForm
+
+@{ if (!string.IsNullOrEmpty(ViewBag.Message))
+    {
+        var msg_details = ViewBag.Message.Split(':');
+        if (msg_details[0] == "success")
+        {
+            <p style="color:green;font-size:.75em;">@msg_details[1]</p>
+        }
+        else
+        {
+            <p style="color:red;font-size:.75em;">@msg_details[1]</p>
+        }
+    }
+
+    if (!string.IsNullOrEmpty(ViewBag.Receipt))
+    {
+        <script>
+            @Html.Raw(ViewBag.Receipt)
+        </script>
+    }
+    <script>
+        //window.open("/Order/OrderPage", "_blank");
+        function validatecoupon(element) {            
+            coupon = element.value;
+            customerid = document.getElementById("customer_select").value;
+            if (customerid != "") {
+                if (coupon != "") {
+                    //do something here
+                    $.ajax({
+                        url: "/hlab_customer_api/validatecoupon?coupon=" + coupon + "&customerid=" + customerid,
+                        method: "GET",
+                        success: function (data) {
+                            console.log("result: " + data);
+                            if (!data) {
+                                alert("Invalid Coupon Number!");
+                                element.value="";
+                            }
+                        }
+                    });
+                }
+            }
+            else {
+                alert("Please select a customer!");
+            }
+        }
+
+        function changeamount(id) {
+            //document.getElementById("hidden_taxpriceamount_" + id).value = ""
+            //document.getElementById("amt_" + id).innerHTML="";
+
+            const formatter = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2
+            })
+
+            var price = parseFloat(document.getElementById("hidden_price_" + id).value);
+            var tax = parseFloat(document.getElementById("tax_" + id).value);
+            var newamount = price + (price * (tax / 100));
+            var formatted_newamount = formatter.format(newamount);
+
+            document.getElementById("hidden_taxpriceamount_" + id).value = newamount;
+            document.getElementById("amt_" + id).innerHTML=formatted_newamount;
+        }
+    </script>
+}
+<style>
+    option {
+        border: 1px solid #EBEBEB;
+        border-radius:2px;
+        padding:3px 3px 3px 3px;
+        white-space: normal;
+        word-wrap: break-word;
+        margin-top:2px;
+    }
+</style>
+
+    <form asp-action="PlaceOrder" asp-controller="OrderPostTransactions" method="post" class="" id="order_page_form">
+        <div class="row">
+            <div class="col-sm-5">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-sm-4">Select Customer</div>
+                            <div class="col-sm-8">
+                                <div class="row">
+                                    <div class="col-sm-5">
+                                        <select class="form-control" id="form_searchfilter">
+                                            <option value="fn">First Name</option>
+                                            <option value="ln" selected>Last Name</option>
+                                            <option value="ci">Customer ID</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-5"><input type="text" class="form-control" id="form_searchvalue"></div>
+                                    <div class="col-sm-2">
+                                        <button type="button" class="btn btn-sm btn-outline-success" value="" id="search_customer"><span class="glyphicon glyphicon-search" style="font-size:1.7rem;"></span></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body order_panel">
+                        <select asp-for="@Model.hlab_order_log.customer_id" asp-items="@Model.selectCustomerList" class="form-control" style="height:280px" id="customer_select" multiple></select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-7">
+                <div class="panel panel-success">
+                    <div class="panel-heading">Select Package</div>
+                    <div class="panel-body order_panel">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <select class="form-control" asp-items="@Model.selectCategoryList" id="category_select" style="height:300px;" multiple></select>
+                            </div>
+                            <div class="col-sm-4">
+                                <select class="form-control" asp-items="@Model.selectPkgList" style="height:300px;" multiple id="pkg_select"></select>
+                            </div>
+                            <div class="col-sm-4">
+                                <div style="border:1px solid #D7D7DA; padding:5px 5px 5px 5px;border-radius:5px;color:#9D9D9D;font-size:0.8em;height:300px;overflow:auto;">
+                                    <p><b>LAB CODE:</b><span id="pkg_labcode"></span></p>
+                                    <p><b>PRICE:</b><span id="pkg_price"></span></p>
+                                    <p><b>ANALYSIS:</b><span id="pkg_analysis"></span></p>
+                                    <p><b>DESCRIPTION:</b><span id="pkg_desc"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-9"></div>
+                            <div class="col-sm-3"><div style="text-align:right;"><button type="button" class="btn btn-success" value="" id="place_order_btn">Place Request</button></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" id="form_customerid">
+        <input type="hidden" id="form_classid" value="@ViewBag.defaultPkgClassId">
+        <input type="hidden" id="form_pkgid" value="">
+        <input type="hidden" id="form_gst" value="0">
+        <div class="row">
+            <div class="col-sm-9">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-sm-8">Customer Request</div>
+                            <div class="col-sm-4 text-right">
+                                <div class="col-sm-4" style="font-size:0.8em;">Submit As:</div>
+                                <div class="col-sm-8">
+                                    <select asp-for="@Model.hlab_order_log.proc_status" class="form-control form-control-sm">
+                                        <option value="true">Final</option>
+                                        <option value="false">Draft</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body order_panel" style="overflow:auto;">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table class="table" id="order_table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" width="3%">&nbsp;</th>
+                                            <th scope="col" width="5%">Qty</th>
+                                            <th scope="col" width="20%">Lab Code</th>
+                                            <th scope="col" width="25%">Analysis</th>
+                                            <th scope="col" width="15%">Coupon</th>
+                                            <th scope="col" width="10%">Price</th>
+                                            <th scope="col" width="10%">Tax%</th>
+                                            <th scope="col" width="10%">
+                                                <div class="row">
+                                                    <div class="col-sm-4 text-right">Amt </div>
+                                                    <div class="col-sm-5 text-left">
+                                                        <input asp-for="@Model.hlab_order_log.tax" type="hidden" value="5" id="input_tax" class="form-control decimal_only">
+                                                    </div>
+                                                </div>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-11 text-right"><b>GST #:</b></div>
+                            <div class="col-sm-1"><span id="gst_number"></span></div>
+                        </div>
+
+                        @*<div class="row">
+                            <div class="col-sm-11 text-right"><b>TAX %:</b></div>
+                            <div class="col-sm-1"><input asp-for="@Model.hlab_order_log.tax" type="text" value="5" id="input_tax" class="form-control decimal_only"></div>
+                        </div>*@
+                        <div class="row">
+                            <div class="col-sm-11 text-right"><b>TOTAL:</b></div>
+                            <div class="col-sm-1"><span id="total_price"></span></div>
+                            <input asp-for="@Model.hlab_order_log.total_amount" type="hidden" id="form_totalamount" value="">
+                        </div>
+
+                        @for (int x = 0; x <= 30; x++)
+                        {
+                            <input asp-for="@Model.hlab_order_items[x].test_pkg_id" type="hidden" class="form_pkg_id_group">
+                            <input asp-for="@Model.hlab_order_items[x].coupon" type="hidden" class="form_coupon_group">
+                            <input asp-for="@Model.hlab_order_items[x].amount" type="hidden" class="form_amount_group">
+                        }
+                        <!--do for each loop here-->
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-sm-10">PAYMENT</div>
+                            <div class="col-sm-2 text-left">
+                                <!--<button type="button" class="btn btn-sm btn-outline-success open_modal clear_payment_form" value="addpayment" id=""><span class="glyphicon glyphicon-plus-sign" style="font-size:1.7rem;"></span></button>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body order_panel" style="overflow:auto;">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table class="table" id="">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">&nbsp;</th>
+                                            <th scope="col">Type</th>
+                                            <th scope="col">Amount</th>
+                                            <th scope="col"><span id="coupon_header" style="display:none;">Coupon#</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{ int count = 0;}
+                                        @for (int i = 0; i < 5; i++)
+                                        {
+                                            count = count + 1;
+                                            <tr>
+                                                <td style="font-size:0.80em;">
+                                                    @count
+                                                </td>
+                                                <td><select asp-for="@Model.hlab_test_payments[i].payment_type_id" class="form-control form-control-sm" asp-items="@Model.selectPaymentTypeList"></select></td>
+                                                <td><input type="text" class="form-control form-control-sm decimal_only" asp-for="@Model.hlab_test_payments[i].paid_amount" id="autofill_payment"></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-11 text-right"></div>
+                            <div class="col-sm-1"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-7"></div>
+            <div class="col-sm-5">
+                <div style="text-align:right;">
+                    <input asp-for="@Model.save_proceed" type="hidden" id="save_proceed">
+                    <button type="button" class="btn btn-success" value="" id="compute_total">Compute Total</button>
+                    <button type="button" class="btn btn-success" value="" id="submit_order">Submit Request</button>
+                    <button type="button" class="btn btn-success" value="" id="submit_order_proceed">Submit & Proceed</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+    <div id="addpayment" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content" style="width:25%;font-size:0.85em;">
+            <div>
+                <h3><span id="service" style="float:left;">Add Payment</span></h3>
+                <button type="button" class="close close_modal" value="addpayment" onclick="">&times;</button>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-sm-3 text-right">Payment Type</div>
+                <div class="col-sm-5"><select class="form-control form-control-sm" asp-items="@ViewBag.selectPaymentTypeList"></select></div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-sm-3 text-right">Amount Paid</div>
+                <div class="col-sm-5"><input type="text" class="form-control form-control-sm" value="" id="amt_paid"></div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-7 text-right">&nbsp;</div>
+                <div class="col-sm-5 text-right"><button type="button" class="btn btn-success" id="save_test_result_btn">ADD</button></div>
+            </div>
+        </div>
+    </div>

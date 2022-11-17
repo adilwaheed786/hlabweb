@@ -1,0 +1,373 @@
+﻿@model HorizonLabAdmin.Models.Forms.TestTransactionSearchParameters
+<!--<link href="~/css/jquery-ui.css" rel="stylesheet" />-->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="~/js/jquery-ui.js"></script>
+<script src="~/js/test_transaction_events.js"></script>
+<script src="~/js/general_functions.js"></script>
+@{
+    ViewData["PageTitle"] = "Horizon Lab Test Records";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+
+    string request_datetime_start = "", request_datetime_end = "", customer_id = "", request_id = "", visibility = "";
+    if (Model.searchRequestId != 0) { request_id = Model.searchRequestId.ToString(); }
+    if (Model.customerId != 0) { customer_id = Model.customerId.ToString(); }
+    if (Model.searchRequestDateStart != null && Model.searchRequestDateStart != DateTime.MinValue) { request_datetime_start = Model.searchRequestDateStart.ToString("dd/MM/yyyy"); }
+    if (Model.searchRequestDateEnd != null && Model.searchRequestDateEnd != DateTime.MinValue) { request_datetime_end = Model.searchRequestDateEnd.ToString("dd/MM/yyyy"); }
+}
+@{string msg_color = "green", page_message = "", coupon="", nonwaterbacteria="";}
+@if (!string.IsNullOrEmpty(ViewBag.PageMessage))
+{
+    var message = ViewBag.PageMessage.Split(":");
+    if (message[0] == "Error")
+    {
+        msg_color = "red";
+    }
+    page_message = message[1];
+}
+<p align="left"><span style="font-size:15px;color:@msg_color;">@page_message</span></p>
+<b>Water Sample Certificates</b>
+<div class="row" style="font-size:1.3rem; color:#606060;">
+    <div class="col-sm-9">
+        <div class="row">
+            @if (!string.IsNullOrEmpty(request_id))
+            {
+                <div class="col-sm-2"><b>Request </b><br />ID : @request_id</div>
+            }
+
+            @if (!string.IsNullOrEmpty(customer_id) || !string.IsNullOrEmpty(Model.searchCustomerFirstName) || !string.IsNullOrEmpty(Model.searchCustomerLastName))
+            {
+                <div class="col-sm-2">
+                    <b>Customer</b>
+                    <br /> ID:  @customer_id
+                </div>
+                <b>Customer Name : </b>@Model.searchCustomerFirstName @Model.searchCustomerLastName
+            }
+
+            @if (!string.IsNullOrEmpty(request_datetime_start) || !string.IsNullOrEmpty(request_datetime_end))
+            {
+                <div class="col-sm-2"><b>Requested Date :</b> <br />@request_datetime_start - @request_datetime_end</div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.str_searchSubmtDateStart) || !string.IsNullOrEmpty(Model.str_searchSubmtDateEnd))
+            {
+                <div class="col-sm-2"><b>Submitted Date :</b> <br />@Model.str_searchSubmtDateStart - @Model.str_searchSubmtDateEnd</div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.str_searchRcvdDateStart) || !string.IsNullOrEmpty(Model.str_searchRcvdDateEnd))
+            {
+                <div class="col-sm-2"><b>Received Date :</b> <br />@Model.str_searchRcvdDateStart - @Model.str_searchRcvdDateEnd</div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.str_searchTestDateStart) || !string.IsNullOrEmpty(Model.str_searchTestDateEnd))
+            {
+                <div class="col-sm-2"><b>Requested Date :</b> <br />@Model.str_searchTestDateStart - @Model.str_searchTestDateEnd</div>
+            }
+
+            <div class="col-sm-2"><b>Sort By :</b> <br />@Model.sortByString @Model.sortByOption</div>
+
+            <div class="col-sm-2">
+                <b>Filter</b><br />
+                @{
+                    string filter_label = "";
+                    if (Model.filter == "all") { filter_label = "ALL RECORDS"; }
+                    if (Model.filter == "unsent") { filter_label = "UNSENT CERTIFICATIONS"; }
+                    if (Model.filter == "sent") { filter_label = "SENT CERTIFICATIONS"; }
+                }
+                @filter_label
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3" style="text-align:right;">
+        <button type="button" class="btn btn-sm btn-outline-success open_modal" value="search_modal"><span class="glyphicon glyphicon-search" style="font-size:2rem;"></span></button>
+        <button type="button" class="btn btn-sm btn-outline-success" id="multi_report" value=""><span class="glyphicon glyphicon-print" style="font-size:2rem;"></span></button>
+        @*<button type="button" class="btn btn-sm btn-outline-success" id="download_multi_report" value=""><span class="glyphicon glyphicon-download-alt" style="font-size:2rem;"></span></button>*@
+        <button type="button" class="btn btn-sm btn-outline-success" id="email_documents" value=""><span class="glyphicon glyphicon-envelope" style="font-size:2rem;"></span></button>
+    </div>
+</div>
+
+<div style="background-color:white;font-size:1.3rem;">
+    <div class="table_fix_header">
+        <form asp-action="MultipleB1nsReport" asp-controller="Certificate" method="post" id="multi_report_form" target="_blank">
+            <table class="table table-striped">
+                <thead class="data_table_header">
+                    <tr>
+                        <th class="data_table_header"><input type="checkbox" id="checkbox_controller" />&nbsp;Request ID</th>
+                        <th class="data_table_header" width="15%"><select asp-items="@ViewBag.selectEmailTemplate" id="template_controller" class="form-control form-control-sm"></select></th>
+                        <th class="data_table_header">Customer</th>
+                        <th class="data_table_header">Primary<br/>Email</th>
+                        <th class="data_table_header">Request Date</th>
+                        <th class="data_table_header">Test Package</th>
+                        <th class="data_table_header">Coupon</th>
+                        <th class="data_table_header">Email Sent</th>
+                        <th class="data_table_header"># of Sample(s)</th>
+                        <th class="data_table_header"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.watercertificatelist.Count; i++)
+                    {
+                        nonwaterbacteria = "";
+                        coupon = "";
+                        var customername = Model.watercertificatelist[i].first_name + " " + Model.watercertificatelist[i].last_name;
+                        string str_request_id = "";
+                        str_request_id = String.Format("{0:00000000}", Model.watercertificatelist[i].order_id);
+                    <tr>
+                        <td>
+                            <input type="hidden" asp-for="@Model.watercertificatelist[i].order_id" value="@Model.watercertificatelist[i].order_id" />
+                            <input type="hidden" asp-for="@Model.watercertificatelist[i].test_pkg_id " value="@Model.watercertificatelist[i].test_pkg_id " />
+                            @if (Model.watercertificatelist[i].min_work_date != null && Model.watercertificatelist[i].msa_horizonid==0)
+                            {
+                                <input type="checkbox" id="" name="requestids" class="cert_checkbox" value="@i" />                                 
+                            }
+
+                            @if(Model.watercertificatelist[i].msa_horizonid != 0)
+                            {
+                                <span style="color:#999999;font-style: italic;">*@str_request_id</span>
+                            }
+                            else
+                            {
+                                <span>@str_request_id</span>
+                            }
+                        </td>
+                        <td>
+                            @{
+                                @foreach(var item in ViewBag.selectEmailTemplate)
+                                {
+                                    if(item.Value == Model.watercertificatelist[i].email_template_id.ToString())
+                                    {
+                                        item.Selected = true;
+                                    }
+                                }
+                             }
+                            <select asp-for="@Model.watercertificatelist[i].email_template_id" asp-items="@ViewBag.selectEmailTemplate" id="" class="form-control form-control-sm emailtemplate"></select>
+                        </td>
+                        <td><a href="@Url.Action("EditCustomerForm","Customer", new { cid=Model.watercertificatelist[i].customer_id})" target="_blank">(@Model.watercertificatelist[i].customer_id) @customername</a></td>
+                        <td>@Model.watercertificatelist[i].email</td>
+                        <td>@(Model.watercertificatelist[i].order_date != null ? Model.watercertificatelist[i].order_date.ToString("dd/MM/yyyy") : "")</td>
+                        <td>@Model.watercertificatelist[i].lab_code</td>
+                        <td>@Model.watercertificatelist[i].gen_coupon</td>
+                        <td>@Model.watercertificatelist[i].date_email_sent</td>
+                        <td>@(Model.watercertificatelist[i].CountWithTrans)</td>
+                        <td>
+                            @{
+                                if (nonwaterbacteria == "") //if non water bacteria package class was detected
+                                {
+                                    <a class="btn btn-sm btn-outline-info" href="@Url.Action("b1ns2", "Certificate", new { requestid = Model.watercertificatelist[i].order_id, test_pkg_id = Model.watercertificatelist[i].test_pkg_id })" target="_blank" title="water certificate"><span class="glyphicon glyphicon-certificate" style="font-size:1.3rem;color:#8FB5FD;"></span></a>
+                                }
+
+                                if (!string.IsNullOrEmpty(Model.watercertificatelist[i].gen_coupon))
+                                {
+                                    <a class="btn btn-sm btn-outline-info" href="@Url.Action("CouponCertificate", "Certificate", new { coupons = Model.watercertificatelist[i].gen_coupon })" target="_blank" title="coupon"><span class="glyphicon glyphicon-barcode" style="font-size:1.3rem;color:#8FB5FD;"></span></a>
+                                }
+
+                                if (Model.watercertificatelist[i].max_subsidy_img_id != 0 && !string.IsNullOrEmpty(Model.watercertificatelist[i].scan_image_filename))
+                                {
+                                    string[] arr_filenames = Model.watercertificatelist[i].scan_image_filename.Split(',');
+                                    foreach (var name in arr_filenames)
+                                    {
+                                        <a class="btn btn-sm btn-outline-info" href="~/scan_subsidy_forms/@name" target="_blank" title="coupon">
+                                            <span class="glyphicon glyphicon-file" style="font-size:1.3rem;color:#8FB5FD;"></span>
+                                        </a>
+                                    }
+                                }
+                            }
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </form>
+        @*@foreach (var trans in ViewBag.transList)
+            {
+                <form asp-action="DownloadB1NSPdfReport" asp-controller="Certificate" method="get" id="download_cert_@trans.trans_id" target="_blank"><input type="hidden" name="transid" value="@trans.trans_id"></form>
+            }*@
+    </div>
+</div>
+<form asp-action="NavigateTransactionRecords" asp-controller="Certificate" method="post" class="" id="test_transaction_nav">
+    <div class="row" style="padding-top:10px;">
+        @{ var rec_count = string.Format("{0:#,0}", Model.rec_count);}
+        <div class="col-sm-4" style="text-align:left;"> <span style="font-size:1.1rem;font-weight:bold;">@rec_count record(s) found</span></div>
+        <div class="col-sm-4" style="text-align:center;">
+            <button type="button" class="btn btn-sm btn-outline-success" id="first_btn"><span class="glyphicon glyphicon-fast-backward" style="font-size:2rem;"></span></button>
+            <button type="button" class="btn btn-sm btn-outline-success" id="back_btn"><span class="glyphicon glyphicon-backward" style="font-size:2rem;"></span></button>
+            <input type="hidden" value="@Model.rec_start" name="record_start" id="record_start" />
+            <input type="hidden" value="@Model.rec_end" name="record_end" id="record_end" />
+            <input type="hidden" value="@Model.rec_count" name="rec_count" id="rec_count" />
+            <input type="hidden" value="@Model.filter" name="filter" id="" />
+            <button type="button" class="btn btn-sm btn-outline-success" id="next_btn"><span class="glyphicon glyphicon-forward" style="font-size:2rem;"></span></button>
+            <button type="button" class="btn btn-sm btn-outline-success" id="last_btn"><span class="glyphicon glyphicon-fast-forward" style="font-size:2rem;"></span></button>
+        </div>
+        <div class="col-sm-4" style="text-align:right;">
+            @{
+                string start = "0", end = "0";
+                if (Model.rec_end != 0)
+                {
+                    start = string.Format("{0:#,0}", Model.rec_start + 1);
+                    end = string.Format("{0:#,0}", Model.rec_end);
+                }
+            }
+            @if (Model.rec_end >= Model.rec_count) { end = Model.rec_count.ToString(); }
+            <span style="font-size:1.5rem;font-weight:bold;">@start to @end Record(s)</span>
+        </div>
+    </div>
+</form>
+
+<div id="search_modal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content" style="width:50%;">
+        <div>Filter Settings<button class="close close_modal" value="search_modal">&times;</button></div>
+        <br />
+        <div style="padding:0px 5px 5px 5px;font-size:1.3rem;">
+            <form asp-action="SearchRequests" asp-controller="Certificate" method="post" class="" id="test_transaction_search">
+                <input type="hidden" class="" name="display" id="display" value="search">
+                <div class="row">
+                    <div class="col-sm-3 text-right">Request ID </div>
+                    <div class="col-sm-3"><input asp-for="@Model.searchRequestId" type="text" class="form-control input-sm number_only clear_field" id="searchRequestId" value="@request_id"></div>
+                </div>
+                <hr />
+
+                CUSTOMER
+                <div class="row">
+                    <div class="col-sm-3 text-right">ID </div>
+                    <div class="col-sm-3"><input asp-for="@Model.customerId" class="form-control input-sm number_only clear_field" type="text" id="customerId" value="@customer_id"></div>
+                </div>
+
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-sm-3 text-right">First Name </div>
+                    <div class="col-sm-3"><input asp-for="@Model.searchCustomerFirstName" class="form-control input-sm clear_field" type="text" id="searchCustomerFirstName" value="@Model.searchCustomerFirstName"></div>
+                    <div class="col-sm-3 text-right">Last Name </div>
+                    <div class="col-sm-3"><input asp-for="@Model.searchCustomerLastName" class="form-control input-sm clear_field" type="text" id="searchCustomerLastName" value="@Model.searchCustomerLastName"></div>
+                </div>
+                <hr />
+
+                REQUEST DATE
+                <div class="row">
+                    <div class="col-sm-2 text-right">Start</div>
+                    <div class="col-sm-4">
+                        <div class='input-group date'>
+                            <input asp-for="@Model.searchRequestDateStart" class="form-control input-sm date_only clear_field" id="searchRequestDateStart" type="text" value="@request_datetime_start" autocomplete="off">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 text-right">End</div>
+                    <div class="col-sm-4">
+                        <div class='input-group date'>
+                            <input asp-for="@Model.searchRequestDateEnd" class="form-control input-sm date_only clear_field" id="searchRequstDateEnd" type="text" value="@request_datetime_end" autocomplete="off">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+
+                SUBMITTED DATE
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-sm-2 text-right">Start</div>
+                    <div class="col-sm-4">
+                        <div class='input-group date'>
+                            <input asp-for="@Model.searchSubmtDateStart" type="text" class="form-control input-sm clear_field" id="searchSubmtDateStart" value="@Model.str_searchSubmtDateStart" autocomplete="off">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2 text-right">End</div>
+                    <div class="col-sm-4">
+                        <div class='input-group date'>
+                            <input asp-for="@Model.searchSubmtDateEnd" type="text" class="form-control input-sm clear_field" id="searchSubmtDateEnd" value="@Model.str_searchSubmtDateEnd" autocomplete="off">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                RECEIVED DATE
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-sm-2 text-right">Start</div>
+                    <div class="col-sm-4">
+                        <div class='input-group date'>
+                            <input asp-for="@Model.searchRcvdDateStart" type="text" class="form-control input-sm clear_field" id="searchRcvdDateStart" value="@Model.str_searchRcvdDateStart" autocomplete="off">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2 text-right">End</div>
+                    <div class="col-sm-4">
+                        <div class='input-group date'>
+                            <input asp-for="@Model.searchRcvdDateEnd" type="text" class="form-control input-sm clear_field" id="searchRcvdDateEnd" value="@Model.str_searchRcvdDateEnd" autocomplete="off">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+
+                TEST DATE
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-sm-2 text-right">Start</div>
+                    <div class="col-sm-4">
+                        <div class='input-group date'>
+                            <input asp-for="@Model.searchTestDateStart" type="text" class="form-control input-sm clear_field" id="searchTestDateStart" value="@Model.str_searchTestDateStart" autocomplete="off">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 text-right">End</div>
+                    <div class="col-sm-4">
+                        <div class='input-group date'>
+                            <input asp-for="@Model.searchTestDateEnd" type="text" class="form-control input-sm clear_field" id="searchTestDateEnd" value="@Model.str_searchTestDateEnd" autocomplete="off">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                PROJECT 
+                <div class="row">
+                    <div class="col-sm-3 text-right">NAME</div>
+                    <div class="col-sm-3">
+                        <select asp-for="@Model.selectprojectid" asp-items="@Model.projectName" class="form-control"></select>
+                        @*<input asp-for="@Model.projectName" class="form-control input-sm number_only clear_field" type="text" id="projectName" value="@customer_id">*@
+                    </div>
+                </div>
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-sm-2 text-right">Start </div>
+                    <div class="col-sm-4">
+                        <div class='input-group date'>
+                            <input asp-for="@Model.searchProjectDateStart" type="text" class="form-control input-sm clear_field" id="searchProjectDateStart" value="@Model.str_searchProjectDateStart" autocomplete="off">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 text-right">End</div>
+                    <div class="col-sm-4">
+                        <div class='input-group date'>
+                            <input asp-for="@Model.searchProjectDateEnd" type="text" class="form-control input-sm clear_field" id="searchProjectDateEnd" value="@Model.str_searchProjectDateEnd" autocomplete="off">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-sm-4">
+                        Sort By <select asp-for="@Model.sortByString" asp-items="@Model.sortByList" class="form-control clear_field" id="sortByString"></select>
+                    </div>
+                    <div class="col-sm-4">
+                        Sort Option <select asp-for="@Model.sortByOption" asp-items="@Model.sortOptionList" class="form-control clear_field" id="sortByOption"></select>
+                    </div>
+                    <div class="col-sm-4">
+                        Certification Filter
+                        <select class="form-control" asp-for="@Model.filter">
+                            <option value="all">All</option>
+                            <option value="unsent">Unsent</option>
+                            <option value="sent">Sent</option>
+                        </select>
+                    </div>
+                </div>
+                <hr />
+                <div>
+                    <button type="submit" class="btn btn-sm btn-outline-success" style="font-size:1.3rem;">Apply</button>
+                    <button type="button" class="btn btn-sm btn-outline-success clear_button" style="font-size:1.3rem;">Clear</button>
+                    <input type="hidden" class="" name="sortByString" id="sortByString" value="">
+                    <input type="hidden" class="" name="sortByOption" id="sortByOption" value="">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

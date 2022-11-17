@@ -1,0 +1,78 @@
+﻿
+@{
+    ViewData["Title"] = "View Request";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+<div class="row">
+    <div class="col-sm-6">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <b>REQUEST ID: </b> @ViewBag.orderid
+            </div>
+            <div class="panel-body">
+                <table class="table" id="item_table">
+                    <thead>
+                        <tr>
+                            <th scope="col"></th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Test</th>
+                            <th scope="col">Lab Code</th>
+                            <th scope="col">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ string placeorderbtn = ""; }
+                        @foreach (var item in ViewBag.orderitems)
+                        {
+                            placeorderbtn = "";
+                            <tr>
+                                @if (item.pkg_class_id == 1 && item.pkg_class_id != 2 && item.trans_id == 0)
+                                { //if class is 1(Water Test Sample) and not 2(Misc) but transaction id is 0
+                                    placeorderbtn = $"<" +
+                                                    $"a type='button' " +
+                                                    $"class='btn btn-sm btn-outline-success' " +
+                                                    $"target='_blank'" +
+                                                    $"href='/WaterBacteriaTransaction/NewWaterSampleForm?oid={item.order_id}&oiid={item.order_item_id}' " +
+                                                    $"data-toggle='tooltip' title='add test sample info'>" +
+                                                    $"<span class='glyphicon glyphicon-open-file' style='font-size:1.3rem;'></span></a >";
+                                }
+
+                                @if (item.pkg_class_id == 4 && item.pkg_class_id != 2 && item.trans_id == 0)
+                                {//if class is 4(Water Chemical) and not 2(Misc) but transaction id is 0
+                                    placeorderbtn = $"<" +
+                                                    $"a type='button' " +
+                                                    $"class='btn btn-sm btn-outline-success' " +
+                                                    $"target='_blank'" +
+                                                    $"href='/WaterChemicalTransaction/NewWaterChemForm?oid={item.order_id}&oiid={item.order_item_id}' " +
+                                                    $"data-toggle='tooltip' title='add test sample info'>" +
+                                                    $"<span class='glyphicon glyphicon-open-file' style='font-size:1.3rem;'></span></button >";
+                                }
+
+                                @if (item.pkg_class_id != 2 && item.trans_id != 0)
+                                {//if packaage class id is not 2(Misc) but transaction id is not equal to 0
+                                    if (item.trans_id != 0)
+                                    {
+                                        if (item.pkg_class_id == 4)
+                                        {
+                                            placeorderbtn = $"Trans ID:<a href='/WaterChemicalTransaction/ViewWaterChemForm?transId={item.trans_id}' target='_blank'>{item.trans_id}</a>";
+                                        }
+                                        else if (item.pkg_class_id == 1)
+                                        {
+                                            placeorderbtn = $"Trans ID:<a href='/WaterBacteriaTransaction/EditTestTransactionPage?transId={item.trans_id}' target='_blank'>{item.trans_id}</a>";
+                                        }
+                                    }
+                                }
+                                <td>@Html.Raw(placeorderbtn)</td>
+                                <td>1</td>
+                                <td>@item.pkg_class</td>
+                                <td>@item.lab_code</td>
+                                <td>@item.amount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+

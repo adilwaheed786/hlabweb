@@ -1,0 +1,72 @@
+﻿@{
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+    ViewData["PageTitle"] = "User Accounts Panel";
+}
+@{string msg_color = "green", page_message = "";}
+@if (!string.IsNullOrEmpty(ViewBag.PageMessage))
+{
+    var message = ViewBag.PageMessage.Split(":");
+    if (message[0] == "Error")
+    {
+        msg_color = "red";
+    }
+    page_message = message[1];
+}
+<div class="row">
+    <div class="col-lg-4">
+            <button type="button" class="btn btn-success goto_newuseraccountform"><span class="glyphicon glyphicon-plus"></span>&nbsp;Add New Account</button>
+    </div>
+    <div class="col-lg-4"><b>@ViewBag.Page</b></div>
+    <div class="col-lg-4">
+        <form asp-action="SearchUserAccounts" asp-controller="UserAccount" class="form-inline" id="">
+            <div class="form-group mb-2">
+                <select asp-items="@ViewBag.searchOption" name="searchBy" class="form-control"></select>
+                <input type="text" class="form-control" name="searchString" id="searchString" value=" @ViewBag.searched" />
+                <button type="submit" class="btn btn-outline-success"><span class="glyphicon glyphicon-search"></span></button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<p align="left"><span style="font-size:15px;color:@msg_color;">@page_message</span></p>
+<div style="background-color:white;">    
+    <table class="table table-striped" style="font-size:1.3rem;">
+        <thead class="data_table_header">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">UserName</th>
+                <th scope="col">&nbsp</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in ViewBag.userList)
+            {
+                var name = user.fname + " " + user.lname;
+                <tr>
+                    <th scope="row">@user.user_id</th>
+                    <td>@name</td>
+                    <td>@user.email</td>
+                    <td>@user.username</td>
+                    <td>
+                        <button type="button" class="btn btn-outline-info" onclick="window.location.href='/UserAccount/ViewUserAccount?userId=@user.user_id'"><span class="glyphicon glyphicon-info-sign"></span></button>
+                        <button type="button" class="btn btn-outline-success" onclick="window.location.href='/UserAccount/UserAccountForm?userId=@user.user_id'"><span class="glyphicon glyphicon-pencil"></span></button>
+                        <!--For active users only-->
+                        @if (ViewBag.status)
+                        {
+                            <button type="button" class="btn btn-outline-danger delete_user" value="@user.user_id"><span class="glyphicon glyphicon-remove"></span></button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-outline-success activate_user" value="@user.user_id"><span class="glyphicon glyphicon-ok"></span></button>
+                        }
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script src="~/js/user_account_events.js"></script>

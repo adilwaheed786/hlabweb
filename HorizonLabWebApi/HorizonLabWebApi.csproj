@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <AssemblyName>HorizonLabWebApi</AssemblyName>
+    <RootNamespace>HorizonLabWebApi</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Helpers\**" />
+    <Compile Remove="wwwroot\**" />
+    <Content Remove="Helpers\**" />
+    <Content Remove="wwwroot\**" />
+    <EmbeddedResource Remove="Helpers\**" />
+    <EmbeddedResource Remove="wwwroot\**" />
+    <None Remove="Helpers\**" />
+    <None Remove="wwwroot\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.9" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="4.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="HorizonLabLibrary">
+      <HintPath>..\HorizonLabLibrary\bin\Debug\netstandard2.0\HorizonLabLibrary.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="nlog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

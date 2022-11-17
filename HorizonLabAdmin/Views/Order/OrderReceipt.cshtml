@@ -1,0 +1,148 @@
+﻿@{ 
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="~/images/horizonlab_icon.png">
+    <title>Horizon Lab Admin</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <link rel="stylesheet" href="~/css/font-awesome.min.css">
+    <!--<link href="~/css/style.css" rel="stylesheet" />-->
+    <link href="~/css/horizonlab_style.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+
+    <script src="~/js/core/jquery.min.js"></script>
+    <script src="~/js/core/popper.min.js"></script>
+    <script src="~/js/core/bootstrap-material-design.min.js"></script>
+    <script src="~/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+    <script src="~/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>
+    <link rel="stylesheet" href="~/css/modal_style.css" />
+    <script src="~/js/css-icons.js"></script>
+</head>
+@{
+    decimal subtotal = 0, gst = 0, baldue = 0, changedue = 0, total_payment = 0 ;
+}
+<body>
+    <div class="wrapper">
+        <div class="content">
+            <div class="container-fluid" style="width:100%;font-size:0.85em;">
+                <table style="width:100%;">
+                    <tr>
+                        <td><img src="~/images/horizonlab_logo.png" class="img-fluid" alt="" width="300" height="180" /></td>
+                        <td style="text-align:right;">
+                            4055 Portage Avenue<br />
+                            Winnipeg, MB R3K 2E8<br />
+                            Ph: (204) 488-2035<br />
+                            Fax: (204) 488-4772<br />
+                            Email: customerservice@horizonlab.ca
+                        </td>
+                    </tr>
+                </table>
+                <hr />
+                <br/>
+                <p class="text-center" style="padding:5px 5px 5px 5px;background:#E5E2E2;color:#7E7C7C;">Customer Receipt Only</p>
+                <b>Customer:</b>&nbsp;<span>@ViewBag.orderview.first_name</span>&nbsp;<span>@ViewBag.orderview.last_name</span><br />
+                <b>Date:</b>&nbsp;@ViewBag.orderview.order_date<br />
+                <b>Order ID:</b>&nbsp;@ViewBag.orderview.order_id<br />
+                <p>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Package Code</th>
+                                <th>Description</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                                <th>Amount(+Tax)</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @{
+                                if (ViewBag.orderitemlist.Count > 0)
+                                {
+                                    foreach (var item in ViewBag.orderitemlist)
+                                    {
+                                        <tr>
+                                            <td>@item.lab_code</td>
+                                            <td>@item.analysis</td>
+                                            <td>1</td>
+                                            <td>$@item.price</td>
+                                            <td>$@item.amount</td>
+                                        </tr>
+                                        subtotal = subtotal + @item.amount;
+                                    }
+                                    gst = subtotal * Convert.ToDecimal((ViewBag.orderview.tax/100));
+                                    //baldue = gst + subtotal;
+
+                                    foreach(var pay in ViewBag.payments)
+                                    {
+                                        total_payment = total_payment + pay.paid_amount;
+                                    }
+                                    changedue = total_payment - baldue;
+
+                                }
+                            }
+                            <tr>
+                                <td colspan="2">&nbsp;</td>
+                                <td colspan="2"><b>Subtotal</b></td>
+                                <td>$@subtotal</td>
+                            </tr>
+                            @*<tr>
+                                <td colspan="2">&nbsp;</td>
+                                <td colspan="2"><b>GST @ViewBag.orderview.tax%</b></td>
+                                <td>$@Math.Round(gst, 2)</td>
+                            </tr>*@
+                            <tr>
+                                <td colspan="2">&nbsp;</td>
+                                <td colspan="2"><b>Balance Due</b></td>
+                                <td>$@Math.Round(baldue, 2)</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td colspan="3">
+                                    <b>Payments:</b>
+                                    <table class="table table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th>Amount Paid</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var pay in ViewBag.payments)
+                                            {
+                                                <tr>
+                                                    <td>@pay.payment</td>
+                                                    <td>$@Math.Round(pay.paid_amount, 2)</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td colspan="2">&nbsp;</td>
+                                <td colspan="2"><b>Amount Paid</b></td>
+                                <td>$@total_payment</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">&nbsp;</td>
+                                <td colspan="2"><b>Change Due</b></td>
+                                <td>$@Math.Round(changedue, 2)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </p>
+                <p class="text-center">Thank you for choosing Horizon Lab!</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,58 @@
+﻿
+@{
+    ViewData["PageTitle"] = "Email Sent Logs";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="~/js/jquery-ui.js"></script>
+<script>
+    $(function () {
+        $("#sortdate").click(function () {
+            var sort = $(this).val();
+            if (sort == "desc") {
+                window.location = "/Settings/EmailLogs?sortdate=asc"
+            }
+            else{
+                window.location = "/Settings/EmailLogs?sortdate=desc"
+            }
+        });
+    });
+</script>
+
+<div class="row" style="height:800px; font-size:1.2rem; overflow:auto;">
+    <div class="col-lg-12">
+        <div class="panel panel-success">
+            <div class="panel-heading">Logs</div>
+            <div class="panel-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Recipient</th>
+                            <th>Remarks</th>
+                            <th>Email Template</th>
+                            <th>Email Subject</th>
+                            <th>Status</th>
+                            <th>                           
+                                <button type="button" class="btn btn-default" value="@ViewBag.sortdate" id="sortdate">Date Sent</button>
+                             </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var log in ViewBag.email_logs)
+                        {
+                            <tr>
+                                <td>@log.email_recepient</td>
+                                <td>@log.remarks</td>
+                                <td>@log.template_name</td>
+                                <td>@log.template_subject</td>
+                                <td>@log.status</td>
+                                <td>@log.date_sent</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

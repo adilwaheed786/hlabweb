@@ -1,0 +1,149 @@
+﻿@model HorizonLabAdmin.Models.Forms.EmailTemplate
+@{
+    ViewData["PageTitle"] = "Email Template Settings";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+<link href="~/css/jquery-ui.css" rel="stylesheet" />
+<link href="~/css/jquery-te-1.4.0.css" rel="stylesheet" />
+<script src="~/js/jquery-ui.js"></script>
+<script src="~/js/email_events.js"></script>
+<script src="~/js/general_functions.js"></script>
+<script src="~/js/jquery-te-1.4.0.min.js"></script>
+
+<div class="panel panel-success">
+    <div class="panel-heading">
+        <div class="row">
+            <div class="col-sm-10">Email Templates</div>
+            <div class="col-sm-2 text-right">
+                <button type="button" class="btn btn-sm btn-outline-success open_modal" id="" value="newemailtemplate"><span class="glyphicon glyphicon-plus" style="font-size:2rem;" title="new email template"></span></button>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-lg-5">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Template Name</th>
+                            <th>Date Last Modified</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var template in Model.hlab_email_template_list)
+                        {
+                            <tr>
+                                <td><input asp-for="@template.status" type="checkbox" id="" value="@template.id" class="status_checkbox"></td>
+                                <td>
+                                    <a class="dropdown-item" href="@Url.Action("EmailTemplateSettings", "Settings", new { templateid = template.id})">@template.template_name</a>
+                                </td>
+                                <td>@template.date_last_modified</td>
+
+                                @if (template.status)
+                                {
+                                    <td><span id="status_label_@template.id">Enabled</span></td>
+                                }
+                                else
+                                {
+                                    <td><span id="status_label_@template.id">Disabled</span></td>
+                                }
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col-lg-7">
+                @if (ViewBag.templateid != 0)
+                {
+                <form asp-action="UpdateNewEmailTemplate" asp-controller="Settings" method="post" id="" enctype="multipart/form-data">
+                    <input asp-for="@Model.hlab_email_template.id" type="hidden" class="form-control" />
+                    <input asp-for="@Model.hlab_email_template.date_last_modified" type="hidden" class="form-control" value="@DateTime.Now" />
+                    <input asp-for="@Model.hlab_email_template.status" type="hidden" class="form-control" />
+                    <div class="" style="border:1px solid #E3E3E3; border-radius:6px;height:590px; overflow:auto;padding:2% 2% 2% 2%;">
+                        <p><b>Email Template Name:</b><br /><input asp-for="@Model.hlab_email_template.template_name" type="text" class="form-control" /></p>
+                        <p><b>Email Template Subject:</b><br /><input asp-for="@Model.hlab_email_template.template_subject" type="text" class="form-control" /></p>
+                        <p><b>Email Body Message:</b><br /><textarea asp-for="@Model.hlab_email_template.template_message" class="form-control jqte-test"></textarea></p>
+                        <p><input type="file" id="files" name="attachments" class="form-control" multiple><br><br></p>
+                        <p>
+                            <div class="d-flex flex-wrap" style="width:350px;">
+                                @foreach (var file in Model.file_attachment_list)
+                                {
+                                    <div class="p-2 border">
+                                        <input name="attached_files" type="checkbox" value="@file.file_name" checked>
+                                        @file.file_name
+                                    </div>
+                                }
+                            </div>
+                        </p>
+                    </div>                   
+                    <div class="row">
+                        <div class="col-sm-10"></div>
+                        <div class="col-sm-2 text-right">
+                            <button type="submit" class="btn btn-success" id="" value="">SAVE</button>
+                        </div>
+                    </div>
+                </form>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="newemailtemplate" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content" style="width:45%;">
+        <div><h3><span id="service" style="float:left;">Add New Email Template</span></h3><button class="close close_modal" value="newemailtemplate" onclick="">&times;</button></div>
+        <br />
+        <form asp-action="AddNewEmailTemplate" asp-controller="Settings" method="post" class="" id="" enctype="multipart/form-data">
+            <input asp-for="@Model.new_hlab_email_template.date_last_modified" type="hidden" class="form-control" value="@DateTime.Now" />
+            <input asp-for="@Model.new_hlab_email_template.status" type="hidden" class="form-control" value="true" />
+            <div class="row">
+                <div class="col-sm-5"><b>Email Template Name:</b></div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-12"><input asp-for="@Model.new_hlab_email_template.template_name" type="text" class="form-control" value="" /></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-5"><b>Email Subject:</b></div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-12"><input asp-for="@Model.new_hlab_email_template.template_subject" type="text" class="form-control" value="" /></div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-5">
+                    <b>Email Body Message:</b><br />
+                </div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-12">
+                    <textarea asp-for="@Model.new_hlab_email_template.template_message" class="form-control jqte-test"></textarea>
+                </div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-5"><b>File Attachments:</b></div>
+                <div class="col-sm-5">
+                    <input type="file" id="files" name="attachments" class="form-control" multiple>
+                </div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-10">&nbsp;</div>
+                <div class="col-sm-2 text-right"><button type="submit" class="btn btn-success" id="">SAVE</button></div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    $('.jqte-test').jqte();
+
+    // settings of status
+    var jqteStatus = true;
+    $(".status").click(function () {
+        jqteStatus = jqteStatus ? false : true;
+        $('.jqte-test').jqte({ "status": jqteStatus })
+    });
+</script>

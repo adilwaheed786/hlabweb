@@ -1,0 +1,98 @@
+﻿@model HorizonLabAdmin.Models.Forms.WaterBacteriaBulkUploadObject
+@{
+    ViewData["Title"] = "ProcessWaterBacteriaBulkUploads";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+
+<h2>Processed Water Bacteria Bulk Upload</h2>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="panel panel-success">
+            <div class="panel-heading">&nbsp;</div>
+            <div class="panel-body" style="overflow:auto;height:650px;">
+                <div class="row">
+                        <table class="table table-striped" style="font-size:1.15rem;">
+                            <thead>
+                                <tr>
+                                    <th><div style="width:200px;">Insert Result</div></th>
+                                    <th><div style="width:100px;">LabPackage</div></th>
+                                    <th><div style="width:70px;">CustomerID</div></th>
+                                    <th><div style="width:150px;">FirstName</div></th>
+                                    <th><div style="width:150px;">LastName</div></th>
+                                    <th><div style="width:220px;">PrimaryEmail</div></th>
+                                    <th><div style="width:120px;">PrimaryPhone</div></th>
+                                    <th><div style="width:100px;">TotalRequestAmount</div></th>
+                                    <th><div style="width:90px;">Payment1</div></th>
+                                    <th><div style="width:70px;">Amount1</div></th>
+                                    <th><div style="width:90px;">Payment2</div></th>
+                                    <th><div style="width:70px;">Amount2</div></th>
+                                    <th><div style="width:90px;">Payment3</div></th>
+                                    <th><div style="width:70px;">Amount3</div></th>
+                                    <th><div style="width:100px;">Coupon</div></th>
+                                    <th><div style="width:175px;">Project</div></th>
+                                    <th><div style="width:120px;">Postal</div></th>
+                                    <th><div style="width:190px;">SampleID</div></th>
+                                    <th><div style="width:100px;">SampleType</div></th>
+                                    <th><div style="width:190px;">LegalLocation</div></th>
+                                    <th><div style="width:150px;">Town</div></th>
+                                    <th><div style="width:170px;">Municipality</div></th>
+                                    <th><div style="width:120px;">CollectDate</div></th>
+                                    <th><div style="width:80px;">CollectTime</div></th>
+                                    <th><div style="width:150px;">SubmittedBy</div></th>
+                                    <th><div style="width:120px;">SubmittedDate</div></th>
+                                    <th><div style="width:80px;">SubmittedTime</div></th>
+                                    <th><div style="width:80px;">ReceivedBy</div></th>
+                                    <th><div style="width:120px;">ReceivedDate</div></th>
+                                    <th><div style="width:80px;">ReceivedTime</div></th>
+                                    <th><div style="width:120px;">TestDate</div></th>
+                                    <th><div style="width:100px;">Temperature</div></th>
+                                    <th><div style="width:60px;">Tax%</div></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.wbf_list.Count; i++)
+                                {
+                                <tr>
+                                    <td>@Model.wbf_list[i].InsertResult</td>
+                                    <td>@Model.wbf_list[i].LabPackage</td>
+                                    <td>@Model.wbf_list[i].CustomerID</td>
+                                    <td>@Model.wbf_list[i].FirstName</td>
+                                    <td>@Model.wbf_list[i].LastName</td>
+                                    <td>@Model.wbf_list[i].PrimaryEmail</td>
+                                    <td>@Model.wbf_list[i].PrimaryPhone</td>
+                                    <td>@Model.wbf_list[i].TotalRequestAmount</td>
+                                    <td>@Model.wbf_list[i].Payment1</td>
+                                    <td>@Model.wbf_list[i].Amount1</td>
+                                    <td>@Model.wbf_list[i].Payment2</td>
+                                    <td>@Model.wbf_list[i].Amount2</td>
+                                    <td>@Model.wbf_list[i].Payment3</td>
+                                    <td>@Model.wbf_list[i].Amount3</td>
+                                    <td>@Model.wbf_list[i].Coupon</td>
+                                    <td>@Model.wbf_list[i].Project</td>
+                                    <td>@Model.wbf_list[i].Postal</td>
+                                    <td>@Model.wbf_list[i].SampleID</td>
+                                    <td>@Model.wbf_list[i].SampleType</td>
+                                    <td>@Model.wbf_list[i].LegalLocation</td>
+                                    <td>@Model.wbf_list[i].Town</td>
+                                    <td>@Model.wbf_list[i].Municipality</td>
+                                    <td>@Model.wbf_list[i].CollectDate</td>
+                                    <td>@Model.wbf_list[i].CollectTime</td>
+                                    <td>@Model.wbf_list[i].SubmittedBy</td>
+                                    <td>@Model.wbf_list[i].SubmittedDate</td>
+                                    <td>@Model.wbf_list[i].SubmittedTime</td>
+                                    <td>@Model.wbf_list[i].ReceivedBy</td>
+                                    <td>@Model.wbf_list[i].ReceivedDate</td>
+                                    <td>@Model.wbf_list[i].ReceivedTime</td>
+                                    <td>@Model.wbf_list[i].TestDate</td>
+                                    <td>@Model.wbf_list[i].Temperature</td>
+                                    <td>@Model.wbf_list[i].Tax</td>
+                                </tr>
+                                }
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

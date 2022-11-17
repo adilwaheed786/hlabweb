@@ -1,0 +1,101 @@
+﻿@{
+    ViewData["PageTitle"] = "Test Package Categories";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+<link href="~/css/jquery-ui.css" rel="stylesheet" />
+<script src="~/js/jquery-ui.js"></script>
+<script src="~/js/test_package_events.js"></script>
+<script src="~/js/general_functions.js"></script>
+@model HorizonLabAdmin.Models.Forms.TestPackage
+<div clsss="row">
+    @{ if (!string.IsNullOrEmpty(ViewBag.Message))
+        {
+            var msg_details = ViewBag.Message.Split(':');
+            if (msg_details[0] == "success")
+            {
+                <p style="color:green;font-size:.75em;">@msg_details[1]</p>
+            }
+            else
+            {
+                <p style="color:red;font-size:.75em;">@msg_details[1]</p>
+            }
+        }       
+    }
+
+    <div class="col-sm-12">
+        <form asp-action="UpdateTestPackageCategory" asp-controller="Settings" method="post" class="" id="">
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-sm-8">Test Categories Table</div>
+                                <div class="col-sm-4" style="text-align:right;">
+                                    <button type="submit" class="btn btn-sm btn-outline-success" value="" id="" data-toggle='tooltip' title='save changes'>
+                                        <span class="glyphicon glyphicon-floppy-disk" style="font-size:1.7rem;"></span>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-success open_modal" value="addnewcategory" id="" data-toggle='tooltip' title='add new category'>
+                                        <span class="glyphicon glyphicon-plus" style="font-size:1.7rem;"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th style="width:5%;">&nbsp;</th>
+                                        <th>Category Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.test_categories.Count; i++)
+                                    {
+                                        <tr>
+                                            <td class="text-right">
+                                                @if (Model.test_categories[i].status)
+                                                {
+                                                    <button type="button" class="btn btn-sm btn-outline-success category_status_button" value="status_@Model.test_categories[i].category_id" id="" data-toggle='tooltip' title='disable category'>
+                                                        <span class="glyphicon glyphicon-check" style="font-size:1.25rem;"></span>
+                                                    </button>
+                                                    <input asp-for="@Model.test_categories[i].status" type="hidden" class="form-control" id="status_@Model.test_categories[i].category_id">
+                                                }
+                                                else
+                                                {
+                                                    <button type="button" class="btn btn-sm btn-outline-success category_status_button" value="status_@Model.test_categories[i].category_id" id="" data-toggle="tooltip" title="enable category" style="color:#CCCECC;border-color:#CCCECC;">
+                                                        <span class="glyphicon glyphicon-check" style="font-size:1.25rem;"></span>
+                                                    </button>
+                                                    <input asp-for="@Model.test_categories[i].status" type="hidden" class="form-control" id="status_@Model.test_categories[i].category_id">
+                                                }
+                                            </td>
+                                            <td style="font-size:1.25rem;">
+                                                <input asp-for="@Model.test_categories[i].package_ctgry" type="text" class="form-control">
+                                                <input asp-for="@Model.test_categories[i].category_id" type="hidden" class="form-control">
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="addnewcategory" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content" style="width:25%;">
+        <div><h3><span id="service" style="float:left;">Add New Test Category</span></h3><button class="close close_modal" value="addnewcategory" onclick="">&times;</button></div>
+        <br />
+        <form asp-action="AddTestPackageCategory" asp-controller="Settings" method="post" class="" id="new_cateogry_form">
+            <input asp-for="@Model.test_category.package_ctgry" type="text" class="form-control " value="" id="category_name">
+            <input asp-for="@Model.test_category.status" type="hidden" class="form-control " value="True" id="">
+
+            <div class="row allownace_top">
+                <div class="col-sm-12 text-right"><button type="button" class="btn btn-success" id="save_new_category">SAVE</button></div>
+            </div>
+        </form>
+    </div>
+</div>

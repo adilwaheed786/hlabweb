@@ -1,0 +1,95 @@
+﻿@model HorizonLabAdmin.Models.Forms.TestResultPageViewModel
+@{ string orderid = "", analysis = "", dateorder = "", recievedby = "", price = "", labcode = "", html_disable = null;}
+@{ bool disabled = false; int admin_access = 1;}
+@if (ViewBag.orderitemview != null)
+{
+    orderid = string.Format("{0:00000000}", ViewBag.orderitemview.order_id);
+    analysis = ViewBag.orderitemview.analysis;
+    dateorder = ViewBag.orderitemview.order_date?.ToString("dd/MM/yyyy");
+    recievedby = ViewBag.orderitemview.received_by;
+    price = string.Format("{0:0.00}", ViewBag.orderitemview.amount);
+    labcode = ViewBag.orderitemview.lab_code;
+
+    @if (ViewBag.orderitemview.pkg_id == 1)
+    { //if package id is subsidy
+        disabled = true;
+    }
+    if (Model.trans_details.publish && ViewBag.user_access_id != admin_access)
+    {
+        html_disable = "disabled";
+    }
+}
+
+@*<button type="button" class="btn btn-sm btn-success open_modal" value="addtestresult"><span class="glyphicon glyphicon-plus" style="font-size:1.3rem;"></span></button>*@
+<!--<button type="button" class="accordion" data-toggle="collapse" data-target="#test_results" aria-expanded="true" aria-controls="test_results">Test Results</button>
+<div class="panel panel-success collapse" id="test_results">-->
+    <div class="panel-body">
+        <div class="row">
+            <table class="table table-striped">
+                <thead class="">
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th class="">Parameter</th>
+                        <th class="">Note</th>
+                        <th class="" style="width:6%;">Result</th>
+                        <th class=""><a href="#" id="addUnit">+Unit Of Measurement</a></th>
+                        <th class="">Pass/Fail</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ string delete_value = ""; int tabindex = 35;}
+
+                    @if (Model.result_list != null && Model.result_list.Count > 0)
+                    {
+                        foreach (var result in Model.result_list)
+                        {
+                            delete_value = result.result_id + "_" + Model.trans_details.trans_id;
+                            <tr>
+                                <td>
+                                    <!--<button type="button" class="btn btn-sm btn-outline-success editresultbtn openeditform" id="" value="@result.result_id" onclick=""><span class="glyphicon glyphicon-pencil" style="font-size:1.3rem;"></span></button>-->
+                                    <button type="button" class="btn btn-sm btn-outline-danger delete_result" value="@delete_value" disabled="@html_disable"><span class="glyphicon glyphicon-remove" style="font-size:1.3rem;"></span></button>
+                                    <input type="hidden" id="" class="result_ids" value="@result.result_id" disabled="@html_disable" />
+                                </td>
+                                <td><select asp-for="@result.param_id" asp-items="@Model.selectTestParameters" style="width:100%;" id="paramid_@result.result_id" class="dropdownfield" disabled="@html_disable"></select></td>
+                                <td><input type="text" style="width:100%;" value="@result.idnty_location" id="testnote_@result.result_id" disabled="@html_disable"></td>
+                                <td><input type="text" class="result_value" style="width:95%;" value="@result.result" id="result_@result.result_id" tabindex="@tabindex" disabled="@html_disable"></td>
+                                <td>
+                                    <div class="row">
+                                        @if (result.unit_id == 0)
+                                        {
+                                            foreach (var dflt in ViewBag.default_pkg_params)
+                                            {
+                                                if (dflt.param_id == result.param_id)
+                                                {
+                                                    result.unit_id = dflt.unit_measurement_id;
+                                                }
+                                            }
+                                        }
+                                        <select asp-items="@Model.selectUnitMeasurements" style="width:95%;" asp-for="@result.unit_id" id="unit_id_@result.result_id" class="dropdownfield" disabled="@html_disable"></select>
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (string.IsNullOrEmpty(result.result) || result.result == "0" || result.result.ToLower() == "absent")
+                                    {
+                                        result.is_failed = true;
+                                    }
+                                    else
+                                    {
+                                        result.is_failed = false;
+                                    }
+
+                                    <select asp-for="@result.is_failed" style="width:100%;" id="isFail_@result.result_id" disabled="@html_disable">
+                                        <option value="true">Pass</option>
+                                        <option value="false">Fail</option>
+                                    </select>
+
+                                </td>
+                            </tr>
+                            tabindex++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+<!--</div>-->

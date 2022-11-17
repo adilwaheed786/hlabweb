@@ -1,0 +1,641 @@
+﻿@model HorizonLabAdmin.Models.Forms.TestResultPageViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<link href="~/css/horizonlab_style.css" rel="stylesheet" />
+<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+<link href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
+<link href="~/css/jquery.datetextentry.css" rel="stylesheet" />
+<link href="~/css/jquery-ui.css" rel="stylesheet" />
+<link href="~/css/modal_style.css" rel="stylesheet" />
+
+<script src="~/js/core/popper.min.js"></script>
+<script src="~/js/core/bootstrap-material-design.min.js"></script>
+<script src="~/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+<script src="~/js/css-icons.js"></script>
+<script src="~/js/jquery-ui.js"></script>
+<script src="~/js/general_functions.js"></script>
+<script src="~/js/core/jquery.min.js"></script>
+<script src="~/js/jquery.datetextentry.js"></script>
+<script src="~/js/fm.timetator.jquery.js"></script>
+<script src="~/js/edit_transaction_events.js"></script>
+
+<script>
+    $(function () {
+        //$('#input_collectdate').datetextentry({ field_order: 'DMY', year_id: 'collectdate_year' });
+        $('#input_submitdate').datetextentry({ field_order: 'DMY', year_id: 'submitdate_year' });
+        $('#input_receiveddate').datetextentry({ field_order: 'DMY', year_id: 'receiveddate_year' });
+        $('#input_testdate').datetextentry({
+            field_order: 'DMY',
+            year_id: 'testdate_year',
+            on_blur: function () {
+                //$("#input_collecttime").focus();
+            }
+        });
+        $('#input_reportdate').datetextentry({ field_order: 'DMY' });
+        $('#input_datereceived').datetextentry({ field_order: 'DMY' });
+        $('#input_sampleddate').datetextentry({ field_order: 'DMY' });
+
+        $('#input_collecttime').timetator({ useCap: true });
+        $('#input_submittime').timetator({ useCap: true });
+        $('#input_receivedtime').timetator({ useCap: true });
+        $('#input_sampledtime').timetator({ useCap: true });
+        $('#input_timereceived').timetator({ useCap: true });
+
+        $("#collectdate_year").focusout(function () {
+            $('#input_collecttime').focus();
+        });
+
+        $("#submitdate_year").focusout(function () {
+            $('#input_submittime').focus();
+        });
+
+        $("#receiveddate_year").focusout(function () {
+            $('#input_receivedtime').focus();
+        });
+
+        $("#testdate_year").focusout(function () {
+            $('#form_temperature').focus();
+        });
+
+        $(".jq-dte-year").focusout(function () {
+            if ($(this).val() == "") {
+                var year = new Date().getFullYear();
+                $(this).val(year);
+            }
+        });
+    });
+</script>
+
+@{string msg_color = "green", page_message = "";}
+@if (!string.IsNullOrEmpty(ViewBag.PageMessage))
+{
+    var message = ViewBag.PageMessage.Split(":");
+    if (message[0] == "Error")
+    {
+        msg_color = "red";
+    }
+    page_message = message[1];
+}
+<p align="left"><span style="font-size:15px;color:@msg_color;">@page_message</span></p>
+<body style="padding:5px 5px 5px 5px;">
+<div style="font-size:1.3rem;">
+    <h3>Test results for transaction #@string.Format("{0:00000000}", Model.trans_details.trans_id)</h3>
+    @{ string orderid = "", analysis = "", dateorder = "", recievedby = "", price = "", labcode = "";}
+    @{ bool disabled = false;}
+    @if (Model.orderitemview != null)
+    {
+        orderid = string.Format("{0:00000000}", Model.orderitemview.order_id);
+        analysis = Model.orderitemview.analysis;
+        dateorder = Model.orderitemview.order_date?.ToString("dd/MM/yyyy");
+        recievedby = Model.orderitemview.received_by;
+        price = string.Format("{0:0.00}", Model.orderitemview.amount);
+        labcode = Model.orderitemview.lab_code;
+
+        @if (Model.orderitemview.pkg_id == 1)
+        { //if package id is subsidy
+            disabled = true;
+        }
+    }
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="panel panel-success" style="height:220px;">
+                <div class="panel-heading">Customer Information</div>
+                <div class="panel-body">
+                    <p><b>Customer ID:</b> @String.Format("{0:00000000}", Model.trans_details.customer_id)</p>
+                    <p><b>Customer Name: </b> @Model.trans_details.first_name @Model.trans_details.last_name</p>
+                    <p>
+                        <b>Address</b>
+                        <br />
+                        @if (!string.IsNullOrEmpty(Model.trans_details.street))
+                        {
+                            @Model.trans_details.street @Model.trans_details.city <br />
+                            @Model.trans_details.province
+                        }
+                        @if (!string.IsNullOrEmpty(Model.trans_details.postal_code))
+                        {
+                            @Model.trans_details.postal_code.ToUpper()
+                        }
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="panel panel-success" style="height:220px;">
+                <div class="panel-heading">Other Information</div>
+                <div class="panel-body">
+                    <p><b>Public: </b>@Model.trans_details.is_public</p>
+                    <p><b>Semi Public: </b>@Model.trans_details.is_semi_public</p>
+                    <p><b>Approved for Financing: </b>@Model.trans_details.is_approve_financing</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel panel-success" style="height:220px;">
+                <div class="panel-heading">Order Information</div>
+                <div class="panel-body">
+                    <p><b>Request ID:</b> @orderid</p>
+                    <p><b>Lab Code:</b> @labcode</p>
+                    <p><b>Analysis:</b> @analysis</p>
+                    <p><b>Date Request:</b> @dateorder</p>
+                    <p><b>Received By:</b> @recievedby  </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <form asp-action="UpdateTransactionInfo" asp-controller="WaterBacteriaPostTransactions" method="post" class="" id="edit_transaction_info" enctype="multipart/form-data">
+        <input type="hidden" asp-for="@Model.ispageframe" value="true">
+        <input type="hidden" asp-for="@Model.goto_viewpage" value="EditTestTransactionFramePage">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">Invoice / Payment</div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <input asp-for="@Model.trans_details.trans_id" type="hidden" class="form-control" value="@Model.trans_details.trans_id" id="transactionid">
+                            <input asp-for="@Model.trans_details.customer_id" type="hidden" class="form-control" id="customer_select" value="@Model.trans_details.customer_id">
+                            <input asp-for="@Model.trans_details.date_entered" type="hidden" class="form-control" value="@Model.trans_details.date_entered">
+
+                            <div class="col-sm-6">
+                                <div class="row allownace_top">
+                                    <div class="col-sm-5 text-right"><b>Amount: </b></div>
+                                    <div class="col-sm-5 text-left">@Model.trans_details.price</div>
+                                </div>
+                                <div class="row allownace_top">
+                                    <div class="col-sm-5 text-right"><b>Paid By: </b></div>
+                                    <div class="col-sm-5">@Model.trans_details.first_name @Model.trans_details.last_name</div>
+                                </div>
+                                <div class="row allownace_top">
+                                    <div class="col-sm-5 text-right"><b>Paid: </b></div>
+                                    <div class="col-sm-5"><select asp-for="@Model.trans_details.is_paid" asp-items="@Model.isPaid" class="form-control" id=""></select></div>
+                                </div>
+                                <div class="row allownace_top">
+                                    <div class="col-sm-5 text-right"><b>Assigned Coupon: </b></div>
+                                    <div class="col-sm-5"><input asp-for="@Model.trans_details.assigned_coupon" type="text" class="form-control number_only" value="@Model.trans_details.assigned_coupon"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="row allowance_top">
+                                    <div class="col-sm-5 text-right">
+                                        <b>Susbsidy Form:</b>
+                                        <input asp-for="@Model.trans_details.subsidyimage_id" type="hidden" value="@Model.trans_details.subsidyimage_id">
+                                        <br />@Model.trans_details.scan_image_filename
+
+                                    </div>
+                                    <div class="col-sm-7">
+                                        <input type="file" name="scan_subsidy_image" id="scan_subsidy_image" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="row allowance_top">
+                                    <div class="col-sm-5 text-right"><b>Payment(s):</b></div>
+                                    <div class="col-sm-7">
+                                        @if (Model.customer_order_payment_list.Count > 0)
+                                        {
+                                            foreach (var payment in Model.customer_order_payment_list)
+                                            {
+                                                <p>
+                                                    @payment.payment<br />
+                                                    $@payment.paid_amount<br />
+                                                    @if (payment.payment_date != null)
+                                                    {
+                                                        <span>@payment.payment_date.Value.ToString("dd/MM/yyyy")</span>
+                                                    }
+                                                    <hr />
+                                                </p>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">Sample Identification</div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row allownace_top">
+                                    <div class="col-sm-2 text-right"><b>Project: </b></div>
+                                    <div class="col-sm-10"><select asp-for="@Model.trans_details.project_id" asp-items="@Model.selectProjectList" class="form-control" id=""></select></div>
+                                </div>
+                                <div class="row allownace_top">
+                                    <div class="col-sm-2 text-right"><b>Flood Sample: </b></div>
+                                    <div class="col-sm-10"><select asp-for="@Model.trans_details.is_flood_sample" asp-items="@Model.isFloodSample" class="form-control" id=""></select></div>
+                                </div>
+                                <div class="row allownace_top">
+                                    <div class="col-sm-2 text-right"><b>Comments: </b></div>
+                                    <div class="col-sm-10"><textarea asp-for="@Model.trans_details.notes" class="form-control">@Model.trans_details.notes</textarea></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-success">
+            <div class="panel-heading">Other Infromation</div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="row allownace_top">
+                            <div class="col-sm-5 text-right"><b>Sample ID: </b></div>
+                            <div class="col-sm-7 text-left"><input asp-for="@Model.trans_details.idnty_location" type="text" class="form-control" id="form_sampleid" value="@Model.trans_details.idnty_location" tabindex="1"></div>
+                        </div>
+                        <div class="row allownace_top">
+                            <div class="col-sm-5 text-right"><b>Sample Type: </b></div>
+                            <div class="col-sm-7 text-left"><select asp-for="@Model.trans_details.sample_type_id" asp-items="@Model.selectSampleTypeList" class="form-control" id="form_sampletype" disabled="@(disabled ? "disabled" : null)" tabindex="2"></select></div>
+                        </div>
+                        <div class="row allownace_top">
+                            <div class="col-sm-5 text-right"><b>Legal Location: </b></div>
+                            <div class="col-sm-7 text-left"><input asp-for="@Model.trans_details.sample_legal_loc" type="text" class="form-control" value="@Model.trans_details.sample_legal_loc" disabled="@(disabled ? "disabled" : null)" tabindex="3"></div>
+                        </div>
+                        <div class="row allownace_top">
+                            <div class="col-sm-5 text-right"><b>Town: </b></div>
+                            <div class="col-sm-7 text-left"><input asp-for="@Model.trans_details.town" type="text" class="form-control" value="@Model.trans_details.town" disabled="@(disabled ? "disabled" : null)" tabindex="4"></div>
+                        </div>
+                        <div class="row allownace_top">
+                            <div class="col-sm-5 text-right"><b>Rural Municipality: </b></div>
+                            <div class="col-sm-7 text-left"><select asp-for="@Model.trans_details.rm_id" asp-items="@Model.selectMunicipalityList" class="form-control" id="form_municipality" disabled="@(disabled ? "disabled" : null)" tabindex="5"></select></div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="row allownace_top">
+                            <div class="col-sm-5 text-right"><b>Latitude: </b></div>
+                            <div class="col-sm-7 text-left"><input asp-for="@Model.trans_details.latitude" type="text" class="form-control" value="@Model.trans_details.latitude"></div>
+                        </div>
+                        <div class="row allownace_top">
+                            <div class="col-sm-5 text-right"><b>Longitude: </b></div>
+                            <div class="col-sm-7 text-left"><input asp-for="@Model.trans_details.longitude" type="text" class="form-control" value="@Model.trans_details.longitude"></div>
+                        </div>
+                        <div class="row allownace_top">
+                            <div class="col-sm-5 text-right"><b>UTM X: </b></div>
+                            <div class="col-sm-7 text-left"><input asp-for="@Model.trans_details.utm_x" type="text" class="form-control" value="@Model.trans_details.utm_x"></div>
+                        </div>
+                        <div class="row allownace_top">
+                            <div class="col-sm-5 text-right"><b>UTM Y: </b></div>
+                            <div class="col-sm-7 text-left"><input asp-for="@Model.trans_details.utm_y" type="text" class="form-control" value="@Model.trans_details.utm_y"></div>
+                        </div>
+                        <div class="row allownace_top">
+                            <div class="col-sm-5 text-right"><b>Existence: </b></div>
+                            <div class="col-sm-7 text-left"><select asp-for="@Model.trans_details.existence" asp-items="@Model.selectExistence" class="form-control"></select></div>
+                        </div>
+                        <div class="row allownace_top">
+                            <div class="col-sm-5 text-right"><b>Zone: </b></div>
+                            <div class="col-sm-7 text-left"><input asp-for="@Model.trans_details.zone" type="text" class="form-control" value="@Model.trans_details.zone" disabled="@(disabled ? "disabled" : null)"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+                <div class="row">
+                    @{ string collect_day = "", collect_month = "", collect_year = DateTime.Now.Year.ToString(), collect_hour = "", collect_minute = "";}
+                    @{ string submit_day = "", submit_month = "", submit_year = DateTime.Now.Year.ToString(), submit_hour = "", submit_minute = "";}
+                    @{ string receive_day = "", receive_month = "", receive_year = DateTime.Now.Year.ToString(), receive_hour = "", receive_minute = "";}
+                    @{ string test_day = "", test_month = "", test_year = DateTime.Now.Year.ToString();}
+                    @{ string report_day = "", report_month = "", report_year = DateTime.Now.Year.ToString();}
+                    @{ string collect_date = "", collect_date2 = "", submitted_date = "", received_date = "", report_date = "", test_date = "";}
+                    @{ string collect_time = "", submitted_time = "", received_time = "";}
+
+                    @if (@Model.trans_details.collect_datetime != null)
+                    {
+                        collect_day = Model.trans_details.collect_datetime.Value.Day.ToString("D2");
+                        collect_month = Model.trans_details.collect_datetime.Value.Month.ToString("D2");
+                        collect_year = Model.trans_details.collect_datetime.Value.Year.ToString("D2");
+                        collect_hour = Model.trans_details.collect_datetime.Value.Hour.ToString("D2");
+                        collect_minute = Model.trans_details.collect_datetime.Value.Minute.ToString("D2");
+                        collect_date = $"{collect_year}-{collect_month}-{collect_day}";
+                        collect_date2 = $"{collect_day}/{collect_month}/{collect_year}";
+                        collect_time = $"{collect_hour}:{collect_minute}";
+                    }
+
+                    @if (@Model.trans_details.submtd_datetime != null)
+                    {
+                        submit_day = Model.trans_details.submtd_datetime.Value.Day.ToString("D2");
+                        submit_month = Model.trans_details.submtd_datetime.Value.Month.ToString("D2");
+                        submit_year = Model.trans_details.submtd_datetime.Value.Year.ToString("D2");
+                        submit_hour = Model.trans_details.submtd_datetime.Value.Hour.ToString("D2");
+                        submit_minute = Model.trans_details.submtd_datetime.Value.Minute.ToString("D2");
+                        submitted_date = $"{submit_year}-{submit_month}-{submit_day}";
+                        submitted_time = $"{submit_hour}:{submit_minute}";
+
+                    }
+
+                    @if (@Model.trans_details.rcv_date != null)
+                    {
+                        receive_day = Model.trans_details.rcv_date.Value.Day.ToString("D2");
+                        receive_month = Model.trans_details.rcv_date.Value.Month.ToString("D2");
+                        receive_year = Model.trans_details.rcv_date.Value.Year.ToString("D2");
+                        receive_hour = Model.trans_details.rcv_date.Value.Hour.ToString("D2");
+                        receive_minute = Model.trans_details.rcv_date.Value.Minute.ToString("D2");
+                        received_date = $"{receive_year}-{receive_month}-{receive_day}";
+                        received_time = $"{receive_hour}:{receive_minute}";
+                    }
+
+                    @if (@Model.trans_details.test_date != null)
+                    {
+                        test_day = Model.trans_details.test_date.Value.Day.ToString("D2");
+                        test_month = Model.trans_details.test_date.Value.Month.ToString("D2");
+                        test_year = Model.trans_details.test_date.Value.Year.ToString("D2");
+                        test_date = $"{test_year}-{test_month}-{test_day}";
+                    }
+
+                    @if (@Model.trans_details.work_date != null)
+                    {
+                        report_day = Model.trans_details.work_date.Value.Day.ToString("D2");
+                        report_month = Model.trans_details.work_date.Value.Month.ToString("D2");
+                        report_year = Model.trans_details.work_date.Value.Year.ToString("D2");
+                        report_date = $"{report_year}-{report_month}-{report_day}";
+                    }
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-5 text-right"><b>Collect Date: </b></div>
+                            <div class="col-sm-7 text-left">
+                                <input type="text" id="input_collectdate" class="" value="@collect_date" tabindex="6">
+                            </div>
+                        </div>
+                        <div class="row allownace_top">
+                            <div class="col-sm-5 text-right"><b>Collect Time: </b></div>
+                            <div class="col-sm-7 text-left">
+                                <input type="text" id="input_collecttime" class="" value="@collect_time" tabindex="7">
+                                <input asp-for="@Model.trans_details.collect_datetime" type="hidden" autocomplete="off" class="form-control" id="collectdate">
+                            </div>
+                        </div>
+                        <div class="row allownace_top">
+                            <div class="col-sm-5 text-right"><b>Submitted By: </b></div>
+                            <div class="col-sm-7 text-left"><input asp-for="@Model.trans_details.submtd_by" type="text" class="form-control" value="@Model.trans_details.submtd_by" tabindex="8" id="form_submittedby"></div>
+                        </div>
+                        <div class="row allownace_top">
+                            <div class="col-sm-5 text-right"><b>Submitted Date:</b></div>
+                            <div class="col-sm-7 text-left">
+                                <input type="text" id="input_submitdate" class="" value="@submitted_date" tabindex="9">
+                            </div>
+                        </div>
+                        <div class="row allownace_top">
+                            <div class="col-sm-5 text-right"><b>Submitted Time:</b></div>
+                            <div class="col-sm-7 text-left">
+                                <input type="text" id="input_submittime" value="@submitted_time" class="" tabindex="10">
+                                <input asp-for="@Model.trans_details.submtd_datetime" class="form-control" type="hidden" autocomplete="off" id="submitdate">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-5 text-right"><b>Received By: </b></div>
+                            <div class="col-sm-7 text-left"><select asp-for="@Model.trans_details.rcv_by_id" asp-items="@Model.selectReceiversList" class="form-control" id="form_receivedby" tabindex="11"></select></div>
+                        </div>
+                        <div class="row allownace_top">
+                            <div class="col-sm-5 text-right"><b>Received Date:</b></div>
+                            <div class="col-sm-7 text-left">
+                                <input type="text" id="input_receiveddate" class="" value="@received_date" tabindex="12">
+                            </div>
+                        </div>
+                        <div class="row allownace_top">
+                            <div class="col-sm-5 text-right"><b>Received Time:</b></div>
+                            <div class="col-sm-7 text-left">
+                                <input type="text" id="input_receivedtime" value="@received_time" class="" tabindex="13">
+                                <input asp-for="@Model.trans_details.rcv_date" class="form-control" type="hidden" autocomplete="off" id="receivedate">
+                            </div>
+                        </div>
+
+                        <div class="row allownace_top">
+                            <div class="col-sm-5 text-right"><b>Test Date:</b></div>
+                            <div class="col-sm-7 text-left">
+                                <input type="text" id="input_testdate" class="" value="@test_date" tabindex="14">
+                                <input asp-for="@Model.trans_details.test_date" type="hidden" autocomplete="off" class="form-control" id="testdate">
+                            </div>
+                        </div>
+
+                        <div class="row allownace_top">
+                            <div class="col-sm-5 text-right"><b>Temperature: </b></div>
+                            <div class="col-sm-7 text-left"><input asp-for="@Model.trans_details.temp" type="text" class="form-control" id="form_temperature" value="@Model.trans_details.temp" tabindex="15"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-sm-6 text-left">Test Results</div>
+                    <div class="col-sm-6 text-right">
+                        @*<button type="button" class="btn btn-sm btn-success open_modal" value="addtestresult"><span class="glyphicon glyphicon-plus" style="font-size:1.3rem;"></span></button>*@
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <table class="table table-striped">
+                        <thead class="">
+                            <tr>
+                                <th>&nbsp;</th>
+                                <th class="">Parameter</th>
+                                <th class="">Note</th>
+                                <th class="" style="width:6%;">Result</th>
+                                <th class=""><a href="#" id="addUnit">+Unit Of Measurement</a></th>
+                                <th class="">Pass/Fail</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ string delete_value = ""; int tabindex = 35;}
+                            @foreach (var result in Model.result_list)
+                            {
+                                delete_value = result.result_id + "_" + Model.trans_details.trans_id;
+                                <tr>
+                                    <td>
+                                        <!--<button type="button" class="btn btn-sm btn-outline-success editresultbtn openeditform" id="" value="@result.result_id" onclick=""><span class="glyphicon glyphicon-pencil" style="font-size:1.3rem;"></span></button>-->
+                                        <button type="button" class="btn btn-sm btn-outline-danger delete_result" value="@delete_value"><span class="glyphicon glyphicon-remove" style="font-size:1.3rem;"></span></button>
+                                        <input type="hidden" id="" class="result_ids" value="@result.result_id" />
+                                    </td>
+                                    <td><select asp-for="@result.param_id" asp-items="@Model.selectTestParameters" class="form-control" id="paramid_@result.result_id"></select></td>
+                                    <td><input type="text" class="form-control" value="@Model.trans_details.idnty_location" id="testnote_@result.result_id"></td>
+                                    <td><input type="text" class="form-control result_value" value="@result.result" id="result_@result.result_id" tabindex="@tabindex"></td>
+                                    <td>
+                                        <div class="row">
+                                            @if (result.unit_id == 0)
+                                            {
+                                                foreach (var dflt in ViewBag.default_pkg_params)
+                                                {
+                                                    if (dflt.param_id == result.param_id)
+                                                    {
+                                                        result.unit_id = dflt.unit_measurement_id;
+                                                    }
+                                                }
+                                            }
+                                            <select asp-items="@Model.selectUnitMeasurements" class="form-control" asp-for="@result.unit_id" id="unit_id_@result.result_id"></select>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (string.IsNullOrEmpty(result.result) || result.result == "0")
+                                        {
+                                            result.is_failed = true;
+                                        }
+                                        else
+                                        {
+                                            result.is_failed = false;
+                                        }
+
+                                        <select asp-for="@result.is_failed" class="form-control" id="isFail_@result.result_id">
+                                            <option value="true">Pass</option>
+                                            <option value="false">Fail</option>
+                                        </select>
+
+                                    </td>
+                                </tr>
+                                tabindex++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-success">
+            <div class="panel-heading">Report Infromation</div>
+            <div class="panel-body">
+                <div class="row ">
+                    <div class="col-sm-12">
+                        <div class="row allownace_top">
+                            @{tabindex++;}
+                            <div class="col-sm-5 text-right"><b>Report: </b></div>
+                            <div class="col-sm-7"><select asp-for="@Model.trans_details.report_type_id" asp-items="@Model.selectReportTypeList" class="form-control" id="form_reporttype" tabindex="@tabindex"></select></div>
+                        </div>
+
+                        <div class="row allownace_top">
+                            <div class="col-sm-5 text-right"><b>Report Date:</b></div>
+                            <div class="col-sm-7 text-left">
+                                <input type="text" id="input_reportdate" class="" value="@report_date" tabindex="17" autocomplete="off">
+                                <input asp-for="@Model.trans_details.work_date" type="hidden" autocomplete="off" class="form-control" id="reportdate">
+                            </div>
+                        </div>
+
+                        <div class="row allownace_top">
+                            <div class="col-sm-5 text-right"><b>Lab Code: </b></div>
+                            <div class="col-sm-7 text-left"><select asp-for="@Model.trans_details.test_pkg_id" asp-items="@Model.selectTestPackageList" class="form-control" id=""></select></div>
+                        </div>
+
+                        <div class="row allownace_top">
+                            <div class="col-sm-5">
+                                @{ string gendisplay = "none";}
+                                @{ string deldisplay = "none";}
+                                @if (Model.trans_details.gen_coupon == 0)
+                                {
+                                    gendisplay = "block";
+                                }
+                                else
+                                {
+                                    deldisplay = "block";
+                                }
+
+                                <button type="button" class="btn btn-success" id="generate_coupon" style="display:@gendisplay;">Generate Coupon</button>
+                                <button type="button" class="btn btn-warning" id="delete_coupon" style="display:@deldisplay;">Delete Coupon</button>
+                            </div>
+                            <div class="col-sm-7 text-left">
+                                <input asp-for="@Model.trans_details.gen_coupon" type="text" class="form-control" value="@Model.trans_details.gen_coupon" id="generated_coupon" disabled>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <br />
+    <button type="button" class="btn btn-success" onclick="window.location='/WaterBacteriaTransaction/ViewTransactions'">TRANSACTION VIEW PAGE</button>
+    <button type="button" class="btn btn-success" id="save_test_details_btn">SAVE CHANGES</button>
+</div>
+</body>
+<div id="edittestresult" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content" style="width:25%;">
+        <div><h3><span id="service" style="float:left;">Edit Test Result</span></h3><button class="close closeditform" value="edittestresult" onclick="">&times;</button></div>
+        <br />
+        <form asp-action="UpdateTestResult" asp-controller="WaterBacteriaPostTransactions" method="post" class="" id="edit_transaction">
+            <input asp-for="@Model.hlab_test_result.result_id" type="hidden" class="form-control " value="" id="editResultId">
+            <input asp-for="@Model.hlab_test_result.trans_id" type="hidden" class="form-control " value="" id="editTransId">
+            <div class="row allownace_top">
+                <div class="col-sm-5 text-right"><b>Parameter:</b></div>
+                <div class="col-sm-5"><select asp-for="@Model.hlab_test_result.param_id" asp-items="@Model.selectTestParameters" class="form-control" id="editParam"></select></div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-5 text-right"><b>Note:</b></div>
+                <div class="col-sm-5"><input asp-for="@Model.hlab_test_result.test_note" type="text" class="form-control" value="" id="editNote"></div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-5 text-right"><b>Result:</b></div>
+                <div class="col-sm-5"><input asp-for="@Model.hlab_test_result.result" type="text" class="form-control" value="" id="editResult"></div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-5 text-right"><b>Unit Of Measurement:</b></div>
+                <div class="col-sm-5"><select asp-for="@Model.hlab_test_result.unit_id" asp-items="@Model.selectUnitMeasurements" class="form-control" id="editUnit"></select></div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-5 text-right"><b>Accepted:</b></div>
+                <div class="col-sm-5">
+                    <select asp-for="@Model.hlab_test_result.is_failed" class="form-control" id="editPassFail">
+                        <option value="true">True</option>
+                        <option value="false">False</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-5 text-right">&nbsp;</div>
+                <div class="col-sm-5 text-right"><button type="button" class="btn btn-success" id="save_test_result_btn">SAVE CHANGES</button></div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="addtestresult" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content" style="width:25%;">
+        <div><h3><span id="service" style="float:left;">Add Test Result</span></h3><button class="close close_modal" value="addtestresult" onclick="">&times;</button></div>
+        <br />
+        <form asp-action="AddTestResult" asp-controller="WaterBacteriaPostTransactions" method="post" class="" id="add_test_result_form">
+            <input asp-for="@Model.hlab_test_result.trans_id" type="hidden" class="form-control " value="@Model.trans_details.trans_id" id="">
+            <div class="row allownace_top">
+                <div class="col-sm-5 text-right"><b>Parameter:</b></div>
+                <div class="col-sm-5"><select asp-for="@Model.hlab_test_result.param_id" asp-items="@Model.selectTestParameters" class="form-control" id="editParam"></select></div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-5 text-right"><b>Note:</b></div>
+                <div class="col-sm-5"><input asp-for="@Model.hlab_test_result.test_note" type="text" class="form-control" value="" id=""></div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-5 text-right"><b>Result:</b></div>
+                <div class="col-sm-5"><input asp-for="@Model.hlab_test_result.result" type="text" class="form-control" value="" id=""></div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-5 text-right"><b>Unit Of Measurement:</b></div>
+                <div class="col-sm-5"><select asp-for="@Model.hlab_test_result.unit_id" asp-items="@Model.selectUnitMeasurements" class="form-control" id=""></select></div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-5 text-right"><b>Accepted:</b></div>
+                <div class="col-sm-5">
+                    <select asp-for="@Model.hlab_test_result.is_failed" class="form-control" id="">
+                        <option value="true">True</option>
+                        <option value="false">False</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row allownace_top">
+                <div class="col-sm-5 text-right">&nbsp;</div>
+                <div class="col-sm-5 text-right"><button type="button" class="btn btn-success" id="add_test_result_btn">SAVE</button></div>
+            </div>
+        </form>
+    </div>
+</div>

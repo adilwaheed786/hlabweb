@@ -1,0 +1,164 @@
+﻿@{
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+    ViewData["PageTitle"] = "Horizon Lab Services";
+}
+@model HorizonLabAdmin.Models.Forms.ServiceForm
+<link rel="stylesheet" href="~/css/services_section.css">
+<div>
+    <section id="services" class="">
+        <div class="container">
+            <div class="note">Note: <u><b>Service Header</b></u> can have up to five lines with a maximum of 155 characters for each line.</div>
+            <div id="service_intro">
+                <h3>Our Services</h3>
+                <span></span>
+                <form asp-action="SaveIntro" asp-controller="Services" class="" method="post" id="service_header_form">
+                    @if (Model.header_list != null)
+                    {
+                        @foreach (var header in Model.header_list)
+                        {
+                            <div class="" style="text-align:left">
+                                <label for="">Line #@header.id</label><br />
+                                <input type="hidden" name="id_@header.id" value="@header.id">
+                                <input type="text" id="line_@header.id" name="line_@header.id" placeholder="" class="form-control" value="@header.content" />
+                                <span id="error_line_@header.id" style="color:red; display:none;">&#10006;</span>
+                                <span id="ok_line_@header.id" style="color:green; display:none;">&#10004;</span>
+                                <br />
+                            </div>
+                        }
+                    }
+                </form>
+                <div class="" style="text-align:right"><button class="btn btn-success" id="save_service_header_button">Save Changes</button></div>
+                <div class="note">@ViewBag.ServiceHeaderMessage</div>
+                <hr />
+                <br />
+
+                @{string msg_color = "green", service_message = "";}
+                @if (!string.IsNullOrEmpty(ViewBag.ServiceMessage))
+                {
+                    var message = ViewBag.ServiceMessage.Split(":");
+                    if (message[0] == "Error")
+                    {
+                        msg_color = "red";
+                    }
+                    service_message = message[1];
+                }
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <p align="left"><span class="note" style="color:@msg_color;">@service_message</span></p>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="row">
+                            <div class="col-lg-4"></div>
+                            <div class="col-lg-4"></div>
+                            <div class="col-lg-4">
+                                <button type="button" class="btn btn-success open_modal" value="add_service_modal" id="">Add Service</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    @if (Model.service_list != null)
+                    {
+                        @foreach (var svc in Model.service_list)
+                        {
+                            <div class="col-lg-3">
+                                <div>
+                                    <div style="font-weight:bold;">
+                                        @{string icon = "blank.png";}
+                                        @{string service_name_id = svc.service.id + "_" + svc.service.service_name;}
+                                        @if (!string.IsNullOrEmpty(svc.service.image_file_name))
+                                        {
+                                            icon = svc.service.image_file_name;
+                                        }
+                                        <p><img src="~/images/@icon" class="img-fluid" alt="" width="60" height="60" style="" /></p>
+                                        <button class="open_modal btn btn-success goto_addnew_detail" value="detail_modal" id="@service_name_id">&nbsp;+&nbsp;</button>
+                                        <button button class="open_modal btn btn-outline-secondary goto_service" id="@svc.service.id" value="service_modal">@svc.service.service_name</button><br />
+                                    </div>
+                                    <br />
+                                    @if (svc.detail_list != null)
+                                    {
+                                        <ul class="service_ul">
+                                            @foreach (var dtl in svc.detail_list)
+                                            {
+                                                var id = svc.service.service_name + "_" + dtl.id;
+                                                <li><button class="open_modal btn btn-outline-success goto_detail" style="width:100%;" value="detail_modal" id="@id">@dtl.service_detail</button></li>
+                                            }
+                                        </ul>
+                                    }
+                                </div>
+                            </div>
+                                            }
+                                            }
+                </div>
+            </div>
+    </section>
+</div>
+
+<div id="detail_modal" class="modal">    
+    <!-- Modal content -->
+    <div class="modal-content" style="width:25%;">
+        <div><h3><span id="service" style="float:left;"></span></h3><button class="close close_modal" value="detail_modal">&times;</button></div>        
+        <br/>
+        <form asp-action="" asp-controller="Services" class="" id="service_detail_form" method="post">
+            <p align="center">
+                <input type="hidden" id="detail_id" name="detail_id" class="form-control" value="">
+                <input type="hidden" id="service_id" name="service_id" class="form-control" value="">
+                <input type="text" id="detail" name="detail" placeholder="Service Item Name" class="form-control" value="" /><br/><br />
+                <button class="btn btn-success" value="" id="save_new_service_detail">Save</button>
+                <button class="btn btn-success" value="" id="save_service_detail_changes">Save Changes</button>
+                <button class="btn btn-danger" value="" id="delete_service_detail">Delete</button>
+            </p>
+        </form>
+    </div>
+</div>
+
+<div id="service_modal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content" style="width:25%;">
+        <div><button class="close close_modal" value="service_modal">&times;</button></div>
+        <h3>Service</h3>
+        <form asp-action="SaveServiceChanges" asp-controller="Services" method="post" class="pure-form pure-form-aligned" id="service_form" enctype="multipart/form-data">
+            <p align="left">
+                <input type="hidden" id="modal_service_id" name="modal_service_id" class="form-control" value="">
+                <b>Service Name: </b><input type="text" id="modal_service_name" name="modal_service_name" placeholder="Service Name" class="form-control" value="" /><br /><br />
+                <b>Service Icon: </b><input type="file" id="modal_image_file" name="modal_image_file" class="form-control-file" />
+            </p>
+            <p align="right">
+                <span class="btn btn-success save_service_btn" value="" id="save_service_btn">Save</span>
+                <span class="btn btn-danger" value="" id="delete_service">Delete</span>
+            </p>
+        </form>
+    </div>
+</div>
+
+<div id="add_service_modal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content" style="width:25%;">
+        <div><button class="close close_modal" value="add_service_modal">&times;</button></div>
+        <h2>Add New Service</h2>
+        <br />
+        <form asp-action="AddNewService" asp-controller="Services" class="pure-form pure-form-aligned" id="add_service_form" method="post" enctype="multipart/form-data">
+            <p align="left">
+                <b>Service Name: </b><input asp-for="@Model.new_service_name" type="text" id="new_service_name" placeholder="Service Name" class="form-control" value="" /><br /><br />
+                <b>Image Icon: </b><input asp-for="@Model.new_service_icon" type="file" id="new_service_icon" placeholder="Image Icon" class="form-control-file" />
+            </p>
+
+            <p align="left">
+                <b>Items:</b>
+                @{int counter = 0;}
+                @for (int x = 0; x <= 6; x++)
+                {
+                    counter = counter + 1;
+                    <p><input asp-for="@Model.service_object_list[x]" type="text" id="new_service_item_@counter" placeholder="Service Item #@counter" class="form-control" value="" /></p>
+                }
+            </p>
+            <p align="right">
+                <span class="btn btn-success save_service_btn" value="" id="save_new_service">Save New Service</span>
+            </p>
+        </form>
+    </div>
+</div>
+
+<script src="~/js/service_events.js"></script>

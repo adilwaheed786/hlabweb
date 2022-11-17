@@ -1,0 +1,230 @@
+﻿
+@{
+    ViewData["Title"] = "WaterBacteriaProjectsForms";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+@model HorizonLabAdmin.Helpers.Containers.ProjectRequestPageObject
+@using HorizonLabAdmin.Helpers.Containers
+@inject HorizonLabAdmin.Interfaces.IUtility _UtilityHelper
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link href="~/css/jquery.datetextentry.css" rel="stylesheet" />
+<script src="~/js/jquery-ui.js"></script>
+<script src="~/js/jquery.datetextentry.js"></script>
+<script src="~/js/fm.timetator.jquery.js"></script>
+<script src="~/js/general_functions.js"></script>
+<script src="~/js/bulk_request_insert_events.js"></script>
+
+<div class="row" style="height:800px; font-size:1.2rem; overflow:auto;">
+    <div class="col-lg-12">
+        <div class="panel panel-success">
+            <div class="panel-heading"><b>Project Request Records</b></div>
+            <div class="panel-body">
+                <form asp-action="WaterBacteriaProjectsForms" asp-controller="Certificate" method="get" class="" id="search_record_form">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            PROJECT
+                            <select asp-for="@Model.selected_project_id" asp-items="@Model.ProjectSelectList" class="form-control"></select>
+                        </div>
+
+                        <div class="col-sm-2">
+                            DATE CREATED
+                            <input type="text" asp-for="@Model.DateCreated" class="form-control datepicker_default" value="@Model.DateCreated" autocomplete="off">
+                        </div>
+
+                        <div class="col-sm-1">
+                            <br />
+                            <button type="submit" class="btn btn-success" value="" id="">SEARCH</button>
+                        </div>
+                        <input type="hidden" id="selected_project_form_id" asp-for="@Model.selected_project_form_id" value="@Model.selected_project_form_id">
+                    </div>
+                </form>
+                <div class="row" style="margin-left:10px;margin-right:10px;">
+                    <div class="col-sm-9" style="border:1px solid #E7E7E7;border-radius:5px;height:550px; overflow:auto;">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th width="12%">UID</th>
+                                    <th width="20%">Project</th>
+                                    <th width="7%">Created</th>
+                                    <th width="7%">Samples</th>
+                                    <th colspan="3">Incubation</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.ProjectRequestForms != null && Model.ProjectRequestForms.Count > 0)
+                                {
+                                    @foreach (var form in Model.ProjectRequestForms)
+                                    {
+                                        string row_color = "";
+                                        string uid = "";
+                                        if (!string.IsNullOrEmpty(form.hl_code))
+                                        {
+                                            uid = form.hl_code;
+                                            uid = uid.Substring(0, uid.Length - 2);
+                                        }
+
+                                        if (Model.selected_project_form_id == form.id) { row_color = "#CFFEC7"; }
+                                        <tr style="background-color:@row_color;">
+                                            <td>
+                                                @if (form.form_id == 1)
+                                                {
+                                                    <a href="@Url.Action("F054P","Forms", new { pid= form.id })" target="_blank">@uid</a>
+                                                }
+                                                else if (form.form_id == 2)
+                                                {
+                                                    @uid
+                                                }
+                                                else if (form.form_id == 3)
+                                                {
+                                                    <a href="@Url.Action("F125P","Forms", new { pid= form.id, fid=0, transid = 0, rush = form.is_rush, condition = form.is_condition_met })" target="_blank">@uid</a>
+                                                }
+
+                                            </td>
+                                            <td>@form.project</td>
+                                            <td>@form.date_created.Value.ToString("dd/MM/yyyy")</td>
+                                            <td>@form.rec_count samples</td>
+                                            <td style="width:18%;"><b>Date/Time in:</b> @form.incubation_date_time_in</td>
+                                            <td style="width:18%;"><b>Date/Time out:</b> @form.incubation_date_time_out</td>
+                                            <td style="width:10%;"><b>Temp:</b> @form.incubation_temp</td>
+                                            <td><button class="btn btn-sm btn-success view_settings" value="@form.id">SETTINGS</button></td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-sm-3" style="border:1px solid #E7E7E7;border-radius:5px;height:550px; overflow:auto;padding-top:30px;">
+                        <form asp-action="UpdateProjectTestSupplies" asp-controller="Supply" method="post" class="" id="update_proj_form">
+                            <input type="hidden" asp-for="@Model.selected_project_form_id" value="@Model.selected_project_form_id">
+
+                            @if (Model.selected_project_form_id != 0)
+                            {
+                                string str_incubate_in = "", str_incubate_out = "", str_incubate_time_in = "", str_incubate_time_out = "", str_incubationb_temp = "";
+                                DateTime? inc_date_in = null, inc_date_out = null;
+                                SplitDateTimeOutput datetimeobject = new SplitDateTimeOutput();
+
+                                if (Model.ProjectRequestFormInfo != null)
+                                {
+                                    <input type="hidden" asp-for="@Model.ProjectRequestFormInfo.form_id" value="@Model.ProjectRequestFormInfo.form_id">
+                                    <input type="hidden" asp-for="@Model.ProjectRequestFormInfo.project_id" value="@Model.ProjectRequestFormInfo.project_id">
+                                    <input type="hidden" asp-for="@Model.ProjectRequestFormInfo.date_created" value="@Model.ProjectRequestFormInfo.date_created">
+                                    <input type="hidden" asp-for="@Model.ProjectRequestFormInfo.created_by" value="@Model.ProjectRequestFormInfo.created_by">
+                                    inc_date_in = Model.ProjectRequestFormInfo.incubation_date_time_in;
+                                    inc_date_out = Model.ProjectRequestFormInfo.incubation_date_time_out;
+                                    str_incubationb_temp = Model.ProjectRequestFormInfo.incubation_temp;
+                                }
+
+
+                                if (inc_date_in.HasValue)
+                                {
+                                    datetimeobject = _UtilityHelper.SplitDateTime(inc_date_in);
+                                    str_incubate_in = datetimeobject.strDate;
+                                    str_incubate_time_in = datetimeobject.strTime;
+                                }
+
+                                if (inc_date_out.HasValue)
+                                {
+                                    datetimeobject = _UtilityHelper.SplitDateTime(inc_date_out);
+                                    str_incubate_out = datetimeobject.strDate;
+                                    str_incubate_time_out = datetimeobject.strTime;
+                                }
+
+                                <p>
+                                    Incubation Date/Time In:
+                                    <br />
+                                    <input type="text" name="" class="input_collectdate" id="inc_date_in" value="@str_incubate_in" autocomplete="off">
+                                    <input style="width:30%;" type="text" id="inc_time_in" class="number_only input_collecttime" value="@str_incubate_time_in">
+                                    <input asp-for="@Model.ProjectRequestFormInfo.incubation_date_time_in" type="hidden" class="" id="inc_datetime_in" value="@inc_date_in">
+                                </p>
+
+                                <p>
+                                    Incubation Date/Time Out:
+                                    <br />
+                                    <input type="text" name="" class="input_collectdate" id="inc_date_out" value="@str_incubate_out" autocomplete="off">
+                                    <input style="width:30%;" type="text" id="inc_time_out" class="number_only input_collecttime" value="@str_incubate_time_out">
+                                    <input asp-for="@Model.ProjectRequestFormInfo.incubation_date_time_out" type="hidden" class="" id="inc_datetime_out" value="@inc_date_out">
+                                </p>
+                                <p>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            Temp:
+                                            <br />
+                                            <input asp-for="@Model.ProjectRequestFormInfo.incubation_temp" style="width:70%;" type="text" class="" id="" value="@str_incubationb_temp" autocomplete="off">
+                                        </div>
+                                        <div class="col-sm-4">
+                                            Rush: <br /><select style="width:80%;" asp-for="@Model.ProjectRequestFormInfo.is_rush" class="" asp-items="@Model.RushList" id=""></select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            Condition Met:<br /> <select style="width:80%;" asp-for="@Model.ProjectRequestFormInfo.is_condition_met" class="" asp-items="@Model.IsConditionMetList" id=""></select>
+                                        </div>
+                                    </div>
+                                </p>
+                                <div style="border:1px solid #E7E7E7;border-radius:5px;height:300px; overflow:auto;">
+                                    @if (Model.TestPackageSupplyList != null && Model.TestPackageSupplyList.Count > 0)
+                                    {
+                                        string color = "#BCFFD4";
+                                        DateTime todays = DateTime.Now;
+                                        <table style="width:100%;">
+                                            <tr>
+                                                <th>&nbsp;</th>
+                                                <th>Name</th>
+                                                <th>Lot</th>
+                                                <th>Expiry Date</th>
+                                            </tr>
+                                            @foreach (var supply in Model.TestPackageSupplyList)
+                                            {
+                                                TimeSpan difference = supply.expiry_date - todays;
+                                                int intdaysdiff = (int)difference.TotalDays;
+                                                string box_checked = "";
+                                                color = "#BCFFD4";
+
+                                                if (intdaysdiff <= 0) { continue; }
+
+                                                if (todays.ToString("dd/MM/yyyy") == supply.expiry_date.ToString("dd/MM/yyyy"))
+                                                {
+                                                    color = "#FED18A";
+                                                }
+                                                else if (intdaysdiff > 0 && intdaysdiff <= 14)
+                                                {
+                                                    color = "#FED18A";
+                                                }
+                                                else if (intdaysdiff <= 0)
+                                                {
+                                                    color = "#FB8F7C";
+                                                }
+
+                                                if (Model.ProjectRequestFormsSettings != null && Model.ProjectRequestFormsSettings.Count > 0)
+                                                {
+                                                    foreach (var selected_supply in Model.ProjectRequestFormsSettings)
+                                                    {
+                                                        if (selected_supply.supply_id == supply.id)
+                                                        {
+                                                            box_checked = "checked";
+                                                        }
+                                                    }
+                                                }
+                                                <tr>
+                                                    <td style="padding: 2px 2px 2px 2px;background:@color;">
+                                                        <input type="checkbox" class="supply_ids" value="@supply.id" name="supply_ids" @box_checked />
+                                                    </td>
+                                                    <td style="padding: 2px 2px 2px 2px;background:@color;">@supply.name</td>
+                                                    <td style="padding: 2px 2px 2px 2px;background:@color;">@supply.lot</td>
+                                                    <td style="padding: 2px 2px 2px 2px;background:@color;">@supply.expiry_date.ToString("dd/MM/yyyy")</td>
+
+                                                </tr>
+                                            }
+                                        </table>
+                                    }
+                                </div>
+                                <button type="button" id="apply_proj_form_changes" class="btn btn-success">SAVE CHANGES</button>
+                            }
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,335 @@
+﻿
+@{
+    Layout = null;
+}
+@model HorizonLabAdmin.Helpers.Containers.F110Data;
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <link rel="icon" href="~/images/horizonlab_icon.png">
+    <title>F110 B2 Water Bacteria Test Report</title>
+
+    <link rel="stylesheet" href="~/css/font-awesome.min.css">
+    <!--<link href="~/css/style.css" rel="stylesheet" />-->
+    <link href="~/css/horizonlab_style.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+    <style>
+        body {
+            -webkit-print-color-adjust: exact !important;
+            font-family: system-ui, sans-serif, auto !important;
+        }
+
+        @Html.Raw("@media print{ }")
+        .border_cell {
+            border: 1px solid;
+            padding: 2px 2px 2px 2px;
+        }
+        .grey_cell {
+            background: #D5D4D4 !important;
+        }
+        .analysis_header{
+            text-align:center;
+            font-weight:bold;
+        }
+        .footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: #D5D4D4;
+        }
+        .constant_cell1{
+            max-height:17px;
+            max-width:250px;
+        }
+        .constant_cell2{
+            max-height:40px;
+            max-width:120px;
+        }
+        .constant_cell3{
+            max-height:30px;
+            max-width:150px;
+        }
+        .bold_font{
+            font-weight:bold;
+        }
+        .italic_font{
+            font-style: italic;
+        }
+    </style>
+</head>
+@{    
+    DateTime incubation_date_in, incubation_date_out;
+    string str_date_in = "", str_date_out = "", tolerance_date_start = "", tolerance_date_end = "";
+    string isYesNo = "N", colilert_used = "", colilert_expiry_date = "", colilert_lot="";
+    string comparator_name = "", comparator_expiry_date = "", comparator_lot = "";
+    string simplate_name = "", simplate_expiry_date = "", simplate_lot = "";
+    int tolerance_in_1 = 0, tolerance_out_1 = 0;
+
+    if (Model.RequestInformation.is_condition_met) { isYesNo = "Y"; }
+
+    if (Model.ColilertSupply != null)
+    {
+        tolerance_in_1 = Model.ColilertSupply.hours_tolerance_start;
+        tolerance_out_1 = Model.ColilertSupply.hours_tolerance_end;
+        colilert_used = Model.ColilertSupply.name;
+        colilert_lot = Model.ColilertSupply.lot;
+        if (Model.ColilertSupply.expiry_date != null)
+        {
+            colilert_expiry_date = Model.ColilertSupply.expiry_date.Value.ToString("dd/MM/yyyy");
+        }
+    }
+
+    if (Model.ComparatorSupply != null)
+    {
+        comparator_name = Model.ComparatorSupply.name;
+        comparator_lot = Model.ComparatorSupply.lot;
+        if (Model.ComparatorSupply.expiry_date != null)
+        {
+            comparator_expiry_date = Model.ComparatorSupply.expiry_date.Value.ToString("dd/MM/yyyy");
+        }
+    }
+
+    if (Model.Simplate != null)
+    {
+        simplate_name = Model.Simplate.name;
+        simplate_lot = Model.Simplate.lot;
+        if (Model.Simplate.expiry_date != null)
+        {
+            simplate_expiry_date = Model.Simplate.expiry_date.Value.ToString("dd/MM/yyyy");
+        }
+    }
+
+    if (Model.RequestInformation.incubation_date_time_in != null)
+    {
+        incubation_date_in = Model.RequestInformation.incubation_date_time_in.Value;
+        str_date_in = incubation_date_in.ToString("dd/MM/yyyy HH:mm");
+        tolerance_date_start = incubation_date_in.AddHours(tolerance_in_1).ToString("dd/MM/yyyy HH:mm");
+    }
+
+    if (Model.RequestInformation.incubation_date_time_out != null)
+    {
+        incubation_date_in = Model.RequestInformation.incubation_date_time_in.Value;
+        incubation_date_out = Model.RequestInformation.incubation_date_time_in.Value;
+        str_date_out = incubation_date_in.AddHours(tolerance_in_1).AddHours(tolerance_out_1).ToString("dd/MM/yyyy");
+        tolerance_date_end = incubation_date_in.AddHours(tolerance_in_1).AddHours(tolerance_out_1).ToString("dd/MM/yyyy HH:mm");
+    }
+}
+<body>
+    <div style="width: 745px;/*height:720px;*/ font-family: Arial; font-size: 1.1rem; padding: 5px 5px 5px 5px;">
+        <table style="width:100%;">
+            <tr>
+                <td class="bold_font" style="text-align:right;font-size:1.3rem;">B2 Water Bacteria Test Report</td>
+                <td style="text-align:right;"><img src="~/images/horizonlab_logo.png" class="img-fluid" alt="" width="180" height="30" /></td>
+            </tr>
+        </table>
+        <table style="width:90%;">
+            <tr>
+                <td colspan="4" class="border_cell" style="text-align:center;font-weight:bold;font-size:1.3rem;">SAMPLE INFORMATION</td>
+            </tr>
+            <tr>
+                <td class="border_cell bold_font" style="width:25%;">Customer Name</td>
+                <td class="border_cell" style="width:25%;">&nbsp;@Model.RequestInformation.first_name @Model.RequestInformation.last_name</td>
+                <td class="border_cell bold_font" style="width:25%;">Sample ID</td>
+                <td class="border_cell" style="width:25%;">@Model.hl_code&nbsp;@Model.TestTransaction.idnty_location</td>
+            </tr>
+            <tr>
+                <td class="border_cell bold_font">Date & Time Received</td>
+                <td class="border_cell">&nbsp;@Model.TestTransaction.rcv_date</td>
+                <td rowspan="2" class="border_cell bold_font">Sample received in good condition</td>
+                <td rowspan="2" class="border_cell">&nbsp;@isYesNo</td>
+            </tr>
+            <tr>
+                <td class="border_cell bold_font">Sampleing Date & Time</td>
+                <td class="border_cell">&nbsp;@Model.TestTransaction.collect_datetime</td>
+            </tr>
+        </table>
+        <table style="width:100%;">
+            <tr>
+                <td colspan="4" class="border_cell" style="text-align:center;font-weight:bold;font-size:1.3rem;">INCUBATION INFORMATION</td>
+            </tr>
+            <tr>
+                <td class="border_cell bold_font" style="width:25%;text-align:center;">Analysis type</td>
+                <td class="border_cell bold_font" style="width:25%;text-align:center;">Date & time in</td>
+                <td class="border_cell bold_font" style="width:25%;text-align:center;">Date & time out</td>
+                <td class="border_cell bold_font" style="width:25%;text-align:center;">Temp 35+/-0.5&deg;C</td>
+            </tr>
+            <tr>
+                <td class="border_cell bold_font" style="height:40px;">Coliform/E.coli</td>
+                <td class="border_cell">&nbsp;@str_date_in</td>
+                <td class="border_cell">&nbsp;@str_date_out</td>
+                <td class="border_cell">&nbsp;@Model.RequestInformation.incubation_temp</td>
+            </tr>
+            <tr>
+                <td class="border_cell grey_cell"><i>Incubation time period</i></td>
+                <td colspan="3" class="border_cell grey_cell" style="text-align:center;">@tolerance_date_start&nbsp;&nbsp;TO&nbsp;&nbsp;@tolerance_date_end</td>
+            </tr>
+            <tr>
+                <td class="border_cell bold_font" style="height:40px;">HPC</td>
+                <td class="border_cell">&nbsp;@str_date_in</td>
+                <td class="border_cell">&nbsp;@str_date_out</td>
+                <td class="border_cell">&nbsp;@Model.RequestInformation.incubation_temp</td>
+            </tr>
+            <tr>
+                <td class="border_cell grey_cell"><i>Incubation time period</i></td>
+                <td colspan="3" class="border_cell grey_cell" style="text-align:center;">@tolerance_date_start &nbsp;&nbsp;TO&nbsp;&nbsp;@tolerance_date_end</td>
+            </tr>
+        </table>
+
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+
+        <table style="width:100%;">
+            <tr>
+                <td colspan="4" class="border_cell" style="text-align:center;font-weight:bold;font-size:1.3rem;">SUPPLY INFORMATION</td>
+            </tr>
+            <tr>
+                <td class="border_cell" style="width:25%;">Circle Colilert media used:</td>
+                <td class="border_cell" style="width:25%;">&nbsp;@colilert_used</td>
+                <td rowspan="2" class="border_cell" style="width:25%;">Expriy Date</td>
+                <td rowspan="2" class="border_cell" style="width:25%;">&nbsp;@colilert_expiry_date</td>
+            </tr>
+            <tr>
+                <td class="border_cell" style="width:25%;">Colilert Media lot#</td>
+                <td class="border_cell" style="width:25%;">&nbsp;@colilert_lot</td>
+            </tr>
+            <tr>
+                <td class="border_cell" style="width:25%;">Comparator (Colilert) Lot#</td>
+                <td class="border_cell" style="width:25%;">&nbsp;@comparator_lot</td>
+                <td class="border_cell" style="width:25%;">Expriy Date</td>
+                <td class="border_cell" style="width:25%;">&nbsp;@comparator_expiry_date</td>
+            </tr>
+            <tr>
+                <td class="border_cell" style="width:25%;">Simplate Lot#</td>
+                <td class="border_cell" style="width:25%;">&nbsp;@simplate_lot</td>
+                <td class="border_cell" style="width:25%;">Expriy Date</td>
+                <td class="border_cell" style="width:25%;">&nbsp;@simplate_expiry_date</td>
+            </tr>
+        </table>
+
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+
+        <table style="width:100%;">
+            <tr>
+                <td colspan="9" class="border_cell" style="text-align:center;font-weight:bold;font-size:1.3rem;">ANALYSIS INFORMATION</td>
+            </tr>
+            <tr>
+                <td class="border_cell bold_font" style="width:11%;text-align:center;">Test Type</td>
+                <td class="border_cell bold_font" style="width:11%;text-align:center;">Large wells</td>
+                <td class="border_cell bold_font" style="width:11%;text-align:center;">Small wells</td>
+                <td class="border_cell bold_font" style="width:11%;text-align:center;">MPN</td>
+                <td class="border_cell" style="width:11%;text-align:center;">If diluted, final MPN</td>
+                <td class="border_cell bold_font grey_cell italic_font" style="width:11%;text-align:center;">Large wells</td>
+                <td class="border_cell bold_font grey_cell italic_font" style="width:11%;text-align:center;">Small wells</td>
+                <td class="border_cell bold_font grey_cell italic_font" style="width:11%;text-align:center;">MPN</td>
+                <td class="border_cell grey_cell italic_font" style="width:11%;text-align:center;">If diluted, final MPN</td>
+            </tr>
+            <tr>
+                <td class="border_cell">&nbsp;Coliform</td>
+                <td class="border_cell">&nbsp;</td>
+                <td class="border_cell">&nbsp;</td>
+                <td class="border_cell">&nbsp;</td>
+                <td class="border_cell">&nbsp;</td>
+                <td class="border_cell grey_cell">&nbsp;</td>
+                <td class="border_cell grey_cell">&nbsp;</td>
+                <td class="border_cell grey_cell">&nbsp;</td>
+                <td class="border_cell grey_cell">&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="border_cell">&nbsp;E.coli</td>
+                <td class="border_cell">&nbsp;</td>
+                <td class="border_cell">&nbsp;</td>
+                <td class="border_cell">&nbsp;</td>
+                <td class="border_cell">&nbsp;</td>
+                <td class="border_cell grey_cell">&nbsp;</td>
+                <td class="border_cell grey_cell">&nbsp;</td>
+                <td class="border_cell grey_cell">&nbsp;</td>
+                <td class="border_cell grey_cell">&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="border_cell bold_font" style="width:11%;text-align:center;">&nbsp;</td>
+                <td colspan="2" class="border_cell bold_font" style="width:11%;text-align:center;">Wells Counted</td>
+                <td class="border_cell bold_font" style="width:11%;text-align:center;">MPN</td>
+                <td class="border_cell" style="width:11%;text-align:center;">If diluted, final MPN</td>
+                <td colspan="2" class="border_cell bold_font grey_cell italic_font" style="width:11%;text-align:center;">Wells Counted</td>
+                <td class="border_cell bold_font grey_cell italic_font" style="width:11%;text-align:center;">MPN</td>
+                <td class="border_cell grey_cell italic_font" style="width:11%;text-align:center;">If diluted, final MPN</td>
+            </tr>
+            <tr>
+                <td class="border_cell">&nbsp;HPC Ctrl</td>
+                <td class="border_cell" colspan="2">&nbsp;</td>
+                <td class="border_cell">&nbsp;</td>
+                <td class="border_cell">&nbsp;</td>
+                <td class="border_cell grey_cell">&nbsp;</td>
+                <td class="border_cell grey_cell">&nbsp;</td>
+                <td class="border_cell grey_cell">&nbsp;</td>
+                <td class="border_cell grey_cell">&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="border_cell">&nbsp;HPC</td>
+                <td class="border_cell" colspan="2">&nbsp;</td>
+                <td class="border_cell">&nbsp;</td>
+                <td class="border_cell">&nbsp;</td>
+                <td class="border_cell grey_cell">&nbsp;</td>
+                <td class="border_cell grey_cell">&nbsp;</td>
+                <td class="border_cell grey_cell">&nbsp;</td>
+                <td class="border_cell grey_cell">&nbsp;</td>
+            </tr>
+            <tr>
+                <td colspan="9" class="grey_cell" style="text-align:center;font-size:1.3rem;">
+                    Shaded area is for (circle):
+                    &nbsp;&nbsp;&nbsp;&nbsp;Parallel
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Confirmation Count
+                </td>
+            </tr>
+        </table>
+
+        <div>&nbsp;</div>
+
+        <table style="width:100%;">
+            <tr>
+                <td class="border_cell" style="width:15%;">Colilert Tech Prep</td>
+                <td class="border_cell" style="width:20%;">&nbsp;</td>
+                <td class="border_cell" style="width:15%;">Colilert Tech counter</td>
+                <td class="border_cell" style="width:20%;">&nbsp;</td>
+                <td class="border_cell" style="width:15%;">Colilert Tech confirmation</td>
+                <td class="border_cell" style="width:20%;">&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="border_cell">HPC Tech Prep</td>
+                <td class="border_cell">&nbsp;</td>
+                <td class="border_cell">HPC Tech counter</td>
+                <td class="border_cell">&nbsp;</td>
+                <td class="border_cell">HPC Tech confirmation</td>
+                <td class="border_cell">&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="border_cell">Reviewed By (QAC/QM)</td>
+                <td colspan="2" class="border_cell">&nbsp;</td>
+                <td class="border_cell">Date</td>
+                <td colspan="2" class="border_cell">&nbsp;</td>
+            </tr>
+        </table>
+        <div>&nbsp;</div>
+        <div class="bold_font">LS/LD: Attach a copy of the Analysis Report or Certification of Analysis to this record to indicate that the results were given to the customer.</div>
+        <div>Comments:</div>
+
+        <div class="footer">
+            <table style="width:960px;">
+                <tr>
+                    <td style="text-align:left;">F110</td>
+                    <td style="text-align:right;">REV 5</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>

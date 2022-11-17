@@ -1,0 +1,61 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="wwwroot\email_file_attachments\**" />
+    <Compile Remove="wwwroot\images\admin_signatures\**" />
+    <Compile Remove="wwwroot\scan_subsidy_forms\**" />
+    <Content Remove="wwwroot\email_file_attachments\**" />
+    <Content Remove="wwwroot\images\admin_signatures\**" />
+    <Content Remove="wwwroot\scan_subsidy_forms\**" />
+    <EmbeddedResource Remove="wwwroot\email_file_attachments\**" />
+    <EmbeddedResource Remove="wwwroot\images\admin_signatures\**" />
+    <EmbeddedResource Remove="wwwroot\scan_subsidy_forms\**" />
+    <None Remove="wwwroot\email_file_attachments\**" />
+    <None Remove="wwwroot\images\admin_signatures\**" />
+    <None Remove="wwwroot\scan_subsidy_forms\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="15.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.9" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="4.14.0" />
+    <PackageReference Include="Select.HtmlToPdf.NetCore" Version="22.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="HorizonLabLibrary">
+      <HintPath>..\HorizonLabLibrary\bin\Debug\netstandard2.0\HorizonLabLibrary.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="nlog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Views\Certificate\CouponCertificate_copy.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Shared\_HlabWebAdminLayout.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Shared\_LoadingModalDialogBox.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\WaterBacteriaTransaction\_EditTestTransactionFrameSection3.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+  </ItemGroup>
+
+</Project>

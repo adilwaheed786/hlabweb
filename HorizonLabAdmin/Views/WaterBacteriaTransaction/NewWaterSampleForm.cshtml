@@ -1,0 +1,384 @@
+﻿<link href="~/css/horizonlab_style.css" rel="stylesheet" />
+<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+
+<link href="~/css/jquery-ui.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/css/modal_style.css" />
+<script src="~/js/jquery-ui.js"></script>
+<!--<script src="~/js/general_functions.js"></script>-->
+@{
+    ViewData["PageTitle"] = "New Water Bacteria Form";
+    Layout = null;
+    if (ViewBag.frame != "yes")
+    {
+        Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+    }
+}
+
+<style>
+    input[type=text]:focus {
+        outline: 2px solid orange; /* oranges! yey */
+    }
+
+    .dropdownfield:focus {
+        outline: 2px solid orange; /* oranges! yey */
+    }
+</style>
+
+@model HorizonLabAdmin.Models.Forms.TestResultPageViewModel
+<!--<link href="~/css/jquery-ui.css" rel="stylesheet" />-->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<link href="~/css/jquery-ui-timepicker-addon.css" rel="stylesheet" />
+<link href="~/css/jquery.datetextentry.css" rel="stylesheet" />
+<script src="~/js/core/jquery.min.js"></script>
+<script src="~/js/jquery.datetextentry.js"></script>
+<script src="~/js/fm.timetator.jquery.js"></script>
+<script src="~/js/api_events.js"></script>
+<!--<script src="~/js/jquery-ui-timepicker-addon.js"></script>-->
+<script src="~/js/general_functions.js"></script>
+<script src="~/js/new_water_sample_events.js"></script>
+<script src="~/js/edit_transaction_events.js"></script>
+<script src="~/js/new_water_sample_datetime_tab_events.js"></script>
+
+
+<div style="background:white; font-size:1.3rem; width:980px;">
+    <form asp-action="AddWaterSample" asp-controller="WaterBacteriaPostTransactions" method="post" class="" id="water_test_form" enctype="multipart/form-data">
+        <input type="hidden" asp-for="@Model.hlab_order_items.id" value="@Model.orderitemview.order_item_id">
+        <input type="hidden" asp-for="@Model.hlab_order_items.test_pkg_id" value="@Model.orderitemview.pkg_id">
+        <input type="hidden" asp-for="@Model.hlab_order_items.order_id" value="@Model.orderitemview.order_id">
+        <input type="hidden" asp-for="@Model.hlab_order_items.amount" value="@Model.orderitemview.amount">
+        <input type="hidden" asp-for="@Model.hlab_order_items.hl_code" value="@Model.orderitemview.hl_code">
+        <input type="hidden" asp-for="@Model.hlab_order_items.coupon" value="@Model.orderitemview.assigned_coupon">
+        <input type="hidden" asp-for="@Model.hlab_test_transactions.customer_id" value="@Model.orderitemview.customer_id">
+        <input type="hidden" asp-for="@Model.orderitemview.pkg_class_id" value="@Model.orderitemview.pkg_class_id">
+        <input type="hidden" asp-for="@Model.orderitemview.hl_code_prefix" value="@Model.orderitemview.hl_code_prefix">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-success">
+                    <div class="panel-body">
+                        @{ string orderid = "", analysis = "", dateorder = "", recievedby = "", price = "", labcode = "", city = Model.customer_info.city, address = $"{Model.customer_info.street} {Model.customer_info.city} {Model.customer_info.province} {Model.customer_info.postal_code}";}
+                        @{ string request_day = "", request_month = "", request_year = "", request_hour = "", request_minute = "", str_reqeust_date = "", str_request_time = "";}
+                        @{ bool disabled = false;}
+                        @if (Model.orderitemview != null)
+                        {
+                            orderid = string.Format("{0:00000000}", Model.orderitemview.order_id);
+                            analysis = Model.orderitemview.analysis;
+                            dateorder = Model.orderitemview.order_date?.ToString("dd/MM/yyyy");
+                            recievedby = Model.orderitemview.received_by;
+                            price = string.Format("{0:0.00}", Model.orderitemview.amount);
+                            labcode = Model.orderitemview.lab_code;
+                        }
+
+                        @if (Model.orderitemview.pkg_id == 1)
+                        { //if package id is subsidy
+                            disabled = true;
+                            address = "";
+                            city = "";
+                        }
+
+                        @if (Model.orderitemview.order_date != null)
+                        {
+                            request_day = Model.orderitemview.order_date.Value.Day.ToString("D2");
+                            request_month = Model.orderitemview.order_date.Value.Month.ToString("D2");
+                            request_year = Model.orderitemview.order_date.Value.Year.ToString("D2");
+                            request_hour = Model.orderitemview.order_date.Value.Hour.ToString("D2");
+                            request_minute = Model.orderitemview.order_date.Value.Minute.ToString("D2");
+                            str_reqeust_date = $"{request_year}-{request_month}-{request_day}";
+                            str_request_time = $"{request_hour}:{request_minute}";
+                        }
+
+                        <div class="col-sm-3">
+                            <div><b>Customer:</b> @Model.customer_info.first_name @Model.customer_info.last_name</div>
+                            <div>
+                                <b>Address: </b><br />
+                                @if (!string.IsNullOrEmpty(Model.customer_info.street))
+                                {
+                                    @Model.customer_info.street
+                                    @Model.customer_info.city
+                                    @Model.customer_info.province
+                                } @Model.customer_info.postal_code
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div><b>Customer ID:</b> @String.Format("{0:00000000}", Model.customer_info.customer_id)</div>
+                            <div><b>Email:</b> @Model.customer_primary_email</div>
+                            <div><b>Phone:</b> @Model.customer_primary_phone</div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div><b>Public: </b>@Model.customer_info.is_public</div>
+                            <div><b>Semi Public: </b>@Model.customer_info.is_semi_public</div>
+                            <div><b>Financing: </b>@Model.customer_info.is_approve_financing</div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div>
+                                <b>Susbsidy Form:</b> <br />
+                                <div><input type="file" name="scan_subsidy_image" id="scan_subsidy_image"></div>
+                            </div>
+                            <div style="padding-top:2px;">
+                                <b>Coupon:</b>
+                                @Model.orderitemview.assigned_coupon
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="panel panel-success">
+                    <div class="panel-body">
+                        <div class="row">
+                            <input asp-for="@Model.hlab_invoice_list[0].invoice_date" type="hidden" class="form-control" value="@DateTime.Now">
+                            <input asp-for="@Model.hlab_invoice_list[0].paid_amount" type="hidden" class="form-control" value="@price">
+                            <input asp-for="@Model.hlab_invoice_list[0].payment_date" type="hidden" class="form-control" value="@dateorder">
+                            <input asp-for="@Model.hlab_invoice_list[0].paid_by" type="hidden" class="form-control" value="@Model.customer_info.first_name @Model.customer_info.last_name">
+                            <input asp-for="@Model.hlab_test_transactions.price" type="hidden" class="form-control decimal_only" value="@price">
+                            <input asp-for="@Model.hlab_test_transactions.assigned_coupon" type="hidden" value="@Model.orderitemview.assigned_coupon">
+
+                            <div class="col-sm-3">
+                                <div><b>Request ID:</b>@orderid</div>
+                                <div><b>Lab Code:</b>@labcode</div>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div><b>Date:</b>@dateorder</div>
+                                <div><b>Analysis:</b><br />@analysis</div>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div><b>Received By:</b>@recievedby</div>
+                                <div><b>Amount: </b>$@price</div>
+                                <div><b>Paid By: </b>@Model.customer_info.first_name @Model.customer_info.last_name</div>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div><b>Paid: </b><select asp-for="@Model.hlab_test_transactions.is_paid" asp-items="@Model.isPaid" class="" style="width:50%;" id="transactionIsPaid"></select></div>
+                                <div>
+                                    <b>Payment(s):</b>
+                                    @if (Model.customer_order_payment_list.Count > 0)
+                                    {
+                                        <div style="height:40px;overflow:auto;">
+                                            @foreach (var payment in Model.customer_order_payment_list)
+                                            {
+                                                <div>
+                                                    <span>@payment.payment</span>&nbsp;
+                                                    <span>$@payment.paid_amount</span>&nbsp;
+                                                    <span>
+                                                        @if (payment.payment_date != null)
+                                                        {
+                                                            <span>@payment.payment_date.Value.ToString("dd/MM/yyyy")</span>
+                                                        }
+                                                    </span>&nbsp;
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <b>Project: </b><br />
+                                <select asp-for="@Model.hlab_test_transactions.project_id" asp-items="@Model.selectProjectList" class="dropdownfield" id="database_project_id" tabindex="2"></select>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <b>Flood Sample: </b><br />
+                                <select asp-for="@Model.hlab_test_transactions.is_flood_sample" asp-items="@Model.isFloodSample" style="width:55%;" id="database_is_flood_sample" class="dropdownfield"></select>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <b>Comments: </b><br />
+                                <textarea asp-for="@Model.hlab_test_transactions.notes" style="width:100%;" id="database_notes"></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-success">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <b>Sample ID: </b><br />
+                        <input asp-for="@Model.hlab_test_transactions.idnty_location" type="text" style="width:100%;" id="form_sampleid" value="" tabindex="3" autofocus>
+                    </div>
+                    <div class="col-sm-2">
+                        <b>Sample Type: </b><br />
+                        <select asp-for="@Model.hlab_test_transactions.sample_type_id" asp-items="@Model.selectSampleTypeList" style="width:100%;" id="form_sampletype" disabled="@(disabled ? "disabled" : null)" tabindex="4" class="dropdownfield"></select>
+                    </div>
+                    <div class="col-sm-2">
+                        <b>Legal Location: </b><br />
+                        <input asp-for="@Model.hlab_test_transactions.sample_legal_loc" type="text" style="width:100%;" id="form_sample_legal_loc" value="" disabled="@(disabled ? "disabled" : null)" tabindex="5">
+                    </div>
+                    <div class="col-sm-2">
+                        <b>Town: </b><br />
+                        <select asp-for="@Model.hlab_test_transactions.town" asp-items="@Model.selectTown" id="select_town" class="dropdownfield" tabindex="6" disabled="@(disabled ? "disabled" : null)"></select>
+
+                        <button type="button" class="btn btn-sm btn-outline-success text-left" id="addTown" tabindex="999">
+                            <span class="glyphicon glyphicon-plus-sign" style="font-size:1.7rem;"></span>
+                        </button>
+                    </div>
+                    <div class="col-sm-2">
+                        <b>Rural Municipality: </b><br />
+                        <select asp-for="@Model.hlab_test_transactions.rm_id" asp-items="@Model.selectMunicipalityList" style="width:100%;" id="form_municipality" disabled="@(disabled ? "disabled" : null)" tabindex="7" class="dropdownfield"></select>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-sm-2">
+                        <div class=""><b>Latitude: </b></div>
+                        <div class=""><input asp-for="@Model.hlab_test_transactions.latitude" type="text" style="width:100%;" value="" id="database_latitude"></div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class=""><b>Longitude: </b></div>
+                        <div class=""><input asp-for="@Model.hlab_test_transactions.longitude" type="text" style="width:100%;" value="" id="database_longitude"></div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class=""><b>UTM X: </b></div>
+                        <div class=""><input asp-for="@Model.hlab_test_transactions.utm_x" type="text" style="width:100%;" value="" id="database_utm_x"></div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class=""><b>UTM Y: </b></div>
+                        <div class=""><input asp-for="@Model.hlab_test_transactions.utm_y" type="text" style="width:100%;" value="" id="database_utm_y"></div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class=""><b>Existence: </b></div>
+                        <div class=""><select asp-for="@Model.hlab_test_transactions.existence" asp-items="@Model.selectExistence" style="width:100%;" id="database_existence" class="dropdownfield"></select></div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class=""><b>Zone: </b></div>
+                        <div class=""><input asp-for="@Model.hlab_test_transactions.zone" type="text" style="width:100%;" value="" disabled="@(disabled ? "disabled" : null)" id="database_zone"></div>
+                    </div>
+                </div>
+                <hr />
+                <div class="row" style="padding-top:5px;">
+                    <div class="col-sm-3">
+                        <b>COLLECT</b>
+                        <div class="row" style="margin-top:2px;">
+                            <div class="col-sm-1">Date: </div>
+                            <div class="col-sm-10">
+                                <input type="text" id="input_collectdate" value="" tabindex="8">
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top:2px;">
+                            <div class="col-sm-1">Time:</div>
+                            <div class="col-sm-10">
+                                <input type="text" id="input_collecttime" style="width:40%;" class="input_time" value="" tabindex="9">
+                                <input asp-for="@Model.hlab_test_transactions.collect_datetime" type="hidden" autocomplete="off" class="" id="collectdate">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <b>SUBMITTED</b>
+                        <div class="row">
+                            <div class="col-sm-1 text-right">By:</div>
+                            <div class="col-sm-10">
+                                <input asp-for="@Model.hlab_test_transactions.submtd_by" type="text" value="@Model.customer_info.first_name @Model.customer_info.last_name" tabindex="10" id="form_submittedby">
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top:2px;">
+                            <div class="col-sm-1">Date: </div>
+                            <div class="col-sm-10">
+                                <input type="text" id="input_submitdate" value="@str_reqeust_date" tabindex="11">
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top:2px;">
+                            <div class="col-sm-1">Time:</div>
+                            <div class="col-sm-10">
+                                <input type="text" id="input_submittime" value="@str_request_time" style="width:40%;" tabindex="12" autocomplete="off" class="input_time">
+                                <input asp-for="@Model.hlab_test_transactions.submtd_datetime" class="form-control" type="hidden" autocomplete="off" id="submitdate">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <b>RECEIVED</b>
+                        <div class="row">
+                            <div class="col-sm-1 text-right">By:</div>
+                            <div class="col-sm-10">
+                                <select asp-for="@Model.hlab_test_transactions.rcv_by_id" asp-items="@Model.selectReceiversList" style="width:100%;" id="form_receivedby" tabindex="13" class="dropdownfield"></select>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top:2px;">
+                            <div class="col-sm-1">Date: </div>
+                            <div class="col-sm-10">
+                                <input type="text" id="input_receiveddate" value="@str_reqeust_date" tabindex="14">
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top:2px;">
+                            <div class="col-sm-1">Time: </div>
+                            <div class="col-sm-10">
+                                <input type="text" id="input_receivedtime" value="@str_request_time" style="width:40%;" tabindex="15" autocomplete="off" class="input_time">
+                                <input asp-for="@Model.hlab_test_transactions.rcv_date" class="form-control" type="hidden" id="receivedate">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <b>Temperature:</b>
+                        <div class="row" style="margin-top:2px;">
+                            <div class="col-sm-1 text-right">&nbsp;</div>
+                            <div class="col-sm-10">
+                                <input asp-for="@Model.hlab_test_transactions.temp" type="text" style="width:100%;" id="form_temperature" value="" tabindex="16">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-success">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div>
+                            Test Date:<br />
+                            <input type="text" id="input_testdate" class="" value="" tabindex="17">
+                            <input asp-for="@Model.hlab_test_transactions.test_date" type="hidden" autocomplete="off" style="width:100%;" id="testdate">
+                        </div>
+                        <div>
+                            Report Date:<br />
+                            <input type="text" id="input_reportdate" class="" value="" tabindex="18" autocomplete="off">
+                            <input asp-for="@Model.hlab_test_transactions.work_date" type="hidden" autocomplete="off" class="form-control" id="reportdate">
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div>
+                            Report:
+                            <select asp-for="@Model.hlab_test_transactions.report_type_id" asp-items="@Model.selectReportTypeList" style="width:100%;" id="form_reporttype" class="dropdownfield"></select>
+                        </div>
+                        <div>
+                            Lab Code:
+                            <select asp-for="@Model.hlab_test_transactions.test_pkg_id" asp-items="@Model.selectTestPackageList" style="width:100%;" id="database_test_pkg_id" class="dropdownfield"></select>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <div>
+                            <input asp-for="@Model.hlab_test_transactions.is_condition_met" type="checkbox">&nbsp;Is Condition Met
+                        </div>
+                        <div>
+                            Condition Comment:
+                            <textarea asp-for="@Model.hlab_test_transactions.condition_comment" style="width:100%;" id=""></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="col-lg-12">
+            <!--<button type="button" class="btn btn-success" onclick="window.location='/WaterBacteriaTransaction/ViewTransactions'">TRANSACTION VIEW PAGE</button>-->
+            <button type="button" class="btn btn-success" id="save_watersample_to_all">APPLY TO ALL</button>
+            <button type="button" class="btn btn-success" id="save_new_test">SAVE</button><br /><br />
+        </div>
+    </div>
+</div>
+
+@Html.Partial("_ProcessingModalDialogBox")
+

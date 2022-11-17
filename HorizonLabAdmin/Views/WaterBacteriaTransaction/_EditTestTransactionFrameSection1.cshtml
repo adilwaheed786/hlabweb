@@ -1,0 +1,159 @@
+﻿@model HorizonLabAdmin.Models.Forms.TestResultPageViewModel
+@{ string orderid = "", analysis = "", dateorder = "", recievedby = "", price = "", labcode = "", html_disable = null;}
+@{ bool disabled = false; int admin_access = 1;}
+@if (ViewBag.orderitemview != null)
+{
+    orderid = string.Format("{0:00000000}", ViewBag.orderitemview.order_id);
+    analysis = ViewBag.orderitemview.analysis;
+    dateorder = ViewBag.orderitemview.order_date?.ToString("dd/MM/yyyy");
+    recievedby = ViewBag.orderitemview.received_by;
+    price = string.Format("{0:0.00}", ViewBag.orderitemview.amount);
+    labcode = ViewBag.orderitemview.lab_code;
+
+    @if (ViewBag.orderitemview.pkg_id == 1)
+    { //if package id is subsidy
+        disabled = true;
+    }
+    if (Model.trans_details.publish && ViewBag.user_access_id != admin_access)
+    {
+        html_disable = "disabled";
+    }
+}
+
+<button type="button" class="accordion" data-toggle="collapse" data-target="#test_request_info" aria-expanded="false" aria-controls="test_request_info">Test Request Information</button>
+<div class="row collapse" id="test_request_info">
+    <div class="col-sm-12">
+        <div class="panel panel-success">
+            <div class="panel-body" style="width:960px;">
+                @*<div class="row">
+                    <div class="col-sm-3">
+                        <div><b>Customer:</b> @Model.trans_details.first_name @Model.trans_details.last_name</div>
+                        <div>
+                            <b>Address: </b><br />
+                            @if (!string.IsNullOrEmpty(Model.trans_details.street))
+                            {
+                                @Model.trans_details.street
+                                @Model.trans_details.city
+                                @Model.trans_details.province
+                            } @Model.trans_details.postal_code
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div><b>Customer ID:</b> @String.Format("{0:00000000}", Model.trans_details.customer_id)</div>
+                        <div><b>Email:</b> @Model.customer_primary_email</div>
+                        <div><b>Phone:</b> @Model.customer_primary_phone</div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div><b>Public: </b>@Model.trans_details.is_public</div>
+                        <div><b>Semi Public: </b>@Model.trans_details.is_semi_public</div>
+                        <div><b>Financing: </b>@Model.trans_details.is_approve_financing</div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div>
+                            <b>Susbsidy Form:</b> <br />
+                            <input asp-for="@Model.trans_details.subsidyimage_id" type="hidden" value="@Model.trans_details.subsidyimage_id" disabled="@html_disable">
+                            <div>@Model.trans_details.scan_image_filename</div>
+                            <div><input type="file" name="scan_subsidy_image" id="scan_subsidy_image" class="" disabled="@html_disable"></div>
+                        </div>
+                        <div style="padding-top:2px;">
+                            <b>Coupon:</b>
+                            <input asp-for="@Model.trans_details.assigned_coupon" type="text" class="number_only" id="database_assigned_coupon" style="width:60%;" value="@Model.trans_details.assigned_coupon" disabled="@html_disable">
+                        </div>
+                    </div>
+                </div>
+                <hr />*@
+                <div class="row">
+                    <input asp-for="@Model.trans_details.trans_id" type="hidden" class="form-control" value="@Model.trans_details.trans_id" id="transactionid">
+                    
+                    <input asp-for="@Model.trans_details.date_entered" type="hidden" class="form-control" value="@Model.trans_details.date_entered" id="database_date_entered">
+                    <input asp-for="@Model.trans_details.price" type="hidden" class="form-control" value="@Model.trans_details.price" id="database_price">
+                    @*<input asp-for="@Model.trans_details.rcv_by_id" type="hidden" class="form-control" value="@Model.trans_details.rcv_by_id" id="database_rcv_by_id">*@
+                    <input asp-for="@Model.trans_details.transaction_type_id" type="hidden" class="form-control" value="@Model.trans_details.transaction_type_id" id="database_transaction_type_id">
+                    <input asp-for="@Model.trans_details.idnty_name" type="hidden" class="form-control" value="@Model.trans_details.idnty_name" id="database_idnty_name">
+                    <input asp-for="@Model.trans_details.is_good_condition" type="hidden" class="form-control" value="@Model.trans_details.is_good_condition" id="database_is_good_condition">
+
+                    <div class="col-lg-3">
+                        <div><b>Request ID:</b>@orderid</div>
+                        <div><b>Lab Code:</b>@labcode</div>
+                    </div>
+
+                    <div class="col-lg-3">
+                        <div><b>Date:</b>@dateorder</div>
+                        <div><b>Analysis:</b><br />@analysis</div>
+                    </div>
+
+                    <div class="col-lg-3">
+                        <div><b>Received By:</b>@recievedby</div>
+                        <div><b>Amount: </b>$@Model.trans_details.price</div>
+                        <div><b>Paid By: </b>@Model.trans_details.first_name @Model.trans_details.last_name</div>
+                    </div>
+
+                    <div class="col-lg-3">
+                        <b>Paid: </b><select asp-for="@Model.trans_details.is_paid" asp-items="@Model.isPaid" style="width:50%;" id="transactionIsPaid" class="dropdownfield" disabled="@html_disable"></select>
+                        <b>Payment(s):</b>
+                        @if (Model.customer_order_payment_list.Count > 0)
+                        {
+                            <div style="height:40px;overflow:auto;">
+                                @foreach (var payment in Model.customer_order_payment_list)
+                                {
+                                    <div>
+                                        <span>@payment.payment</span>&nbsp;
+                                        <span>$@payment.paid_amount</span>&nbsp;
+                                        <span>
+                                            @if (payment.payment_date != null)
+                                            {
+                                                <span>@payment.payment_date.Value.ToString("dd/MM/yyyy")</span>
+                                            }
+                                        </span>&nbsp;
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+                <hr />
+
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <b>Project: </b><br />
+                                <select asp-for="@Model.trans_details.project_id" asp-items="@Model.selectProjectList" class="dropdownfield" id="database_project_id" disabled="@html_disable"></select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <b>Flood Sample: </b><br />
+                                <select asp-for="@Model.trans_details.is_flood_sample" asp-items="@Model.isFloodSample" style="width:55%;" id="database_is_flood_sample" class="dropdownfield" disabled="@html_disable"></select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <b>Comments: </b><br />
+                                <textarea asp-for="@Model.trans_details.notes" style="width:100%;" id="database_notes" disabled="@html_disable">@Model.trans_details.notes</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <b>Downloads: </b><br />
+                                <a href="#">F054</a><br />
+                                <a href="#">Water Bacteria Certificate</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

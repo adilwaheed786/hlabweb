@@ -1,0 +1,428 @@
+﻿@{
+    ViewData["Title"] = "ProjectRequest";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+@model HorizonLabAdmin.Helpers.Containers.ProjectRequestPageObject
+@{ int customer_id = 0, counter = 0, tabIndexCounter = 1;}
+@{string collect_date = "", collect_time = "", default_collect_date = "", default_collect_time = "";}
+@{string rcv_date = "", rcv_time = "", test_date = "", test_time = "", submitted_date = "", submitted_time = "";}
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link href="~/css/jquery.datetextentry.css" rel="stylesheet" />
+<script>
+    window.onbeforeunload = function () {
+        return 'Are you sure you want to leave?';
+    };
+</script>
+<script src="~/js/jquery-ui.js"></script>
+<script src="~/js/jquery.datetextentry.js"></script>
+<script src="~/js/fm.timetator.jquery.js"></script>
+<script src="~/js/general_functions.js"></script>
+<script src="~/js/bulk_request_insert_events.js"></script>
+<script src="~/js/page_navigation.js"></script>
+
+<div class="row" style="height:800px; font-size:1.2rem; overflow:auto;">
+    <div class="col-lg-12">
+        <div class="panel panel-success">
+            <div class="panel-heading"><b>Project Request Records</b></div>
+            <div class="panel-body">
+                <p style="color:blue;">
+                    @if (!string.IsNullOrEmpty(Model.Message))
+                    {
+                        @Model.Message
+                    }
+                </p>
+                <form asp-action="RecordPage" asp-controller="ProjectRequests" method="get" class="" id="request_records_form">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            PROJECT
+                            <select name="project_id" asp-items="@Model.ProjectSelectList" class="form-control"></select>
+                        </div>
+
+                        <div class="col-sm-2">
+                            DATE UPLOADED
+                            <input type="text" id="" name="date" class="form-control datepicker_default" value="@Model.RequestDate" autocomplete="off">
+                        </div>
+
+                        <div class="col-sm-2">
+                            FILTER
+                            <select name="filter" asp-items="@Model.FilterOptions" class="form-control"></select>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <br />
+                            <button type="button" class="btn btn-success" value="" id="search_request_btn">SEARCH</button>
+                            <button type="button" class="btn btn-sm btn-outline-success" id="first_btn" page_form="request_records_form"><span class="glyphicon glyphicon-fast-backward" style="font-size:2rem;"></span></button>
+                            <button type="button" class="btn btn-sm btn-outline-success" id="back_btn" page_form="request_records_form"><span class="glyphicon glyphicon-backward" style="font-size:2rem;"></span></button>
+                            <input type="hidden" value="@ViewBag.start" name="start" id="record_start" />
+                            <input type="hidden" value="@ViewBag.end" name="end" id="record_end" />
+                            <input type="hidden" value="@ViewBag.record_count" name="rec_count" id="rec_count" />
+                            <button type="button" class="btn btn-sm btn-outline-success" id="next_btn" page_form="request_records_form"><span class="glyphicon glyphicon-forward" style="font-size:2rem;"></span></button>
+                            <button type="button" class="btn btn-sm btn-outline-success" id="last_btn" page_form="request_records_form"><span class="glyphicon glyphicon-fast-forward" style="font-size:2rem;"></span></button>
+                        </div>
+                        <div class="col-sm-2 text-right">
+                            <br />
+                            <br />
+                            @{
+                                int l_start = ViewBag.start;
+                                int l_end = ViewBag.end;
+                                l_start = l_start + 1;
+
+                                if (l_end == 0)
+                                {
+                                    l_start = 0;
+                                }
+
+                                if (l_end > ViewBag.record_count)
+                                {
+                                    l_end = ViewBag.record_count;
+                                }
+                            }
+                            Record(s) <span id="start_label">@l_start</span> to  <span id="end_label">@l_end</span> out of @ViewBag.record_count
+                        </div>
+                    </div>
+                </form>
+
+                <div style="height:520px;overflow:auto;" class="panel panel-success">
+                    <div style="width:2500px;">
+                    <form asp-action="UpdateTempRequest" asp-controller="ProjectRequestPosts" method="post" class="" id="bulk_request_form" target="_self">
+                        <input type="hidden" asp-for="@Model.selected_project_id" value="@Model.selected_project_id">
+                        <input type="hidden" asp-for="@Model.RequestDate" value="@Model.RequestDate">
+                        <input type="hidden" asp-for="@Model.SelectedFilter" value="@Model.SelectedFilter">
+                        <div class="panel-body">
+                            <table class="table table-striped" id="request_records">
+                                <thead>
+                                    <tr>
+                                        <th style="width:1%;"><input type="checkbox" id="checkbox_control" /></th>
+                                        <th>&nbsp;</th>
+                                        <th style="width:3%;">Cust. ID</th>
+                                        <th style="width:11%;" colspan="2">Name</th>
+                                        <th style="width:7%;">UID</th>
+                                        <th style="width:14%;">Sample Description <span style="font-weight:normal;font-size:1.0rem;">(96 characters)</span></th>
+                                        <th style="width:5%;">Test Pkg</th>
+                                        <th style="width:13%;" colspan="2">Collect Date/Time</th>
+                                        <th style="width:13%;" colspan="2">Received Date/Time</th>
+                                        <th style="width:3%;">Rcvd By</th>
+                                        <th style="width:11%;">Test Date/Time</th>
+                                        <th style="width:14%;" colspan="2">Submitted Date/Time</th>
+                                        <th>Sbmtd By</th>
+                                        <th>Temp</th>
+                                        <th>Payment</th>
+                                        <th>Form</th>
+                                        <!--<th style="width:5%;">Date Entered</th>-->
+                                        <!--<th style="width:1%;"><span class="glyphicon glyphicon-remove"></span></th>-->
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var request in Model.ProjectRequestRecords)
+                                    {
+                                        collect_date = "";
+                                        collect_time = "";
+                                        rcv_time = "";
+                                        rcv_date = "";
+                                        test_date = "";
+                                        test_time = "";
+                                        submitted_date = "";
+                                        submitted_time = "";
+
+                                        customer_id = request.customer_id;
+                                        if (request.customer_id == 0)
+                                        {
+                                            customer_id = request.temp_customer_id;
+                                        }
+
+                                        if (request.collect_datetime != null)
+                                        {
+                                            default_collect_date = request.collect_datetime.Value.ToString("yyyy-MM-dd");
+                                            default_collect_time = $"{request.collect_datetime.Value.Hour.ToString("D2")}:{request.collect_datetime.Value.Minute.ToString("D2")}";
+                                            collect_date = request.collect_datetime.Value.ToString("yyyy-MM-dd");
+                                            collect_time = $"{request.collect_datetime.Value.Hour.ToString("D2")}:{request.collect_datetime.Value.Minute.ToString("D2")}";
+                                        }
+
+                                        if (request.rcv_date != null)
+                                        {
+                                            rcv_date = request.rcv_date.Value.ToString("yyyy-MM-dd");
+                                            rcv_time = $"{request.rcv_date.Value.Hour.ToString("D2")}:{request.rcv_date.Value.Minute.ToString("D2")}";
+                                        }
+
+                                        if (request.test_date != null)
+                                        {
+                                            test_date = request.test_date.Value.ToString("yyyy-MM-dd");
+                                            test_time = $"{request.test_date.Value.Hour.ToString("D2")}:{request.rcv_date.Value.Minute.ToString("D2")}";
+                                        }
+
+                                        if (request.submitted_datetime != null)
+                                        {
+                                            submitted_date = request.submitted_datetime.Value.ToString("yyyy-MM-dd");
+                                            submitted_time = $"{request.submitted_datetime.Value.Hour.ToString("D2")}:{request.submitted_datetime.Value.Minute.ToString("D2")}";
+                                        }
+
+                                    <tr>
+                                        @{
+                                            Model.TestPackageSelectList.ForEach(x => x.Selected = false);
+                                            Model.PaymentSelectList.ForEach(x => x.Selected = false);
+                                            Model.ReceiverSelectList.ForEach(x => x.Selected = false);
+
+                                            Model.TestPackageSelectList.Where(x => x.Value == request.test_pkg_id.ToString()).First().Selected = true;
+                                            Model.PaymentSelectList.Where(x => x.Value == request.payment_id.ToString()).First().Selected = true;
+                                            Model.ReceiverSelectList.Where(x => x.Value == request.received_by_id.ToString()).First().Selected = true;
+                                        }
+                                        <td><input type="checkbox" class="modify_value" name="checked_req_ids" value="@request.id" /></td>
+                                        <td>@request.id</td>
+                                        <td>
+                                            <input type="hidden" asp-for="@Model.temporary_request_list[counter].id" value="@request.id">
+                                            <input type="hidden" asp-for="@Model.temporary_request_list[counter].request_id" value="@request.request_id">
+                                            <input type="hidden" asp-for="@Model.temporary_request_list[counter].project_id" value="@request.project_id">
+                                            <input type="hidden" asp-for="@Model.temporary_request_list[counter].date_insert" value="@request.date_insert">
+                                            <input type="hidden" asp-for="@Model.temporary_request_list[counter].proj_form_id" value="@request.proj_form_id">
+                                            <input type="hidden" asp-for="@Model.temporary_request_list[counter].collect_datetime" value="@request.collect_datetime" class="collect_datetime_fields" index="@request.id">
+                                            <input type="hidden" asp-for="@Model.temporary_request_list[counter].rcv_date" value="@request.rcv_date" class="received_datetime_fields" index="@request.id">
+                                            <input type="hidden" asp-for="@Model.temporary_request_list[counter].test_date" value="@request.test_date" class="test_datetime_fields" index="@request.id">
+                                            <input type="hidden" asp-for="@Model.temporary_request_list[counter].submitted_datetime" value="@request.submitted_datetime" class="submitted_datetime_fields" index="@request.id">
+
+                                            <input type="text" asp-for="@Model.temporary_request_list[counter].customer_id" class="get_customer_info number_only" id="customer_id_@request.id" value="@customer_id" index="@request.id" tabindex="@tabIndexCounter" style="width:60px;">
+                                            @{tabIndexCounter++;}
+                                        </td>
+                                        @*Customer ID*@
+                                        <td><input asp-for="@Model.temporary_request_list[counter].fname" type="text" class="" id="fname_@request.id" value="@request.temp_fname" tabindex="@tabIndexCounter"> @{tabIndexCounter++;}</td>
+
+                                        @*Customer Name*@
+                                        <td><input asp-for="@Model.temporary_request_list[counter].lname" type="text" class="" id="lname_@request.id" value="@request.temp_lname" tabindex="@tabIndexCounter"> @{tabIndexCounter++;}</td>
+
+                                        @*UID*@
+                                        <td><a href="@Url.Action("OrderListPage", "Order", new { req_id = request.request_id })" target="_blank" title="@request.request_id">@request.hl_code</a></td>
+
+                                        @*Sample Description*@
+                                        <td><input asp-for="@Model.temporary_request_list[counter].sample_desc" type="text" class="sample_description_field" id="sample_desc_@request.id" value="@request.sample_desc" tabindex="@tabIndexCounter" style="width:250px;"> @{tabIndexCounter++;}</td>
+
+                                        @*Test Package*@
+                                        <td><select asp-for="@Model.temporary_request_list[counter].test_pkg_id" asp-items="@Model.TestPackageSelectList" class="" id="test_pkg_id_@request.id"></select></td>
+
+                                        @*Collect Date Time*@
+                                        <td><input type="text" name="" class="input_collectdate" id="collect_date_@request.id" value="@collect_date" autocomplete="off" index="@request.id"></td>
+                                        <td><input style="width:60%;" type="text" class="number_only input_collecttime" id="collect_time_@request.id" value="@collect_time" index="@request.id"></td>
+
+                                        @*Received Date time*@
+                                        <td><input type="text" name="" class="input_collectdate" id="rcv_date_@request.id" value="@rcv_date" autocomplete="off" index="@request.id"></td>
+                                        <td><input style="width:60%;" type="text" class="number_only input_collecttime" id="rcv_time_@request.id" value="@rcv_time" index="@request.id"></td>
+
+                                        @*Received By*@
+                                        <td><select asp-for="@Model.temporary_request_list[counter].received_by_id" asp-items="@Model.ReceiverSelectList" class="" id="received_by_id_@request.id" style="width:65px;"></select></td>
+                                        <td>
+                                            <input type="text" name="" class="input_collectdate" id="test_date_@request.id" value="@test_date" autocomplete="off" index="@request.id">
+                                            <input style="width:60%;" type="hidden" class="number_only input_collecttime" id="test_time_@request.id" value="@test_time" index="@request.id">
+                                        </td>
+
+                                        @*Submitted Date time*@
+                                        <td><input type="text" name="" class="input_collectdate" id="submitted_date_@request.id" value="@submitted_date" autocomplete="off" index="@request.id" /></td>
+                                        <td><input style="width:60%;" type="text" class="number_only input_collecttime" id="submitted_time_@request.id" value="@submitted_time" index="@request.id" /></td>
+
+                                        <td><input asp-for="@Model.temporary_request_list[counter].submitted_by" value="@request.submitted_by" type="text" style="width:60px;" id="submitted_by_@request.id"></td>
+                                        <td><input asp-for="@Model.temporary_request_list[counter].temperature" value="@request.temperature" type="text" style="width:60px;" id="temp_@request.id"></td>
+                                        <td><select asp-for="@Model.temporary_request_list[counter].payment_id" asp-items="@Model.PaymentSelectList" class="" id="payment_@request.id"></select></td>
+                                        <td>
+                                            @if (request.proj_form_id != 0)
+                                            {
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                            }
+                                        </td>
+                                        @*<td>@request.date_insert.Value.ToString("dd/MM/yyyy")</td>
+        <td><input type="checkbox" value="@request.id" class="delete_request" name="delete_temp_req_ids" /></td>*@
+                                        @{
+                                            counter++;
+                                        }
+                                    </tr>
+                                            }
+                                </tbody>
+                            </table>
+                        </div>
+                        @{ string strop = ""; }
+                        <!--MODAL-->
+                        <div id="add_new_form" class="modal">
+                            <!-- Modal content -->
+                            <div class="modal-content" style="width:40%; font-size:1.2rem;">
+                                <div class="panel panel-success">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-lg-10 text-left"><b>Create New Project Form</b></div>
+                                            <div class="col-lg-2"><button type="button" class="close" value="" id="" onclick="CloseModalDialogBox('add_new_form');">&times;</button></div>
+                                        </div>
+                                    </div>
+                                    <div class="panel-body" style="height:500px; overflow:auto;">
+
+                                        <div class="row">
+                                            <div class="col-sm-4">Form<select asp-for="@Model.form_id" class="form-control" asp-items="@Model.FormSelectList" id="form_id"></select></div>
+                                            <div class="col-sm-4">Rush<br /><select asp-for="@Model.isRush" class="form-control" asp-items="@Model.RushList" id=""></select></div>
+                                            <div class="col-sm-4">Condition Met<br /><select asp-for="@Model.isConditionMet" class="form-control" asp-items="@Model.IsConditionMetList" id=""></select></div>
+                                        </div>
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                                Incubation Date/Time In:<br />
+                                                <input style="width:100%;" type="text" class="fromatted_date" id="inc_date_in" autocomplete="off" value="@default_collect_date">
+                                                <input style="width:30%;" type="text" class="number_only input_collecttime" id="inc_time_in" value="@default_collect_time">
+                                                <input type="hidden" asp-for="@Model.IncubationIn" id="IncubationIn" value="" />
+                                            </div>
+                                            @*<div class="col-sm-4">
+                                                    Incubation Date/Time Out:<br />
+                                                    <input style="width:100%;" type="text" name="" class="fromatted_date" id="inc_date_out" value="" autocomplete="off">
+                                                    <input style="width:30%;" type="text" class="number_only input_collecttime" id="inc_time_out" value="">
+                                                    <input type="hidden" asp-for="@Model.IncubationOut" id="IncubationOut" value="" />
+                                                </div>*@
+                                            <div class="col-sm-4">
+                                                <input type="hidden" asp-for="@Model.IncubationOut" id="IncubationOut" value="" />
+                                                Temp:<br />
+                                                <input asp-for="@Model.IncubationTemp" style="width:60%;" type="text" class="" id="" value="35" autocomplete="off">
+                                            </div>
+                                        </div>
+                                        <hr />
+                                        <div style="height:200px; overflow:auto;">
+                                            Test Supplies:
+                                            @if (Model.TestPackageSupplyList != null && Model.TestPackageSupplyList.Count > 0)
+                                            {
+                                                string color = "#BCFFD4";
+                                                DateTime todays = DateTime.Now;
+                                                <table style="width:100%;">
+                                                    <tr>
+                                                        <th>&nbsp;</th>
+                                                        <th>Name</th>
+                                                        <th>Lot</th>
+                                                        <th>Expiry Date</th>
+                                                    </tr>
+                                                    @foreach (var supply in Model.TestPackageSupplyList)
+                                                    {
+                                                        TimeSpan difference = supply.expiry_date - todays;
+                                                        int intdaysdiff = (int)difference.TotalDays;
+                                                        string box_checked = "";
+                                                        color = "#BCFFD4";
+
+                                                        if (intdaysdiff <= 0) { continue; }
+
+                                                        if (todays.ToString("dd/MM/yyyy") == supply.expiry_date.ToString("dd/MM/yyyy"))
+                                                        {
+                                                            color = "#FED18A";
+                                                        }
+                                                        else if (intdaysdiff > 0 && intdaysdiff <= 14)
+                                                        {
+                                                            color = "#FED18A";
+                                                        }
+                                                        else if (intdaysdiff <= 0)
+                                                        {
+                                                            color = "#FB8F7C";
+                                                        }
+
+                                                        <tr>
+                                                            <td style="padding: 2px 2px 2px 2px;background:@color;">
+                                                                <input type="checkbox" class="supply_ids" value="@supply.id" name="supply_ids" @box_checked />
+                                                            </td>
+                                                            <td style="padding: 2px 2px 2px 2px;background:@color;">@supply.name</td>
+                                                            <td style="padding: 2px 2px 2px 2px;background:@color;">@supply.lot</td>
+                                                            <td style="padding: 2px 2px 2px 2px;background:@color;">@supply.expiry_date.ToString("dd/MM/yyyy")</td>
+
+                                                        </tr>
+                                                    }
+                                                </table>
+                                            }
+                                        </div>
+                                        <hr />
+                                        <button type="button" class="btn btn-success" value="" id="create_project_request_form">CREATE</button>
+                                        <button type="button" class="btn btn-success" value="" id="">CLEAR</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--END MODAL-->
+                    </form>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                COLLECT DATE/TIME<br />
+                                <input type="text" name="" class="" id="collect_date_control" autocomplete="off">
+                                <input style="width:30%;" type="text" class="number_only input_collecttime" id="collect_time_control" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                RECEIVED DATE/TIME<br />
+                                <input type="text" name="" class="" id="rcv_date_control" autocomplete="off">
+                                <input style="width:30%;" type="text" class="number_only input_collecttime" id="rcv_time_control" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                TEST DATE/TIME<br />
+                                <input type="text" name="" class="" id="test_date_control" autocomplete="off">
+                                @*<input style="width:30%;" type="text" class="number_only input_collecttime" id="test_time_control" autocomplete="off">*@
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                SUBMITTED DATE/TIME<br />
+                                <input type="text" name="" class="" id="submitted_date_control" autocomplete="off">
+                                <input style="width:30%;" type="text" class="number_only input_collecttime" id="submitted_time_control" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                SUBMITTED BY<br />
+                                <input type="text" name="" class="form-control" id="submitted_by_controller" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2 text-right">
+                        <a href="@Url.Action("AddProjectRequest", "ProjectRequests")" type="button" class="btn btn-success">INSERT NEW</a>
+                        <button type="submit" class="btn btn-success" value="" id="update_requests">UPDATE</button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-2">
+                        TEST PACKAGE
+                        <select name="" id="change_test_pkg" asp-items="@Model.TestPackageSelectList" class="form-control"></select>
+                    </div>
+
+                    <div class="col-sm-2">
+                        PAYMENT
+                        <select name="" id="change_payment" asp-items="@Model.PaymentSelectList" class="form-control"></select>
+                    </div>
+
+                    <div class="col-sm-2">
+                        TEMPERATURE
+                        <input type="text" class="form-control" id="temp_control">
+                    </div>
+
+                    <div class="col-sm-2">
+                        RECEIVED BY
+                        <select name="" id="receiver_controller" asp-items="@Model.ReceiverSelectList" class="form-control"></select>
+                    </div>
+
+                    <div class="col-sm-2">&nbsp;</div>
+
+                    <div class="col-sm-2 text-right">
+                        <button class="btn btn-success open_modal" value="add_new_form">CREATE FORM</button>
+                        <button class="btn btn-warning" id="delete_request">DELETE</button>
+                        @*<button class="btn btn-success" onclick="window.location.reload()" value="add_new_form">REFRESH</button>*@
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

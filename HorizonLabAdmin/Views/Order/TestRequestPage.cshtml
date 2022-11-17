@@ -1,0 +1,188 @@
+﻿
+@{
+    ViewData["Title"] = "Test Request Dashboard";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+
+@model HorizonLabAdmin.Helpers.Containers.DashboardDataView
+<link href="~/css/jquery-ui.css" rel="stylesheet" />
+<script src="~/js/jquery-ui.js"></script>
+<script src="~/js/fm.timetator.jquery.js"></script>
+<script src="~/js/general_functions.js"></script>
+<script src="~/js/api_events.js"></script>
+<script src="~/js/customer_events.js"></script>
+<script src="~/js/test_request_events.js"></script>
+<script src="~/js/test_request_helpers.js"></script>
+<script src="~/js/customer_helper.js"></script>
+<script src="~/js/payment_helper.js"></script>
+<script src="~/js/order_helpers.js"></script>
+<script src="~/js/order_events.js"></script>
+
+<style>
+    option {
+        border: 1px solid #EBEBEB;
+        border-radius: 2px;
+        padding: 3px 3px 3px 3px;
+        white-space: normal;
+        word-wrap: break-word;
+        margin-top: 2px;
+    }
+
+    input[type=text]:focus {
+        outline: 2px solid orange; /* oranges! yey */
+    }
+
+    .dropdownfield:focus {
+        outline: 2px solid orange; /* oranges! yey */
+    }
+</style>
+@{ 
+    string selected_customer_id = "", form_searchvalue="";
+    if (Model.search_customer_id > 0)
+    {
+        form_searchvalue = Model.search_customer_id.ToString();
+        selected_customer_id = "selected";
+    }
+}
+<div style="padding:20px 20px 20px 20px; background:white; border:1px solid #B6B6B6; border-radius:10px; height:800px;overflow:auto;font-size:1.3rem;">
+    <b>TEST REQUEST PAGE</b>
+    <input type="hidden" id="hidden_customerid_field" value="">
+    <input type="hidden" id="hidden_customerfname_field" value="">
+    <input type="hidden" id="hidden_customerlname_field" value="">
+    <input type="hidden" id="hidden_requestid_field" value="">
+    <input type="hidden" id="hidden_requestitemid_field" value="">
+    <input type="hidden" id="hidden_testtransactioid_field" value="">
+    <div class="row">
+        <div class="col-lg-4">
+            <!--<div class="panel panel-success" style="height:700px; overflow:auto;">-->
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-success" style="height:305px; overflow:auto;">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="row">
+                                            <div class="col-sm-10">
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <select class="form-control" id="form_searchfilter" style="font-size:1.15rem;">
+                                                            <option value="fn">First Name</option>
+                                                            @if (Model.search_customer_id == 0)
+                                                            {
+                                                                <option value="ln" selected>Last Name</option>
+                                                                <option value="ci">CST ID</option>
+                                                            }
+                                                            else
+                                                            {
+                                                                <option value="ln">Last Name</option>
+                                                                <option value="ci" selected>CST ID</option>
+                                                            }
+
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <input type="text" class="form-control" id="form_searchvalue" value="@form_searchvalue">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 text-left">
+                                                <button type="button" class="btn btn-sm btn-success" value="" id="search_customer"><span class="glyphicon glyphicon-search" style="font-size:1.7rem;"></span></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <select class="form-control" style="height:170px" id="customer_list" asp-items="@Model.customer_select_list_item" multiple></select>
+                                <button type="button" class="btn btn-lg btn-block btn-success open_modal" value="add_new_customer" id="" style="font-size:1.1rem;">NEW CUSTOMER</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="panel panel-success" style="height:360px; overflow:auto;">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-sm-4 text-left">Requests</div>
+                                    <div class="col-sm-8 text-right">
+                                        <button type="button" class="btn btn-sm btn-warning" value="" id="delete_request" style="font-size:1.0rem;">DEL</button>
+                                        <button type="button" class="btn btn-sm btn-success" value="" id="test_request_button" style="font-size:1.0rem;">NEW</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <select class="form-control" style="height:260px" id="request_list" asp-items="@Model.request_select_list_item" multiple></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="panel panel-success" style="height:360px; overflow:auto;">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-sm-8 text-left">
+                                        Request Items
+                                    </div>
+                                    <div class="col-sm-4 text-right">
+                                        <button type="button" class="btn btn-sm btn-success" value="" id="reload_request_items"><span class="glyphicon glyphicon-refresh" style="font-size:1.5rem;"></span></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-body" id="">
+                                <div id="test_request_panel" style="font-size:1.1rem;">
+                                    <table>
+                                        <tr>
+                                            <td style='width:150px;' class="text-left">
+                                                <b>REQUEST:</b> <br /> <span id="requestid_val"></span>
+                                            </td>
+                                            <td style='width:150px;' class="text-left">
+                                                <b>RECEIVED BY:</b> <br /> <span id="receivedby_val"></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style='width:150px;' class="text-left">
+                                                <b>CUSTOMER:</b> <br /> <span id="customer_val"></span>
+                                            </td>
+                                            <td style='width:150px;' class="text-left">
+                                                <b>DATE:</b> <br /> <span id="date_val"></span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <br />
+                                <div id="request_item_panel" style="width:100%; height:190px; overflow:auto;">
+                                    <select class="form-control" style="height:190px" id="request_item_list" multiple></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--</div>-->
+        </div>
+
+        <div class="col-lg-8">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-success" style="height:680px; overflow:auto;">
+                            <!--<div class="panel-heading"></div>-->
+                            <div class="panel-body">
+                                <iframe name="test_detail_frame" id="test_detail_frame" src="" frameborder="0" style="width:100%;overflow:auto; height:620px;" onload="CloseModalDialogBox('loading_modaldialogbox')">
+                                    Your browser doesn't support iframes.
+                                </iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@Html.Partial("_NewCustomerDialogBox", Model)
+@Html.Partial("_NewTestRequestDialogBox", Model)
+@Html.Partial("_LoadingModalDialogBox")
+@Html.Partial("_ProcessingModalDialogBox")

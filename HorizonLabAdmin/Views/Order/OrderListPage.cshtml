@@ -1,0 +1,448 @@
+﻿
+@{
+    ViewData["PageTitle"] = "Horizon Lab Request Records Page";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+<!--<link href="~/css/jquery-ui.css" rel="stylesheet" />-->
+<script src="~/js/jquery-ui.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+
+<script src="~/js/fm.timetator.jquery.js"></script>
+<script src="~/js/general_functions.js"></script>
+<script src="~/js/api_events.js"></script>
+<script src="~/js/order_helpers.js"></script>
+<script src="~/js/order_events.js"></script>
+
+@model HorizonLabAdmin.Models.Forms.OrderPageForm
+
+@{ if (!string.IsNullOrEmpty(ViewBag.Message))
+    {
+        var msg_details = ViewBag.Message.Split(':');
+        if (msg_details[0] == "success")
+        {
+            <p style="color:green;font-size:.75em;">@msg_details[1]</p>
+        }
+        else
+        {
+            <p style="color:red;font-size:.75em;">@msg_details[1]</p>
+        }
+    }
+}
+
+<div class="panel panel-success">
+    <div class="panel-heading">
+        <div class="row">
+            <div class="col-sm-12">
+                <form asp-action="SearchOrder" asp-controller="OrderPostTransactions" method="post" class="" id="order_page_form">
+                    <div class="row">
+                        <div class="col-sm-1">
+                            <select asp-for="@Model.order_search.searchfilter" asp-items="@ViewBag.selectSearhFilter" class="form-control"></select>
+                        </div>
+                        <div class="col-sm-2"><input asp-for="@Model.order_search.searchvalue" type="text" class="form-control" value="@Model.order_search.searchvalue"></div>
+
+                        <div class="col-sm-6">
+                            <div class="col-sm-1 text-right">From</div>
+                            <div class="col-sm-3"><input asp-for="@Model.order_search.start_order_date" type="text" class="form-control" id="searchOrderDateStart" value="@Model.order_search.start_order_date?.ToString("dd/MM/yyyy")" autocomplete="off"></div>
+                            <div class="col-sm-1 text-right">To</div>
+                            <div class="col-sm-6">
+                                <div class="row">
+                                    <div class="col-sm-6"><input asp-for="@Model.order_search.end_order_date" type="text" class="form-control" id="searchOrderDateEnd" value="@Model.order_search.end_order_date?.ToString("dd/MM/yyyy")" autocomplete="off"></div>
+                                    <div class="col-sm-1"><button type="submit" class="btn btn-sm btn-outline-success" value="" id=""><span class="glyphicon glyphicon-search" style="font-size:1.7rem;" data-toggle="tooltip" title="search request"></span></button></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @*<div class="col-sm-3 text-right">
+                            <button type="button" class="btn btn-sm btn-outline-success" id="colse_order_btn"><span class="glyphicon glyphicon-import" style="font-size:1.7rem;" data-toggle="tooltip" title="close orders"></span></button>
+                            <button type="button" class="btn btn-sm btn-outline-success" onclick="window.location='/Order/OrderPage'"><span class="glyphicon glyphicon-plus" style="font-size:1.7rem;" data-toggle="tooltip" title="place new orders"></span></button>
+                        </div>*@
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-5" style="padding:10px 10px 10px 10px;">
+                <div style="border:1px solid #D7D7DA; padding:5px 5px 5px 5px;border-radius:5px;color:#706E6E;font-size:0.8em;height:500px;overflow:auto;">
+                    <form asp-action="CloseOrders" asp-controller="Order" method="post" class="" id="order_list_form">
+                        <table class="table table-striped" id="order_table">
+                            <thead>
+                                <tr>
+                                    <th width="25%">&nbsp;</th>
+                                    <th width="20%"><!--<input type="checkbox" value="" id="checkbox_control">&nbsp;-->U.I.D</th>
+                                    <th width="35%">Customer</th>
+                                    <th width="20%">Request Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{int count_order_number = 0; string order_date = "", bg_color="";}
+                                @foreach (var order in ViewBag.orderlist)
+                                {
+                                    bg_color = "";
+                                    if (order.order_id == Model.SelectedRequestId) { bg_color = "#BDFFFA"; }
+
+                                    order_date = "";
+                                    if (order.order_date != null)
+                                    {
+                                        order_date = order.order_date?.ToString("MM/dd/yyyy");
+                                    }
+                                    <tr style="background-color:@bg_color;">
+                                        <td>
+                                            <!--<button type="button" class="btn btn-sm btn-outline-info view_order" value="@order.order_id" title='view order'><span class="glyphicon glyphicon-info-sign" style="font-size:1.3rem;"></span></button>-->
+                                            <a href="@Url.Action("OrderListPage", "Order", new {req_id = order.order_id } )"><span style="font-size:1.0rem;">SAMPLE</span></a>&nbsp;|&nbsp;
+                                            @{
+                                                if (!order.proc_status)
+                                                {
+                                                    <!--<button type="button" class="btn btn-sm btn-outline-success" onclick="window.location='/Order/EditOrderPage?orderid=@order.order_id'" title="edit order"><span class="glyphicon glyphicon-pencil" style="font-size:1.3rem;"></span></button>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger remove_order_btn" value="@order.order_id" title="remove order"><span class="glyphicon glyphicon-remove" style="font-size:1.3rem;"></span></button>-->
+                                                }
+                                                else
+                                                {
+                                                    <a href="@Url.Action("OrderReceipt", "Order", new {orderid = order.order_id } )" target="_blank" title="view receipt"><span style="font-size:1.0rem;">RECEIPT</span></a>
+                                                }
+                                            }
+
+                                        </td>
+                                        <td>
+                                            @{ if (!order.proc_status)
+                                                {
+                                                    <input type="checkbox" asp-for="@Model.hlab_order_list[count_order_number].proc_status" class="close_order">
+                                                    <input type="hidden" asp-for="@Model.hlab_order_list[count_order_number].order_id" value="@order.order_id" />
+                                                    <input type="hidden" asp-for="@Model.hlab_order_list[count_order_number].customer_id" value="@order.customer_id" />
+                                                    <input type="hidden" asp-for="@Model.hlab_order_list[count_order_number].order_date" value="@order.order_date" />
+                                                    <input type="hidden" asp-for="@Model.hlab_order_list[count_order_number].received_by" value="@order.received_by" />
+                                                    <input type="hidden" asp-for="@Model.hlab_order_list[count_order_number].total_amount" value="@order.total_amount" />
+                                                    <span>&nbsp;</span>
+                                                    count_order_number++;
+                                                }
+                                            }
+                                            @*@string.Format("{0:00000000}", order.order_id)*@
+                                            @if (!string.IsNullOrEmpty(order.hl_code))
+                                            {
+                                                order.hl_code = order.hl_code.Replace(",","<br/>");
+                                                <span>@Html.Raw(order.hl_code)</span>
+                                            }
+                                        </td>
+                                        <td>@order.first_name @order.last_name</td>
+                                        <td>@order_date</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <div class="col-sm-7" style="padding:10px 10px 10px 10px;">
+                @{
+                    string requestid = "", receivedby = "", customer = "", daterequest = "", request_date = "";
+                    if (Model.request_view != null)
+                    {
+                        if (Model.request_view.order_date != null) { request_date = Model.request_view.order_date?.ToString("dd/MM/yyyy"); }
+                        requestid = string.Format("{0:00000000}", Model.request_view.order_id);
+                        receivedby = Model.request_view.received_by;
+                        customer = Model.request_view.first_name;
+                        daterequest = request_date;
+                    }
+                }
+                <div id="orderdetails" style="border:1px solid #D7D7DA; padding:25px 15px 25px 15px;border-radius:5px;color:#706E6E;font-size:1.16rem;height:500px;">
+                    <form asp-action="SaveRequestFormDetails" asp-controller="OrderPostTransactions" method="post" class="" id="request_details_form">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <b>Request ID: </b> <span id="label_orderid">@requestid</span><br />
+                                <b>Customer: </b><span id="label_customer">@customer</span><br />
+                                <b>Received By: </b><span id="label_receivedby">@receivedby</span><br />
+                                <b>Date Requested: </b> <span id="label_dateorder">@daterequest</span>
+                            </div>
+                            <div class="col-sm-8">
+                                @if (Model.request_view != null)
+                                {
+                                    string incubate_day_in = "", incubate_month_in = "", incubate_year_in = "", incubate_hour_in = "", incubate_minute_in = "", incubate_date_in = "", incubate_time_in = "";
+                                    string incubate_day_out = "", incubate_month_out = "", incubate_year_out = "", incubate_hour_out = "", incubate_minute_out = "", incubate_date_out = "", incubate_time_out = "", incubation_temp = "35";
+                                    DateTime? incubation_date_time_in;
+
+                                    incubation_date_time_in = Model.request_view.incubation_date_time_in;
+                                    if (Model.request_view.incubation_date_time_in == null)
+                                    {
+                                        incubation_date_time_in = Model.request_view.order_date;
+                                    }
+
+                                    if (incubation_date_time_in != null)
+                                    {
+                                        incubate_day_in = incubation_date_time_in.Value.Day.ToString("D2");
+                                        incubate_month_in = incubation_date_time_in.Value.Month.ToString("D2");
+                                        incubate_year_in = incubation_date_time_in.Value.Year.ToString("D2");
+                                        incubate_hour_in = incubation_date_time_in.Value.Hour.ToString("D2");
+                                        incubate_minute_in = incubation_date_time_in.Value.Minute.ToString("D2");
+                                        incubate_date_in = $"{incubate_day_in}-{incubate_month_in}-{incubate_year_in}";
+                                        incubate_time_in = $"{incubate_hour_in}:{incubate_minute_in}";
+                                    }
+
+                                    if (Model.request_view.incubation_date_time_out != null)
+                                    {
+                                        incubate_day_out = Model.request_view.incubation_date_time_out.Value.Day.ToString("D2");
+                                        incubate_month_out = Model.request_view.incubation_date_time_out.Value.Month.ToString("D2");
+                                        incubate_year_out = Model.request_view.incubation_date_time_out.Value.Year.ToString("D2");
+                                        incubate_hour_out = Model.request_view.incubation_date_time_out.Value.Hour.ToString("D2");
+                                        incubate_minute_out = Model.request_view.incubation_date_time_out.Value.Minute.ToString("D2");
+                                        incubate_date_out = $"{incubate_day_out}-{incubate_month_out}-{incubate_year_out}";
+                                        incubate_time_out = $"{incubate_hour_out}:{incubate_minute_out}";
+                                    }
+                                <div class="row">
+                                    <input asp-for="@Model.hlab_order_log.order_id" type="hidden" value="@Model.request_view.order_id">
+                                    <div class="col-sm-3">
+                                        <b>Incubation: </b><br />
+                                        <div class="row">
+                                            <div class="col-sm-6">Date in:<br /><input type="text" class="datepicker" value="@incubate_date_in" id="date_in" autocomplete="off" /></div>
+                                            <div class="col-sm-6">Time in:<br /><input type="text" class="time_formatter" value="@incubate_time_in" id="time_in" autocomplete="off" /></div>
+                                        </div>
+                                        <input asp-for="@Model.hlab_order_log.incubation_date_time_in" type="hidden" value="@Model.request_view.incubation_date_time_in" id="incubation_date_time_in">
+                                    </div>
+                                    @*<div class="col-sm-4">
+                                        <b>&nbsp;</b><br />
+                                        <div class="row">
+                                            <div class="col-sm-6">Date out:<br /><input type="text" class="datepicker" value="@incubate_date_out" id="date_out" autocomplete="off" disabled/></div>
+                                            <div class="col-sm-6">Time out:<br /><input type="text" class="time_formatter" value="" id="time_out" autocomplete="off" disabled/></div>
+                                        </div>
+                                        <input asp-for="@Model.hlab_order_log.incubation_date_time_out" type="hidden" value="@Model.request_view.incubation_date_time_out" id="incubation_date_time_out">
+                                    </div>*@
+                                    <input asp-for="@Model.hlab_order_log.incubation_date_time_out" type="hidden" value="@Model.request_view.incubation_date_time_out" id="incubation_date_time_out">
+                                    <div class="col-sm-3">
+                                        <b>&nbsp;</b><br />
+                                        @if (Model.hlab_order_log != null && !string.IsNullOrEmpty(Model.hlab_order_log.incubation_temp))
+                                        {
+                                            incubation_temp = Model.hlab_order_log.incubation_temp;
+                                        }
+                                        <div class="col-sm-6">Temp:<br /><input asp-for="@Model.hlab_order_log.incubation_temp" type="text" class="" style="width:65px;" autocomplete="off" value="@incubation_temp" id="incubation_temp" /></div>
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <br/>
+                                        <div class="row"><b>Condition Met: </b></div>
+                                        <div class="row">
+                                            <select asp-for="@Model.hlab_order_log.is_condition_met" asp-items="@Model.selectConditionsMet" style="width:75px;" id="set_condition_met" class="set_rush_condition"></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <br/>
+                                        <div class="row"><b>Rush: </b></div>
+                                        <div class="row">
+                                            <select asp-for="@Model.hlab_order_log.is_rush" asp-items="@Model.selectRush" style="width:75px;" id="set_rush" class="set_rush_condition"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                                }
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-sm-7" style="font-size:1.10rem; height:340px; overflow:auto;">
+                                <table class="table" id="item_table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col"></th>
+                                            <th scope="col">Test</th>
+                                            <th scope="col">Lab<br/>Code</th>
+                                            <th scope="col">Latest<br/>Time-in</th>
+                                            @*<th scope="col">Price</th>*@
+                                            <th scope="col">Form</th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.request_item_list != null && Model.request_item_list.Count > 0)
+                                        {
+                                            int waterbacteria = 1, waterchem = 3;
+                                            double total = 0, tax = 0;
+                                            string code = "", color="", font_color="";
+                                            DateTime currDateTime = DateTime.Now;
+                                            DateTime? expiry_datetime = null;
+                                            @foreach (var item in Model.request_item_list)
+                                            {
+                                                if (item.collect_datetime != null && item.pkg_class_id == waterbacteria)
+                                                {
+                                                    expiry_datetime = item.collect_datetime.Value.AddHours(30);
+                                                    DateTime pre_expiry_datetime = expiry_datetime.Value.AddHours(-2);
+                                                    font_color = "green";
+                                                    if (currDateTime >= pre_expiry_datetime) { color = "red"; }
+                                                }
+
+                                                color = "";
+                                                if (item.trans_id == Model.SelectedTransId) { color = "#EBECEC"; }
+                                                <tr style="background:@color;">
+                                                    <td style="color:@font_color">
+                                                        @{                                                                
+                                                            if (!string.IsNullOrEmpty(item.hl_code))
+                                                            {
+                                                                code = item.hl_code;
+                                                                <input type="text" value="@code" style="width:110px;" class="uid" id="@item.order_item_id">
+                                                            }
+                                                        }
+                                                        
+                                                        @if (item.trans_id != null && item.trans_id != 0)
+                                                        {
+                                                            if (item.pkg_class_id == waterbacteria)
+                                                            {
+                                                                <a href="@Url.Action("EditTestTransactionPage", "WaterBacteriaTransaction", new { transId = item.trans_id })" target="_blank">VIEW</a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a href="@Url.Action("ViewWaterChemForm", "WaterChemicalTransaction", new { transId = item.trans_id })" target="_blank">VIEW</a>
+                                                            }
+                                                        }
+                                                    </td>                                                    
+                                                    <td style="color:@font_color">@item.pkg_class</td>
+                                                    <td style="color:@font_color">@item.lab_code</td>
+                                                    <td style="color:@font_color">@expiry_datetime</td>
+                                                    @*<td>$@item.amount</td>*@
+                                                    <td style="color:@font_color">
+                                                        @if (item.trans_id != 0)
+                                                        {
+                                                            if (item.pkg_class_id == waterbacteria)
+                                                            {
+                                                                string formname = !string.IsNullOrEmpty(item.form_name) ? item.form_name : "n/a";
+                                                                if (formname.ToLower() == "f054")
+                                                                {
+                                                                    <a href="@Url.Action("F054","Forms", new { rid =  Model.request_view.order_id, fid = item.form_id, transid = item.trans_id, rush=0, condition=1})" target="_blank" class="wb_form_link">@item.form_name</a>
+                                                                }
+                                                                else if (formname.ToLower() == "f110")
+                                                                {
+                                                                    <a href="@Url.Action("F110","Forms", new { rid =  Model.request_view.order_id, fid = item.form_id, transid = item.trans_id, rush=0, condition=1})" target="_blank" class="wb_form_link">@item.form_name</a>
+                                                                }
+                                                                else if (formname.ToLower() == "f125")
+                                                                {
+                                                                    <a href="@Url.Action("F125","Forms", new { rid =  Model.request_view.order_id, fid = item.form_id, transid = item.trans_id, rush=0, condition=1})" target="_blank" class="wb_form_link">@item.form_name</a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span>@formname</span>
+                                                                }
+
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <span style="color:grey;"><i>no sample</i></span>
+                                                        }
+                                                    </td>
+                                                    <td style="color:@font_color">
+                                                        @if (item.pkg_class_id == waterbacteria && item.trans_id != 0)
+                                                        {
+                                                            string value = $"{item.trans_id}-{item.pkg_id}-{item.order_id}";
+                                                            <button type="button" class="btn btn-sm btn-success supply_settings_button" value="@value" id="">
+                                                                <span class="glyphicon glyphicon-cog" style="font-size:1.0rem;" data-toggle="tooltip" title="supply settings"></span>
+                                                            </button>
+                                                        }
+                                                    </td>
+                                                    @{
+                                                        total = total + Convert.ToDouble(item.amount);
+                                                    }
+                                                </tr>
+                                            }
+                                            tax = total * 0.05;
+                                            @*<tr>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td class="text-right"><b>GST</b></td>
+                                                <td>$@tax.ToString("0.##")</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                            </tr>
+                                            total = total + tax;
+                                            <tr>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td class="text-right"><b>TOTAL</b></td>
+                                                <td>$@total.ToString("0.##")</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                            </tr>*@
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="col-sm-5">
+                                <div class="panel panel-success">
+                                    <div class="panel-heading">@Model.SelectedUID @Model.SelectedTransId Supply Settings</div>
+                                    <div class="panel-body" style="height:230px; overflow:auto;">
+                                        <input type="hidden" asp-for="@Model.SelectedTransId" id="selected_transaction_id" value="@Model.SelectedTransId">
+                                        <input type="hidden" asp-for="@Model.SelectedPackageId" id="selected_package_id" value="@Model.SelectedPackageId">
+                                        @if (Model.FilteredTestPackageSupplyList != null && Model.FilteredTestPackageSupplyList.Count > 0)
+                                        {
+                                            int counter = 0;
+                                            string color = "#BCFFD4";
+                                            DateTime todays = DateTime.Now;
+                                            <table style="width:100%;">
+                                                <tr>
+                                                    <th>&nbsp;</th>
+                                                    <th>Name</th>
+                                                    <th>Lot</th>
+                                                    <th>Expiry Date</th>
+                                                </tr>
+                                                @foreach (var supply in Model.FilteredTestPackageSupplyList)
+                                                {
+                                                    TimeSpan difference = supply.expiry_date - todays;
+                                                    int intdaysdiff = (int)difference.TotalDays;
+                                                    string box_checked = "";
+                                                    color = "#BCFFD4";
+
+                                                    if (todays.ToString("dd/MM/yyyy") == supply.expiry_date.ToString("dd/MM/yyyy"))
+                                                    {
+                                                        color = "#FED18A";
+                                                    }
+                                                    else if (intdaysdiff > 0 && intdaysdiff <= 14)
+                                                    {
+                                                        color = "#FED18A";
+                                                    }
+                                                    else if (intdaysdiff <= 0)
+                                                    {
+                                                        color = "#FB8F7C";
+                                                    }
+
+                                                    if(Model.TransactionSupplyIdList.Count > 0 && Model.TransactionSupplyIdList != null)
+                                                    {
+                                                        foreach(var selected_supply in Model.TransactionSupplyIdList)
+                                                        {
+                                                            if(selected_supply.supply_id == supply.supply_id)
+                                                            {
+                                                                box_checked = "checked";
+                                                            }
+                                                        }
+                                                    }
+
+                                                    <tr>
+                                                        <td style="padding: 2px 2px 2px 2px;background:@color;">
+                                                            <input type="checkbox" value="@supply.supply_id" name="supply_ids" @box_checked/>
+                                                        </td>
+                                                        <td style="padding: 2px 2px 2px 2px;background:@color;">@supply.name</td>
+                                                        <td style="padding: 2px 2px 2px 2px;background:@color;">@supply.lot</td>
+                                                        <td style="padding: 2px 2px 2px 2px;background:@color;">@supply.expiry_date.ToString("dd/MM/yyyy")</td>
+
+                                                    </tr>
+                                                    counter++;
+                                                }
+                                            </table>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-8">&nbsp;</div>
+                                    <div class="col-lg-4 text-right">
+                                        <button type="button" class="btn btn-sm btn-success" value="" id="save_request_form_details" style="font-size:1.0rem;">SAVE</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

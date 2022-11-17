@@ -1,0 +1,157 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+<head>
+    @{ string version = Configuration.GetValue<string>("hlab_version");}
+    <link rel="icon" href="~/images/horizonlab_icon.png">
+    <title>Horizon Lab Admin @version</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <link rel="stylesheet" href="~/css/font-awesome.min.css">
+    <!--<link href="~/css/style.css" rel="stylesheet" />-->
+    <link href="~/css/horizonlab_style.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+
+    <script src="~/js/core/jquery.min.js"></script>  
+    <script src="~/js/core/popper.min.js"></script>
+    <script src="~/js/core/bootstrap-material-design.min.js"></script>
+    <script src="~/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+    <!--<script src="~/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>-->
+    <link rel="stylesheet" href="~/css/modal_style.css" />
+    <script src="~/js/css-icons.js"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="sidebar" data-color="green" data-background-color="white" data-image="">
+            <div class="logo">
+                 <center><img src="~/images/@(Configuration.GetValue<string>("hlab_logo"))" class="img-fluid" alt="" width="150" height="30" /></center>
+            </div>
+            <div class="sidebar-wrapper">
+                <ul class="nav">
+                    <!-- sidebar -->
+                    <li class="nav-item @ViewBag.menu.home"><a class="nav-link" href="@Url.Action("Index", "Home")"><p class="side_menu_text">Home</p></a></li>
+
+                    <li class="nav-item dropdown @ViewBag.menu.customer">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><p class="side_menu_text">Customers</p></a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" href="@Url.Action("NewCustomerForm", "Customer")">New Customer</a>
+                            <a class="dropdown-item" href="@Url.Action("ViewCustomerListPage", "Customer", new { status = "true" })">Active Customers</a>
+                            <a class="dropdown-item" href="@Url.Action("ViewCustomerListPage", "Customer", new { status = "false" })">InActive Customers</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown @ViewBag.menu.order">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><p class="side_menu_text">Requests</p></a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <!--<a class="dropdown-item" href="@Url.Action("OrderPage", "Order")">Old Request Page</a>-->
+                            <!--<a class="dropdown-item" href="@Url.Action("AddProjectRequest", "ProjectRequests")">Request New Project</a>-->
+                            <a class="dropdown-item" href="@Url.Action("TestRequestPage", "Order")">Walk in Requests</a>
+                            <a class="dropdown-item" href="@Url.Action("RecordPage", "ProjectRequests")">Project Requests</a>
+                            <a class="dropdown-item" href="@Url.Action("OrderListPage", "Order")">Request Records</a>
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown @ViewBag.menu.transactions">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><p class="side_menu_text">Transactions</p></a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" href="@Url.Action("ViewTransactions", "WaterBacteriaTransaction", new { pkg_class_id = 1 })">Water Bacteria</a>
+                            @*<a class="dropdown-item" href="@Url.Action("ViewTransactions", "WaterBacteriaTransaction", new { pkg_class_id = 4 })">Water Chemistry Records</a>
+                            <a class="dropdown-item" href="@Url.Action("BulkUploadWaterBacteria", "WaterBacteriaTransaction")">Bulk Upload: Water Bacteria</a>
+                            <a class="dropdown-item" href="@Url.Action("TestRequestPage", "Order")">Add New</a>*@
+                        </div>
+                    </li>
+
+                    <li class="nav-item @ViewBag.menu.reports">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><p class="side_menu_text">Bacteria Reports</p></a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" href="@Url.Action("WaterTestCertificatePage", "Certificate")">Certificates</a>
+                            <a class="dropdown-item" href="@Url.Action("WaterBacteriaProjectsForms", "Certificate")">Project Form</a>
+                            <a class="dropdown-item" href="@Url.Action("SemiPublicReport", "Certificate")">Semi Public</a>
+                            <a class="dropdown-item" href="@Url.Action("MonthlySubsidyReport", "Certificate")">Monthly Subsidy</a>
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown @ViewBag.menu.user">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><p class="side_menu_text">User Accounts</p></a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" href="@Url.Action("UserAccountForm", "UserAccount")">Create New Account</a>
+                            <a class="dropdown-item" href="@Url.Action("ActiveAccountsPage", "UserAccount")">Active Accounts</a>
+                            <a class="dropdown-item" href="@Url.Action("InactiveAccountsPage", "UserAccount")">Inactive Accounts</a>
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown @ViewBag.menu.settings">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><p class="side_menu_text">Settings</p></a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" href="@Url.Action("TestPackageCategories", "Settings")">Test Package Categories</a>
+                            <a class="dropdown-item" href="@Url.Action("TestPackageSettings", "Settings")">Test Package Settings</a>
+                            <a class="dropdown-item" href="@Url.Action("TestPackageCategorization", "Settings")">Categorization</a>
+                            <a class="dropdown-item" href="@Url.Action("EmailTemplateSettings", "Settings")">Email Templates</a>
+                            <a class="dropdown-item" href="@Url.Action("EmailLogs", "Settings")">Email Logs</a>
+                        </div>
+                    </li>
+                    <li class="nav-item @ViewBag.menu.supply"><a class="nav-link" href="@Url.Action("MainPage", "Supply", new { id = 0 })"><p class="side_menu_text">Supply</p></a></li>
+                    <li class="nav-item @ViewBag.menu.help"><a class="nav-link" href="@Url.Action("Index", "Help")"><p class="side_menu_text">Help</p></a></li>
+                    <!--<li class="nav-item @ViewBag.menu.customer"><a class="nav-link" href="@Url.Action("Index", "Certificate")"><p class="side_menu_text">Customers</p></a></li>-->
+                </ul>
+            </div>
+        </div>
+        <div class="main-panel">
+        <!--<div class="col-lg-10 main-panel">-->        
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
+                <div class="col-lg-6">
+                    <b>@Html.Raw(ViewData["PageTitle"])</b>
+                </div>
+                <div class="col-lg-6" style="text-align:right;">
+                    Welcome <span style="font-weight:bold;"><a href="#"><span id="current_user">@Html.Raw(ViewData["UserName"])</span>!</a></span> <!--| <a href="@Url.Action("Logout", "Home")">Logout</a>-->
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="navbar-toggler-icon icon-bar"></span>
+                        <span class="navbar-toggler-icon icon-bar"></span>
+                        <span class="navbar-toggler-icon icon-bar"></span>
+                    </button>
+                </div>
+            </nav>
+            <!-- End Navbar -->
+
+            <div class="content">
+                @{string app_version = Configuration.GetValue<string>("hlab_version"); }
+                @if (app_version.ToLower().Contains("test") || app_version.ToLower().Contains("dev"))
+                {
+                    <div class="alert alert-info">HorizonLab WaterDatabase Test / Development Version: @app_version</div>
+                }              
+                <div class="container-fluid">
+                    <!-- your content here -->
+                    @RenderBody()
+                </div>
+            </div>
+
+            <footer class="footer">
+                <div class="container-fluid">
+                    <nav class="float-left">
+                        <ul>
+                            <li>Date Today: @DateTime.Now</li>
+                        </ul>
+                    </nav>
+                    <!--<div class="copyright float-right">
+                      &copy;
+                      <script>
+                        document.write(new Date().getFullYear())
+                      </script>, made with <i class="material-icons">favorite</i> by
+                      <a href="https://www.creative-tim.com" target="_blank">Creative Tim</a> for a better web.
+                    </div>-->
+                    <!-- your footer here -->
+                </div>
+            </footer>
+        </div>
+    </div>
+</body>
+
+<script src="~/js/modal_events.js"></script>
+</html>
+

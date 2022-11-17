@@ -1,0 +1,57 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+<link href="~/css/jquery-ui.css" rel="stylesheet" />
+<script src="~/js/jquery-ui.js"></script>
+<div class="row">
+    <div class="col-sm-12">
+        <form asp-action="" asp-controller="" method="post" class="" id="">
+            <div class="panel panel-success">
+                <div class="panel-heading">Videos</div>
+                <div class="panel-body" style="height:750px; overflow:auto;">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <video width="160" height="120" style="border:1px solid #A3A4A3; border-radius:8px;width:100%;height:auto;" controls>
+                                <source src="~/videos/Overview.mp4" type="video/mp4">
+                                Your browser does not support the video tag
+                            </video><br />Overview
+                        </div>
+                        <div class="col-sm-2">
+                            <video width="160" height="120" style="border:1px solid #A3A4A3; border-radius:8px;width:100%;height:auto;" controls>
+                                <source src="~/videos/UserAccounts.mp4" type="video/mp4">
+                                Your browser does not support the video tag
+                            </video><br />User Accounts
+                        </div>
+                        <div class="col-sm-2">
+                            <video width="160" height="120" style="border:1px solid #A3A4A3; border-radius:8px;width:100%;height:auto;" controls>
+                                <source src="~/videos/Customers.mp4" type="video/mp4">
+                                Your browser does not support the video tag
+                            </video><br />User Accounts
+                        </div>
+                        <div class="col-sm-2">
+                            <video width="160" height="120" style="border:1px solid #A3A4A3; border-radius:8px;width:100%;height:auto;" controls>
+                                <source src="~/videos/Requests.mp4" type="video/mp4">
+                                Your browser does not support the video tag
+                            </video><br />Requests
+                        </div>
+                        <div class="col-sm-2">
+                            <video width="160" height="120" style="border:1px solid #A3A4A3; border-radius:8px;width:100%;height:auto;" controls>
+                                <source src="~/videos/Transactions.mp4" type="video/mp4">
+                                Your browser does not support the video tag
+                            </video><br />Transactions
+                        </div>
+                        <div class="col-sm-2">
+                            <video width="160" height="120" style="border:1px solid #A3A4A3; border-radius:8px;width:100%;height:auto;" controls>
+                                <source src="~/videos/Settings.mp4" type="video/mp4">
+                                Your browser does not support the video tag
+                            </video><br />Settings
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

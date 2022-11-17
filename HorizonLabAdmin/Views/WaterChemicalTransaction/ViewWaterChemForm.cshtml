@@ -1,0 +1,396 @@
+﻿@{
+    ViewData["PageTitle"] = "Water Chemistry";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+
+@model HorizonLabAdmin.Models.Forms.TestResultPageViewModel
+
+<link href="~/css/jquery-ui.css" rel="stylesheet" />
+<script src="~/js/jquery-ui.js"></script>
+<script src="~/js/general_functions.js"></script>
+<script src="~/js/new_water_sample_events.js"></script>
+<style>
+    .water_chem_subheader {
+        font-size: 0.85rem;
+        text-align: center;
+    }
+
+    .water_chem_header {
+        font-size: 1.18rem;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    table thead th {
+        text-align: center;
+        border: 1px solid #D5D5D5;
+    }
+
+    table tbody th {
+        text-align: center;
+        border: 1px solid #D5D5D5;
+    }
+
+    table tbody td {
+        padding: 5px 5px 5px 5px;
+    }
+
+    .placeholder {
+        width: 6%;
+    }
+
+    .wc_textfield {
+        border: 1px solid #D5D5D5;
+    }
+
+    .wc_textfield_set2 {
+        width: 16.5rem;
+    }
+
+    .wc_number_field {
+        width: 5rem;
+    }
+
+    .wc_number_fiel_set2 {
+        width: 12rem;
+    }
+</style>
+<div style="padding:20px 20px 20px 20px; background:white; border:1px solid #B6B6B6; border-radius:10px; height:800px;overflow:auto;font-size:1.3rem;">
+    <div class="panel panel-success">
+        @{ string orderid = "", analysis = "", dateorder = "", recievedby = "", price = "", labcode = "";}
+        @if (Model.orderitemview != null)
+        {
+            orderid = string.Format("{0:00000000}", Model.orderitemview.order_id);
+            analysis = Model.orderitemview.analysis;
+            dateorder = Model.orderitemview.order_date?.ToString("dd/MM/yyyy");
+            recievedby = Model.orderitemview.received_by;
+            price = string.Format("{0:0.00}", Model.orderitemview.amount);
+            labcode = Model.orderitemview.lab_code;
+        }
+
+        <div class="panel-heading">Order Information</div>
+        <div class="panel-body">
+            <div class="col-sm-6">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <p><b>Transaction ID:</b> @string.Format("{0:00000000}", Model.trans_details.trans_id)</p>
+                        <p><b>Order ID:</b> @orderid</p>
+                        <p><b>Lab Code:</b> @labcode</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <p><b>Date Ordered:</b> @dateorder</p>
+                        <p><b>Received By:</b> @recievedby  </p>
+                        <p><b>Order Price:</b> $@price</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <p><b>Analysis:</b> @analysis</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <input type="hidden" class="form-control" value="" id="customerid">
+                        <p><b>Customer ID:</b> <span id="label_customerid">@ViewBag.customer.customer_id</span></p>
+                        <p><b>Customer Name: </b> <span id="label_customername">@ViewBag.customer.first_name @ViewBag.customer.last_name</span></p>
+                    </div>
+                    <div class="col-sm-4">
+                        <p>
+                            <b>Address</b>
+                            <div class="row">
+                                <span id="label_street">@ViewBag.customer.street</span>
+                                <span id="label_city">@ViewBag.customer.city</span>
+                            </div>
+                            <div class="row">
+                                <span id="label_province">@ViewBag.customer.province</span>
+                                <span id="label_postalcode">@ViewBag.customer.postal_code</span>
+                            </div>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="panel panel-success">
+                <div class="panel-heading">Sample Information</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-2 text-right"><b>Description:</b></div>
+                        <div class="col-sm-6">@Model.trans_details.notes</div>
+
+                        <div class="col-sm-2 text-right"><b>Received in good condition:</b></div>
+                        <div class="col-sm-2">@Model.trans_details.is_good_condition</div>
+                    </div>
+                    <div class="row" style="margin-top:10px;">
+                        <div class="col-sm-2 text-right"><b>Received By:</b></div>
+                        <div class="col-sm-2">@Model.trans_details.receiver</div>
+
+                        <div class="col-sm-2 text-right"><b>Submitted By: </b></div>
+                        <div class="col-sm-2 text-left">@Model.trans_details.submtd_by</div>
+
+                        <div class="col-sm-2 text-right"><b>Temperature:</b></div>
+                        <div class="col-sm-2">@Model.trans_details.temp</div>
+                    </div>
+                    <div class="row" style="margin-top:10px;">
+                        <div class="col-sm-2 text-right"><b>DateTime Sampled:</b></div>
+                        <div class="col-sm-2">@Model.trans_details.collect_datetime</div>
+
+                        <div class="col-sm-2 text-right"><b>DateTime Received:</b></div>
+                        <div class="col-sm-2">@Model.trans_details.rcv_date</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="panel panel-success">
+                <div class="panel-heading">Invoice / Payment</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-3 text-right"><b>Paid: </b></div>
+                        <div class="col-sm-3">@Model.trans_details.is_paid</div>
+
+                        <div class="col-sm-3 text-right"><b>Amount: </b></div>
+                        <div class="col-sm-3">$@price</div>
+                    </div>
+                    <div class="row allownace_top">
+                        <div class="col-sm-3 text-right"><b>Paid By: </b></div>
+                        <div class="col-sm-4">@ViewBag.customer.first_name @ViewBag.customer.last_name</div>
+                    </div>                    
+                    <div class="row allownace_top">
+                        <div class="col-sm-3 text-right"><b>Payment(s): </b></div>
+                        <div class="col-sm-9">
+                            @if (Model.customer_order_payment_list.Count > 0)
+                            {
+                                foreach (var payment in Model.customer_order_payment_list)
+                                {
+                                    <p>
+                                        @payment.payment<br />
+                                        $@payment.paid_amount<br />
+                                        @if (payment.payment_date != null)
+                                        {
+                                            <span>@payment.payment_date.Value.ToString("dd/MM/yyyy")</span>
+                                        }
+                                        <hr />
+                                    </p>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-success">
+        <div class="panel-heading">Water Chemistry Test Results</div>
+        <div class="panel-body" style="overflow:auto;">
+            <table style="width:100%;" class="table-striped">
+                <thead>
+                    <tr>
+                        <th class="water_chem_header"><span class="water_chem_header">ID</span></th>
+                        <th class="water_chem_header"><span class="water_chem_header">Description</span></th>
+                        <th><span class="water_chem_header">Nitrate NO3-N</span><br /><span class="water_chem_subheader">DL 0.23-13.5 NO3-N</span></th>
+                        <th><span class="water_chem_header">Nitrate NO2-N</span><br /><span class="water_chem_subheader">DL 0.15-0.60 mg/L NO2-N</span></th>
+                        <th><span class="water_chem_header">PH</span></th>
+                        <th><span class="water_chem_header">Conductivity</span><br /><span class="water_chem_subheader">R 0.01 uS/cm-200.0m/cm</span></th>
+                        <th><span class="water_chem_header">Sodium</span><br /><span class="water_chem_subheader">H40Qd ISENa381 probe 10-23000mg/L</span></th>
+                        <th><span class="water_chem_header">Flouride</span><br /><span class="water_chem_subheader">DL 0.02-2.00 mg/L</span></th>
+                        <th colspan="3"><span class="water_chem_header">Chloride</span><br /><span class="water_chem_subheader">DL 0.1-25 mg/L Mercuric Thiocyanate method</span></th>
+                        <th colspan="3"><span class="water_chem_header">Sulfate</span><br /><span class="water_chem_subheader">DL 2-70 mg-L</span></th>
+                    </tr>
+                    <tr>
+                        <th><span class="water_chem_header">&nbsp;</span></th>
+                        <th><span class="water_chem_header">&nbsp;</span></th>
+                        <th><span class="water_chem_subheader">result in mg/L</span></th>
+                        <th><span class="water_chem_subheader">result in mg/L</span></th>
+                        <th><span class="water_chem_subheader">&nbsp;</span></th>
+                        <th><span class="water_chem_subheader">result in uS/cm</span></th>
+                        <th><span class="water_chem_subheader">result in mg/L</span></th>
+                        <th><span class="water_chem_subheader">result in mg/L</span></th>
+                        <th><span class="water_chem_subheader">Test Result</span></th>
+                        <th><span class="water_chem_subheader">DF</span></th>
+                        <th><span class="water_chem_subheader">Final Result mg/L</span></th>
+                        <th><span class="water_chem_subheader">Test Result</span></th>
+                        <th><span class="water_chem_subheader">DF</span></th>
+                        <th><span class="water_chem_subheader">Final Result mg/L</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach(var result in Model.list_waterchemresults_a)
+                        {
+                            <tr>
+                                <td class="text-center">@result.id</td>
+                                <td class="text-center">@result.description</td>
+                                <td class="text-center">@result.nitrate</td>
+                                <td class="text-center">@result.nitrite</td>
+                                <td class="text-center">@result.ph</td>
+                                <td class="text-center">@result.conductivity</td>
+                                <td class="text-center">@result.sodium</td>
+                                <td class="text-center">@result.flouride</td>
+                                <td class="text-center">@result.chloride_tr</td>
+                                <td class="text-center">@result.chloride_df</td>
+                                <td class="text-center">@result.chloride_fr</td>
+                                <td class="text-center">@result.sulfate_tr</td>
+                                <td class="text-center">@result.sulfate_df</td>
+                                <td class="text-center">@result.sulfate_fr</td>
+                            </tr>
+                        }
+                    }
+
+                    <tr>
+                        <th class="placeholder" colspan="2"><span class="water_chem_header">&nbsp;</span></th>
+                        <th colspan="2"><span class="water_chem_header">Nitrite & Nitrate Information</span></th>
+                        <th><span class="water_chem_header">pH Info</span></th>
+                        <th><span class="water_chem_header">Conductivity Information</span></th>
+                        <th><span class="water_chem_header">Sodium Information</span></th>
+                        <th><span class="water_chem_header">Flouride Information</span></th>
+                        <th colspan="3"><span class="water_chem_header">Chloride Information</span></th>
+                        <th colspan="3"><span class="water_chem_header">Sulfate Information</span></th>
+                    </tr>
+                    @{
+                        int counter = 0;
+                        foreach (var label in ViewBag.label_array)
+                        {
+                            <tr>
+                                <td class="text-center" colspan="2">@label</td>
+                                <td class="text-center" colspan="2">@Model.list_waterchemresults_b[counter].nitrate_nitrite_info</td>
+                                <td class="text-center">@Model.list_waterchemresults_b[counter].ph_info</td>
+                                <td class="text-center">@Model.list_waterchemresults_b[counter].conductivity_info</td>
+                                <td class="text-center">@Model.list_waterchemresults_b[counter].sodium_info</td>
+                                <td class="text-center">@Model.list_waterchemresults_b[counter].flouride_info</td>
+                                <td class="text-center" colspan="3">@Model.list_waterchemresults_b[counter].chloride_info</td>
+                                <td class="text-center" colspan="3">@Model.list_waterchemresults_b[counter].sulfate_info</td>
+                            </tr>                            
+                            counter++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-9">Trace Metals in Water Test Results</div>
+                <div class="col-sm-3"></div>
+            </div>
+        </div>
+        <div class="panel-body" style="height:50rem;overflow:auto;">
+            <div id="upload_details"></div>
+            <div id="upload_result" style="font-size:0.95rem;">
+                @if (Model.list_tracemetal_results.Count > 0)
+                {
+                    <table class="table-striped">
+                        <thead>
+                            <tr>
+                                <th>Sample Id</th>
+                                <th>Acquisition Date</th>
+                                <th>QC Status</th>
+                                <th>Be 9</th>
+                                <th>B 10</th>
+                                <th>Al 27</th>
+                                <th>Ti 47</th>
+                                <th>V-1 51</th>
+                                <th>V 51</th>
+                                <th>Sc 45</th>
+                                <th>Cr 52</th>
+                                <th>Mn 55</th>
+                                <th>Fe-1 57</th>
+                                <th>Fe-2 57</th>
+                                <th>Co 59</th>
+                                <th>Ni 60</th>
+                                <th>Cu 65</th>
+                                <th>Zn 66</th>
+                                <th>Ge 72</th>
+                                <th>As 75</th>
+                                <th>As-1 75</th>
+                                <th>Se 82</th>
+                                <th>Sr 87</th>
+                                <th>Mo 98</th>
+                                <th>Rh 103</th>
+                                <th>Ag 107</th>
+                                <th>Cd 111</th>
+                                <th>In 115</th>
+                                <th>Sb 121</th>
+                                <th>Sn 118</th>
+                                <th>Ba 137</th>
+                                <th>Tb 159</th>
+                                <th>Tl 205</th>
+                                <th>Pb 208</th>
+                                <th>Th 232</th>
+                                <th>U 238</th>
+                                <th>Na 23</th>
+                                <th>Mg 24</th>
+                                <th>K 39</th>
+                                <th>Ca 44</th>
+                                <th>Sc-1 45</th>
+                                <th>Cl 35</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var result in Model.list_tracemetal_results)
+                            {
+                                <tr>
+                                    <td>@result.description </td>
+                                    <td>@result.acquisition_date</td>
+                                    <td>@result.qc_stat</td>
+                                    <td> @result.Be9 </td>
+                                    <td> @result.B10 </td>
+                                    <td> @result.Al_27 </td>
+                                    <td> @result.Ti_47 </td>
+                                    <td> @result.V_1_51 </td>
+                                    <td> @result.V_51 </td>
+                                    <td> @result.Sc_45 </td>
+                                    <td> @result.Cr_52 </td>
+                                    <td> @result.Mn_55 </td>
+                                    <td> @result.Fe_1_57 </td>
+                                    <td> @result.Fe_2_57 </td>
+                                    <td> @result.Co_59 </td>
+                                    <td> @result.Ni_60 </td>
+                                    <td> @result.Cu_65 </td>
+                                    <td> @result.Zn_66 </td>
+                                    <td> @result.Ge_72 </td>
+                                    <td> @result.As_75 </td>
+                                    <td> @result.As_1_75 </td>
+                                    <td> @result.Se_82 </td>
+                                    <td> @result.Sr_87 </td>
+                                    <td> @result.Mo_98 </td>
+                                    <td> @result.Rh_103 </td>
+                                    <td> @result.Ag_107 </td>
+                                    <td> @result.Cd_111 </td>
+                                    <td> @result.In_115 </td>
+                                    <td> @result.Sb_121 </td>
+                                    <td> @result.Sn_118 </td>
+                                    <td> @result.Ba_137 </td>
+                                    <td> @result.Tb_159 </td>
+                                    <td> @result.Tl_205 </td>
+                                    <td> @result.Pb_208 </td>
+                                    <td> @result.Th_232 </td>
+                                    <td> @result.U_238 </td>
+                                    <td> @result.Na_23 </td>
+                                    <td> @result.Mg_24 </td>
+                                    <td> @result.K_39 </td>
+                                    <td> @result.Ca_44 </td>
+                                    <td> @result.Sc_145 </td>
+                                    <td> @result.CI_35 </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <button type="button" class="btn btn-success" onclick="window.location='/WaterBacteriaTransaction/ViewTransactions'">TRANSACTION VIEW PAGE</button>
+        </div>
+        <br/>
+        &nbsp;
+    </div>
+</div>

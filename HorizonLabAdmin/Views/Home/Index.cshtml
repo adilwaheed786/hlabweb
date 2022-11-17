@@ -1,0 +1,96 @@
+﻿@{
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+    ViewData["PageTitle"] = "Horizon Lab Web Administration";
+}
+<div class="row">
+    <div class="col-lg-4">
+        <div class="panel panel-success" style="min-height: 360px;">
+            <div class="panel-heading">Requests</div>
+            <div class="panel-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><a href="@Url.Action("TestRequestPage", "Order")" type="button" class="btn btn-sm btn-outline-success" value="" id=""><span class="glyphicon glyphicon-copy" style="font-size:1.8rem;"></span></a><br /><span style="font-size:0.75em;">Request Page</span></li>
+                    <li class="list-group-item"><a href="@Url.Action("OrderListPage", "Order")" type="button" class="btn btn-sm btn-outline-success" value="" id=""><span class="glyphicon glyphicon-list-alt" style="font-size:1.8rem;"></span></a><br /><span style="font-size:0.75em;">Request Records</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="panel panel-success" style="min-height: 360px;">
+            <div class="panel-heading">Transaction Records</div>
+            <div class="panel-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><a href="@Url.Action("TestRequestPage", "Order")" type="button" class="btn btn-sm btn-outline-success" value="" id=""><span class="glyphicon glyphicon-plus" style="font-size:1.8rem;"></span></a><br /><span style="font-size:0.75em;">Add New Water Sample</span></li>
+                    <li class="list-group-item"><a href="@Url.Action("ViewTransactions", "WaterBacteriaTransaction")" type="button" class="btn btn-sm btn-outline-success" value="" id=""><span class="glyphicon glyphicon-list-alt" style="font-size:1.8rem;"></span></a><br /><span style="font-size:0.75em;">Transaction Records</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="panel panel-success" style="min-height: 360px;">
+            <div class="panel-heading">Settings</div>
+            <div class="panel-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <a href="@Url.Action("TestPackageCategories", "Settings")" type="button" class="btn btn-sm btn-outline-success" value="" id=" ">
+                            <span class="glyphicon glyphicon-list-alt" style="font-size:1.8rem;"></span>
+                        </a>
+                        <br /><span style="font-size:0.75em;">Test Package Categories</span>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="@Url.Action("TestPackageSettings", "Settings")" type="button" class="btn btn-sm btn-outline-success" value="" id=" ">
+                            <span class="glyphicon glyphicon-cog" style="font-size:1.8rem;"></span>
+                        </a>
+                        <br /><span style="font-size:0.75em;">Test Package Settings</span>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="@Url.Action("TestPackageCategorization", "Settings")" type="button" class="btn btn-sm btn-outline-success" value="" id=" ">
+                            <span class="glyphicon glyphicon-list" style="font-size:1.8rem;"></span>
+                        </a>
+                        <br /><span style="font-size:0.75em;">Categorization</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-4">
+        <div class="panel panel-success" style="min-height: 360px;">
+            <div class="panel-heading">User Accounts</div>
+            <div class="panel-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><a href="@Url.Action("UserAccountForm", "UserAccount")" type="button" class="btn btn-sm btn-outline-warning" value="" id=""><span class="glyphicon glyphicon-user" style="font-size:1.8rem;"></span></a><br /><span style="font-size:0.75em;">Create New User</span></li>
+                    <li class="list-group-item"><a href="@Url.Action("ActiveAccountsPage", "UserAccount")" type="button" class="btn btn-sm btn-outline-warning" value="" id=""><span class="glyphicon glyphicon-floppy-saved" style="font-size:1.8rem;"></span></a><br /><span style="font-size:0.75em;">Active Users</span></li>
+                    <li class="list-group-item"><a href="@Url.Action("InactiveAccountsPage", "UserAccount")" type="button" class="btn btn-sm btn-outline-warning" value="" id=""><span class="glyphicon glyphicon-floppy-remove" style="font-size:1.8rem;"></span></a><br /><span style="font-size:0.75em;">InActive Users</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="panel panel-success" style="min-height: 360px;">
+            <div class="panel-heading">Customers</div>
+            <div class="panel-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><a href="@Url.Action("NewCustomerForm", "Customer")" type="button" class="btn btn-sm btn-outline-success" value="" id=" "><span class="glyphicon glyphicon-user" style="font-size:1.8rem;"></span></a><br /><span style="font-size:0.75em;">Create New Customer</span></li>
+                    <li class="list-group-item"><a href="@Url.Action("ViewCustomerListPage", "Customer",new { status="true"})" type="button" class="btn btn-sm btn-outline-success" value="" id=" "><span class="glyphicon glyphicon-floppy-saved" style="font-size:1.8rem;"></span></a><br /><span style="font-size:0.75em;">Active Customers</span></li>
+                    <li class="list-group-item"><a href="@Url.Action("ViewCustomerListPage",  "Customer",new { status="false"})" type="button" class="btn btn-sm btn-outline-success" value="" id=" "><span class="glyphicon glyphicon-floppy-remove" style="font-size:1.8rem;"></span></a><br /><span style="font-size:0.75em;">InActive Customers</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="panel panel-success" style="min-height: 360px;">
+            <div class="panel-heading">Reports</div>
+            <div class="panel-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><a href="@Url.Action("WaterTestCertificatePage", "Certificate")" type="button" class="btn btn-sm btn-outline-success" value="" id=""><span class="glyphicon glyphicon-list-alt" style="font-size:1.8rem;"></span></a><br /><span style="font-size:0.75em;">Water Certificates</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

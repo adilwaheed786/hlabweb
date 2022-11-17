@@ -1,0 +1,49 @@
+﻿
+@{
+    ViewData["PageTitle"] = "View User Account";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+
+<div class="">
+    <div class="col-lg-8 main_content">
+        <div style="padding:40px 30px 40px 30px;">
+            <div class="">
+                <h3>Name: </h3>
+                @{var name = ViewBag.user.fname.ToUpper() + " " + @ViewBag.user.lname.ToUpper();}
+                <span style="color:#6C6E70;">@name</span>
+            </div>
+
+            <div class="">
+                <h3>Email: </h3>
+                <span style="color:#6C6E70;">@ViewBag.user.email</span><br />
+            </div>            
+
+            <div class="">
+                <h3>Date Registered: </h3>
+                <span style="color:#6C6E70;">@ViewBag.user.date_reg</span><br />
+            </div>
+
+            <div class="">
+                <h3>username: </h3>
+                <span style="color:#6C6E70;">@ViewBag.user.username</span><br />
+            </div>
+
+            <div class="">
+                <h3>Access: </h3>
+                <span style="color:#6C6E70;">@ViewBag.access</span><br />
+            </div>
+
+            <div class="" style="display: block; text-align: right;">
+                <div class="btn-group" role="group" aria-label="">
+                    <button type="button" class="btn btn-primary" onclick ="window.location.href='/UserAccount/UserAccountForm'">Add New</button>
+                    <button type="button" class="btn btn-primary" onclick ="window.location.href='/UserAccount/UserAccountForm?userId=@ViewBag.user.user_id'">Edit</button>
+                    <button type="button" class="btn btn-primary" onclick ="window.location.href='/UserAccount/ActiveAccountsPage'">Active Accounts</button>
+                    <button type="button" class="btn btn-primary" onclick ="window.location.href='/UserAccount/InactiveAccountsPage'">InActive Accounts</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4"></div>
+
+</div>
+

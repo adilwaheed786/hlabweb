@@ -1,0 +1,331 @@
+﻿<!--<link href="~/css/jquery-ui.css" rel="stylesheet" />-->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="~/js/jquery-ui.js"></script>
+<script src="~/js/test_transaction_events.js"></script>
+<script src="~/js/general_functions.js"></script>
+@{
+    ViewData["PageTitle"] = "Horizon Lab Test Records";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+@model HorizonLabAdmin.Models.Forms.TestTransactionSearchParameters
+@{
+    string trans_id = "";
+    string customer_id = "";
+
+    if (Model.searchTransId != 0) { trans_id = Model.searchTransId.ToString(); }
+    if (Model.customerId != 0) { customer_id = Model.customerId.ToString(); }
+}
+@{string msg_color = "green", page_message = "";}
+@if (!string.IsNullOrEmpty(ViewBag.PageMessage))
+{
+    var message = ViewBag.PageMessage.Split(":");
+    if (message[0] == "Error")
+    {
+        msg_color = "red";
+    }
+    page_message = message[1];
+}
+<p align="left"><span style="font-size:10px;color:@msg_color;">@page_message</span></p>
+@{ string controllername = "WaterBacteriaTransaction", viewpagename = "TestTransactionPage", editpagename = "EditTestTransactionPage", editframesrcpage = "EditTestTransactionFrame";}
+<b>@ViewBag.PgkClass</b>
+<div class="row" style="font-size:1.3rem; color:#606060;">
+    <div class="col-sm-11">
+        <div class="row">
+            @if (!string.IsNullOrEmpty(trans_id))
+            {
+                <div class="col-sm-1">
+                    <b>Transaction</b><br />
+                    ID: @trans_id
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(customer_id) || !string.IsNullOrEmpty(Model.searchCustomerFirstName) || !string.IsNullOrEmpty(Model.searchCustomerLastName))
+            {
+                <div class="col-sm-1">
+                    <b>Customer</b> <br />
+                    ID: @customer_id <br />
+                    Name: @Model.searchCustomerFirstName @Model.searchCustomerLastName
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.str_searchSubmtDateStart) || !string.IsNullOrEmpty(Model.str_searchSubmtDateEnd))
+            {
+                <div class="col-sm-2">
+                    <b>Submitted Date</b> <br />
+                    @Model.str_searchSubmtDateStart - @Model.str_searchSubmtDateEnd
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.str_searchRcvdDateStart) || !string.IsNullOrEmpty(Model.str_searchRcvdDateEnd))
+            {
+                <div class="col-sm-2">
+                    <b>Recevied Date</b> <br />
+                    @Model.str_searchRcvdDateStart - @Model.str_searchRcvdDateEnd
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.str_searchTestDateStart) || !string.IsNullOrEmpty(Model.str_searchTestDateEnd))
+            {
+                <div class="col-sm-2">
+                    <b>Test Date</b> <br />
+                    @Model.str_searchTestDateStart - @Model.str_searchTestDateEnd
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.str_sortBy) && !string.IsNullOrEmpty(Model.str_sortOption))
+            {
+                <div class="col-sm-2">
+                    <b>Sorting</b> <br />
+                    @Model.str_sortBy  @Model.str_sortOption
+                </div>
+            }
+
+                <div class="col-sm-2">
+                    <b>Filter</b><br />
+                    @{
+                        string filter_label = "";
+                        if (ViewBag.filter == "all") { filter_label = "ALL RECORDS"; }
+                        if (ViewBag.filter == "unpr") { filter_label = "UNPROCESSED RECORDS"; }
+                        if (ViewBag.filter == "proc") { filter_label = "PROCESSED RECORDS"; }
+                    }
+                    @filter_label
+                </div>
+        </div>
+    </div>
+    <div class="col-sm-1" style="text-align:right;">
+        <button type="button" class="btn btn-sm btn-outline-success open_modal" value="search_modal"><span class="glyphicon glyphicon-search" style="font-size:2rem;"></span></button>
+        <button type="button" class="btn btn-sm btn-outline-success" onclick="window.location='/WaterBacteriaTransaction/NewWaterSampleForm'"><span class="glyphicon glyphicon-plus" style="font-size:2rem;"></span></button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-4" style="border:1px solid #9C9E9E; border-radius:5px; overflow:auto; height:650px;padding:10px 10px 10px 10px;">
+        <div style="background-color:white;font-size:1.0rem;">
+            <div class="table_fix_header">
+                <table class="table table-striped">
+                    <thead class="data_table_header">
+                        <tr>
+                            <th class="data_table_header">ID</th>
+                            <th class="data_table_header"><a href="#" id="sort_customer">Customer</a></th>
+                            <th class="data_table_header">Latest Time-in</th>
+                            <th class="data_table_header">UID</th>
+                            <th class="data_table_header"><a href="#" id="sort_submitteddate">Submitted Date</a></th>
+                            <th class="data_table_header"><a href="#" id="sort_receivedate">Received Date</a></th>
+                            <th class="data_table_header"><a href="#" id="sort_testdate">Test Date</a></th>
+                            <th class="data_table_header"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.transList != null)
+                        {
+                            string color = "";
+                            DateTime currDateTime = DateTime.Now;
+                            DateTime? expiry_datetime = null;
+                            int row_count = ViewBag.rec_start + 1;
+                            @foreach (var trans in Model.transList)
+                            {
+                                if (trans.collect_datetime != null)
+                                {
+                                    expiry_datetime = trans.collect_datetime.Value.AddHours(30);
+                                    DateTime? pre_expiry_datetime = expiry_datetime.Value.AddHours(-2);
+                                    color = "green";
+                                    if (currDateTime >= pre_expiry_datetime) { color = "red"; }
+                                }
+
+                                var customername = trans.first_name + " " + trans.last_name;
+                                if (trans.class_id == 4)
+                                {
+                                    controllername = "WaterChemicalTransaction";
+                                    viewpagename = "ViewWaterChemForm";
+                                    editpagename = "EditWaterChemPage";
+                                }
+                                <tr>
+                                    <td style="color:@color">
+                                        @row_count<button type="button" class="edit_transaction" style="font-size:1.1rem; background-color:#EDEFEF;" value="/@controllername/@editframesrcpage?transid=@trans.trans_id&refresh=1">@string.Format("{0:00000000}", trans.trans_id)</button><br />
+                                        @trans.lab_code
+
+                                    </td>
+                                    <td style="color:@color">@customername</td>
+                                    <td style="color:@color">@expiry_datetime</td>
+                                    <td style="color:@color">@trans.hl_code</td>
+                                    <td style="color:@color">@(trans.submtd_datetime != null ? trans.submtd_datetime?.ToString("dd/MM/yyyy") : "")</td>
+                                    <td style="color:@color">@(trans.rcv_date != null ? trans.rcv_date?.ToString("dd/MM/yyyy") : "")</td>
+                                    <td style="color:@color">@(trans.test_date != null ? trans.test_date?.ToString("dd/MM/yyyy") : "")</td>
+                                    @*<td>
+                                            <a class="btn btn-sm btn-outline-info" href="/@controllername/@viewpagename?transid=@trans.trans_id"><span class="glyphicon glyphicon-info-sign" style="font-size:1.3rem;"></span></a>
+                                            <a class="btn btn-sm btn-outline-success" href="/@controllername/@editpagename?transid=@trans.trans_id"><span class="glyphicon glyphicon-pencil" style="font-size:1.3rem;"></span></a>
+                                            <button type="button" class="btn btn-sm btn-outline-danger deactivate_test_record" value="@trans.trans_id"><span class="glyphicon glyphicon-remove" style="font-size:1.3rem;"></span></button>
+                                        </td>*@
+                                    <td>
+                                        <!--<a class="btn btn-sm btn-outline-success" target="_blank" href="/@controllername/@editpagename?transid=@trans.trans_id"><span class="glyphicon glyphicon-pencil" style="font-size:1.3rem;"></span></a>-->
+                                        <button type="button" class="deactivate_test_record" value="@trans.trans_id"><span class="glyphicon glyphicon-remove" style="font-size:1.1rem;"></span></button>
+                                    </td>
+                                </tr>
+                                row_count = row_count + 1;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8" style="/*border:1px solid #9C9E9E;*/ overflow:hidden; height:670px; border-radius:5px;">
+        <iframe src=""
+                class=""
+                style="width: 100%;height:95%;margin: 1%;border: 1px solid #CCCECC;border-radius:5px;"
+                frameborder="0"
+                id="iframe_transaction_page"
+                onload="CloseModalDialogBox('loading_modaldialogbox')">
+            Select an Item to View
+        </iframe>        
+    </div>    
+    <div><button type="button" class="btn btn-success" style="display:none;" id="save_sample_changes">SAVE CHANGES</button></div>
+</div>
+
+<form asp-action="NavigateTransactionRecords" asp-controller="WaterBacteriaPostTransactions" method="post" class="" id="test_transaction_nav">
+    <input type="hidden" class="" name="pkg_class_id" id="" value="@ViewBag.PkgClassId">
+    <input type="hidden" class="" name="filter" id="" value="@Model.filter">
+    <div class="row" style="padding-top:10px;">
+        @{ var rec_count = string.Format("{0:#,0}", @ViewBag.rec_count);}
+        <div class="col-sm-4" style="text-align:left;"> <span style="font-size:1.1rem;font-weight:bold;">@rec_count record(s) found</span></div>
+        <div class="col-sm-4" style="text-align:center;">
+            <button type="button" class="btn btn-sm btn-outline-success" id="first_btn"><span class="glyphicon glyphicon-fast-backward" style="font-size:2rem;"></span></button>
+            <button type="button" class="btn btn-sm btn-outline-success" id="back_btn"><span class="glyphicon glyphicon-backward" style="font-size:2rem;"></span></button>
+            <input type="hidden" value="@ViewBag.rec_start" name="record_start" id="record_start" />
+            <input type="hidden" value="@ViewBag.rec_end" name="record_end" id="record_end" />
+            <input type="hidden" value="@ViewBag.rec_count" name="rec_count" id="rec_count" />
+            <button type="button" class="btn btn-sm btn-outline-success" id="next_btn"><span class="glyphicon glyphicon-forward" style="font-size:2rem;"></span></button>
+            <button type="button" class="btn btn-sm btn-outline-success" id="last_btn"><span class="glyphicon glyphicon-fast-forward" style="font-size:2rem;"></span></button>
+        </div>
+        <div class="col-sm-4" style="text-align:right;">
+            @{ var start = string.Format("{0:#,0}", ViewBag.rec_start + 1); }
+            @{ var end = string.Format("{0:#,0}", ViewBag.rec_end + ViewBag.rec_start); }
+            @if (ViewBag.rec_end >= ViewBag.rec_count) { end = ViewBag.rec_count; }
+            <span style="font-size:1.5rem;font-weight:bold;">@start to @end Record(s)</span>
+        </div>
+    </div>
+</form>
+
+<div id="search_modal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content" style="width:50%;">
+        <div>Filter Settings<button class="close close_modal" value="search_modal">&times;</button></div>
+        <br />
+        <div style="padding:0px 5px 5px 5px;font-size:1.3rem;">
+            <form asp-action="SearchTransactions" asp-controller="WaterBacteriaPostTransactions" method="post" class="" id="test_transaction_search">
+                <input type="hidden" class="" name="display" id="display" value="search">
+                <input type="hidden" asp-for="@Model.pkg_class_id" value="@ViewBag.PkgClassId">
+                <div class="row">
+                    <div class="col-sm-3 text-right">Transaction ID</div>
+                    <div class="col-sm-3"><input asp-for="@Model.searchTransId" type="text" class="form-control input-sm number_only clear_field" id="searchTransId" value="@trans_id"></div>
+                    <div class="col-sm-3 text-right">Test Package</div>
+                    <div class="col-sm-3"><select asp-for="@Model.searchPackage" asp-items="@Model.selectPackageList" class="form-control" id="searchPackageCategory"></select></div>
+                </div>
+                <hr />
+
+                <div class="row">
+                    <div class="col-sm-3 text-right">CUSTOMER ID</div>
+                    <div class="col-sm-3"><input asp-for="@Model.customerId" class="form-control input-sm number_only clear_field" type="text" id="customerId" value="@customer_id"></div>
+                </div>
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-sm-3 text-right">First Name</div>
+                    <div class="col-sm-3"><input asp-for="@Model.searchCustomerFirstName" class="form-control input-sm clear_field" type="text" id="searchCustomerFirstName" value="@Model.searchCustomerFirstName"></div>
+
+                    <div class="col-sm-3 text-right">Last Name</div>
+                    <div class="col-sm-3"><input asp-for="@Model.searchCustomerLastName" class="form-control input-sm clear_field" type="text" id="searchCustomerLastName" value="@Model.searchCustomerLastName"></div>
+                </div>
+
+                <hr />
+
+                SUBMITTED DATE
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-sm-2 text-right">Start</div>
+                    <div class="col-sm-4">
+                        <div class='input-group date'>
+                            <input asp-for="@Model.searchSubmtDateStart" type="text" class="form-control input-sm clear_field" id="searchSubmtDateStart" value="@Model.str_searchSubmtDateStart" autocomplete="off">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2 text-right">End</div>
+                    <div class="col-sm-4">
+                        <div class='input-group date'>
+                            <input asp-for="@Model.searchSubmtDateEnd" type="text" class="form-control input-sm clear_field" id="searchSubmtDateEnd" value="@Model.str_searchSubmtDateEnd" autocomplete="off">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                RECEIVED DATE
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-sm-2 text-right">Start</div>
+                    <div class="col-sm-4">
+                        <div class='input-group date'>
+                            @*@if (string.IsNullOrEmpty(Model.str_searchRcvdDateStart))
+                                {
+                                    Model.str_searchRcvdDateStart = DateTime.Now.ToString("dd/MM/yyyy");
+                                }*@
+                            <input asp-for="@Model.searchRcvdDateStart" type="text" class="form-control input-sm clear_field" id="searchRcvdDateStart" value="@Model.str_searchRcvdDateStart" autocomplete="off">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2 text-right">End</div>
+                    <div class="col-sm-4">
+                        <div class='input-group date'>
+                            <input asp-for="@Model.searchRcvdDateEnd" type="text" class="form-control input-sm clear_field" id="searchRcvdDateEnd" value="@Model.str_searchRcvdDateEnd" autocomplete="off">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+
+                TEST DATE
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-sm-2 text-right">Start</div>
+                    <div class="col-sm-4">
+                        <div class='input-group date'>
+                            <input asp-for="@Model.searchTestDateStart" type="text" class="form-control input-sm clear_field" id="searchTestDateStart" value="@Model.str_searchTestDateStart" autocomplete="off">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 text-right">End</div>
+                    <div class="col-sm-4">
+                        <div class='input-group date'>
+                            <input asp-for="@Model.searchTestDateEnd" type="text" class="form-control input-sm clear_field" id="searchTestDateEnd" value="@Model.str_searchTestDateEnd" autocomplete="off">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+
+                <div class="row">
+                    <div class="col-sm-4">
+                        Sort By <select asp-for="@Model.sortByString" asp-items="@Model.sortByList" class="form-control clear_field" id="sortByString"></select>
+                    </div>
+                    <div class="col-sm-4">
+                        Sort Option <select asp-for="@Model.sortByOption" asp-items="@Model.sortOptionList" class="form-control clear_field" id="sortByOption"></select>
+                    </div>
+                    <div class="col-sm-4">
+                        Filter                     
+                        <select class="form-control" asp-for="@Model.filter">
+                            <option value="all">All</option>
+                            <option value="unpr">UnProcessed</option>
+                            <option value="proc">Processed</option>
+                        </select>
+                    </div>
+                </div>
+                <hr />
+                <div>
+                    <button type="submit" class="btn btn-sm btn-outline-success" style="font-size:1.3rem;">Apply</button>
+                    <button type="button" class="btn btn-sm btn-outline-success clear_button" style="font-size:1.3rem;">Clear</button>
+                    <input type="hidden" class="" name="sortByString" id="sortByString" value="">
+                    <input type="hidden" class="" name="sortByOption" id="sortByOption" value="">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("_LoadingModalDialogBox")

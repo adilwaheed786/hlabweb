@@ -1,0 +1,178 @@
+﻿@model HorizonLabLibrary.Parameters.customerparameters
+@{
+    ViewData["PageTitle"] = "Edit Customer Form";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+<link href="~/css/jquery-ui.css" rel="stylesheet" />
+<script src="~/js/jquery-ui.js"></script>
+<script src="~/js/api_events.js"></script>
+<script src="~/js/customer_events.js"></script>
+<script src="~/js/general_functions.js"></script>
+<div class="row">
+    <div class="col-lg-2"></div>
+    <div class="col-lg-8">
+        <form asp-action="UpdateCustomer" asp-controller="Customer" method="post" class="" id="customer_form">
+            <input asp-for="@Model.hlab_customers.customer_id" type="hidden" id="" value="@Model.horizonlabcustomerview.customer_id">
+            <input asp-for="@Model.hlab_customers.status" type="hidden" id="" value="@Model.horizonlabcustomerview.status">
+            <input asp-for="@Model.next_customer_id" type="hidden" id="next_customer_id">
+            <input asp-for="@Model.previous_customer_id" type="hidden" id="previous_customer_id">
+            <div class="panel panel-success">
+                <div class="panel-heading">Customer Information</div>
+                <div class="panel-body">
+                    <div class="row allownace_top">
+                        <div class="col-sm-2 text-right">Customer ID</div>
+                        <div class="col-sm-4">@Model.horizonlabcustomerview.customer_id</div>
+                        <div class="col-sm-2 text-right">Company Name</div>
+                        <div class="col-sm-4"><input asp-for="@Model.hlab_customers.company_name" class="form-control input-sm" type="text" id="input_compname" value="@Model.horizonlabcustomerview.company_name"></div>
+                    </div>
+                    <div class="row allownace_top">
+                        <div class="col-sm-2 text-right">First Name</div>
+                        <div class="col-sm-4"><input asp-for="@Model.hlab_customers.first_name" class="form-control input-sm" type="text" id="input_firstname" value="@Model.horizonlabcustomerview.first_name" tabindex="1"></div>
+                        <div class="col-sm-2 text-right">Last Name</div>
+                        <div class="col-sm-4"><input asp-for="@Model.hlab_customers.last_name" class="form-control input-sm" type="text" id="input_lastname" value="@Model.horizonlabcustomerview.last_name" tabindex="2"></div>
+                    </div>
+                    <div class="row allownace_top">
+                        <div class="col-sm-2 text-right">Producer Number</div>
+                        <div class="col-sm-4"><input asp-for="@Model.hlab_customers.producer_number" class="form-control input-sm number_only" type="text" value="@Model.horizonlabcustomerview.producer_number"></div>
+                    </div>
+                    <div class="row allownace_top">
+                        <div class="col-sm-2 text-right">Street</div>
+                        <div class="col-sm-4"><input asp-for="@Model.hlab_customers.street" class="form-control input-sm" type="text" id="input_street" value="@Model.horizonlabcustomerview.street" tabindex="3"></div>
+                        <div class="col-sm-2 text-right">Town</div>
+                        <div class="col-sm-4">
+                            <div class="row">
+                                <div class="col-sm-9">
+                                    <select asp-for="@Model.hlab_customers.city_id" asp-items="@Model.CitySelectList" class="form-control" id="select_city" tabindex="4"></select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <button type="button" class="btn btn-sm btn-outline-success" value="" id="addcity">
+                                        <span class="glyphicon glyphicon-plus-sign" style="font-size:1.7rem;"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row allownace_top">
+                        <div class="col-sm-2 text-right">Province</div>
+                        <div class="col-sm-4"><select asp-for="@Model.hlab_customers.province_id" asp-items="@Model.ProvinceSelectList" class="form-control" id=""></select></div>
+                        <div class="col-sm-2 text-right">Postal Code</div>
+
+                        @{ 
+                            string postal_code = "";
+                            if (!string.IsNullOrEmpty(Model.horizonlabcustomerview.postal_code))
+                            {
+                                postal_code = Model.horizonlabcustomerview.postal_code.ToUpper();
+                                if (postal_code.Length > 3)
+                                {
+                                    char mid = postal_code[3];
+                                    if (mid != ' ')
+                                    {
+                                        postal_code = postal_code.Insert(3, " ");
+                                    }
+                                }
+                            }
+                        }
+
+                        <div class="col-sm-4"><input asp-for="@Model.hlab_customers.postal_code" class="form-control input-sm" type="text" id="input_postal_code" value="@postal_code" tabindex="5"></div>
+                    </div>
+                    <div class="row allownace_top">
+                        <div class="col-sm-2 text-right">Fax</div>
+                        <div class="col-sm-4"><input asp-for="@Model.hlab_customers.fax" class="form-control input-sm" type="text" id="input_fax" value="@Model.horizonlabcustomerview.fax"></div>
+                        <div class="col-sm-2 text-right">&nbsp;</div>
+                        <div class="col-sm-4 text-right" style="font-size:1rem;color:red;">*Postal Code should be in six(6) digits, all-caps letters and should be in this format: A1A1A1</div>
+                    </div>
+                    <div class="row allownace_top">
+                        <div class="col-sm-2 text-right">Phone Number(s)</div>
+                        <div class="col-sm-4">
+                            <input asp-for="@Model.phone_list[0].phone" class="form-control input-sm allownace_top mask_phone" type="text" value="@Model.phone_list[0].phone" tabindex="6">
+                            <input asp-for="@Model.phone_list[1].phone" class="form-control input-sm allownace_top mask_phone" type="text" value="@Model.phone_list[1].phone" tabindex="7">
+                            <input asp-for="@Model.phone_list[2].phone" class="form-control input-sm allownace_top mask_phone" type="text" value="@Model.phone_list[2].phone">
+                            <input asp-for="@Model.phone_list[3].phone" class="form-control input-sm allownace_top mask_phone" type="text" value="@Model.phone_list[3].phone">
+                            <input asp-for="@Model.phone_list[4].phone" class="form-control input-sm allownace_top mask_phone" type="text" value="@Model.phone_list[4].phone">
+                        </div>
+
+
+                        <div class="col-sm-2 text-right">Email Address</div>
+                        <div class="col-sm-4">
+                            <div class="row">
+                                <div class="col-sm-2 text-right set_primary_email" style="margin-top:10px; font-size:1.2rem;color:green;">Primary<input type="hidden" asp-for="@Model.email_list[0].is_primary" value="true"></div>
+                                <div class="col-sm-10"><input asp-for="@Model.email_list[0].email" class="form-control input-sm allownace_top customer_email" id="email_1" value="@Model.email_list[0].email" type="text" tabindex="8"></div>                                                               
+                            </div>
+                            <div class="row">
+                                <input type="hidden" asp-for="@Model.email_list[1].is_primary" value="false">
+                                <div class="col-sm-12"><input asp-for="@Model.email_list[1].email" class="form-control input-sm allownace_top customer_email" id="email_2" value="@Model.email_list[1].email" type="text"></div>
+                            </div>
+                            <div class="row">
+                                <input type="hidden" asp-for="@Model.email_list[2].is_primary" value="false">
+                                <div class="col-sm-12"><input asp-for="@Model.email_list[2].email" class="form-control input-sm allownace_top customer_email" id="email_3" value="@Model.email_list[2].email" type="text"></div>
+                            </div>
+                            <div class="row">
+                                <input type="hidden" asp-for="@Model.email_list[3].is_primary" value="false">
+                                <div class="col-sm-12"><input asp-for="@Model.email_list[3].email" class="form-control input-sm allownace_top customer_email" id="email_4" value="@Model.email_list[3].email" type="text"></div>
+                            </div>
+                            <div class="row">
+                                <input type="hidden" asp-for="@Model.email_list[4].is_primary" value="false">
+                                <div class="col-sm-12"><input asp-for="@Model.email_list[4].email" class="form-control input-sm allownace_top customer_email" id="email_5" value="@Model.email_list[4].email" type="text"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+
+                    <div class="row allownace_top">
+                        <div class="col-sm-2 text-right">Public</div>
+                        <div class="col-sm-4"><select asp-for="@Model.hlab_customers.is_public" asp-items="@Model.PublicSelectList" class="form-control" id=""></select></div>
+                        <div class="col-sm-2 text-right">Semi Public</div>
+                        <div class="col-sm-4"><select asp-for="@Model.hlab_customers.is_semi_public" asp-items="@Model.SemiPublicSelectList" class="form-control" id=""></select></div>
+                    </div>
+
+                    <div class="row allownace_top">
+                        <div class="col-sm-2 text-right">Real Estate</div>
+                        <div class="col-sm-4"><select asp-for="@Model.hlab_customers.is_realestate" asp-items="@Model.RealEstateSelectList" class="form-control" id=""></select></div>
+                        <div class="col-sm-2 text-right">Approve For Financing</div>
+                        <div class="col-sm-4"><select asp-for="@Model.hlab_customers.is_approve_financing" asp-items="@Model.ApproveFinancingSelectList" class="form-control" id=""></select></div>
+                    </div>
+                    <hr />
+
+                    <div class="row allownace_top">
+                        <div class="col-sm-2 text-right">Environment District</div>
+                        <div class="col-sm-4"><input asp-for="@Model.hlab_customers.env_distr" class="form-control input-sm" type="text" value="@Model.horizonlabcustomerview.env_distr"></div>
+                        <div class="col-sm-2 text-right">Com Code</div>
+                        <div class="col-sm-4"><input asp-for="@Model.hlab_customers.com_code" class="form-control input-sm" type="text" value="@Model.horizonlabcustomerview.com_code"></div>
+                    </div>
+                    <div class="row allownace_top">
+                        <div class="col-sm-2 text-right">DW Officer</div>
+                        <div class="col-sm-4"><input asp-for="@Model.hlab_customers.dw_officer" class="form-control input-sm" type="text" value="@Model.horizonlabcustomerview.dw_officer"></div>
+                        <div class="col-sm-2 text-right">DW Phone</div>
+                        <div class="col-sm-4"><input asp-for="@Model.hlab_customers.dw_phone" class="form-control input-sm" type="text" value="@Model.horizonlabcustomerview.dw_phone"></div>
+                    </div>
+
+                    <br />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-5">
+                    <input asp-for="@Model.save_proceed" type="hidden" id="save_proceed">
+                    <button type="button" class="btn btn-success" onclick="window.location='/Customer/ViewCustomerListPage'">CUSTOMER LIST PAGE</button>
+                    <button type="button" class="btn btn-success" id="submit_btn">SAVE</button>
+                </div>
+                <div class="col-sm-7">
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    @{bool next_disabled = true, prev_disabled = true;}
+                    @if (Model.previous_customer_id != 0)
+                    {
+                        prev_disabled = false;
+                    }
+                    
+                    @if (Model.next_customer_id != 0)
+                    {
+                        next_disabled = false;
+                    }
+                    <a href="@Url.Action("EditCustomerForm","Customer", new { cid=Model.previous_customer_id})" type="button" class="btn btn-sm btn-outline-success" id="" disabled="@(prev_disabled ? "disabled" : null)"><span class="glyphicon glyphicon-backward" style="font-size:2rem;"></span></a>
+                    <a href="@Url.Action("EditCustomerForm","Customer", new { cid=Model.next_customer_id})" type="button" class="btn btn-sm btn-outline-success" id="" disabled="@(next_disabled ? "disabled" : null)"><span class="glyphicon glyphicon-forward" style="font-size:2rem;"></span></a>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-lg-2"></div>
+</div>

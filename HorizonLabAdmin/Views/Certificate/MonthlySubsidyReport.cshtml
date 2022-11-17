@@ -1,0 +1,192 @@
+﻿@model HorizonLabAdmin.Models.Forms.TestTransactionSearchParameters
+
+@{
+    ViewData["PageTitle"] = "Water Bacteria Monthly Subsidy Report";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link href="~/css/jquery.datetextentry.css" rel="stylesheet" />
+<!--<link href="~/css/jquery-ui.css" rel="stylesheet" />-->
+<script src="~/js/jquery-ui.js"></script>
+<script src="~/js/general_functions.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".datepicker_default").datepicker({ dateFormat: 'dd/mm/yy' });
+
+        $("#export_subsidy_csv").click(function () {
+            $("#subsidy_form").attr('action', '/CsvExporter/MonthlySubsidy');
+        });
+    });
+</script>
+
+<div class="row" style="height:800px; font-size:1.2rem; overflow:auto;">
+    <div class="col-lg-12">
+        <div class="panel panel-success">
+            <div class="panel-heading"><b>Water Monthly Subsidy Report</b></div>
+            <div class="panel-body">
+                <form asp-action="MonthlySubsidyReport" asp-controller="Certificate" method="get" class="" id="subsidy_form">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            DATE RECEIVED<br />
+                            <input type="text" id="" name="start" class="form-control datepicker_default" value="@ViewBag.StartReceivedDate.ToString("dd/MM/yyyy")" autocomplete="off">
+                        </div>
+
+                        <div class="col-sm-2">
+                            <br />
+                            <input type="text" id="" name="end" class="form-control datepicker_default" value="@ViewBag.EndReceivedDate.ToString("dd/MM/yyyy")" autocomplete="off">
+                        </div>
+
+                        <div class="col-sm-4">
+                            <br />
+                            <button type="submit" class="btn btn-success" value="" id="">SEARCH</button>
+                            <button type="submit" class="btn btn-success" value="" id="export_subsidy_csv">DOWNLOAD</button>
+                        </div>
+
+                    </div>
+                </form>
+
+                <div style="border:1px solid; border-radius:5px; height:500px; overflow:auto;">
+                    <div style="width:3100px;" >
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Horizon ID</th>
+                                    <th>Project</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Mailing Address</th>
+                                    <th>City</th>
+                                    <th>Province</th>
+                                    <th>Postal Code</th>
+                                    <th>DayTime Phone</th>
+                                    <th>Evening Phone</th>
+                                    <th>Email</th>
+                                    <th>Fax</th>
+                                    <th>Sample ID (Client Name)</th>
+                                    <th>Sample ID (location)</th>
+                                    <th>Sample Type</th>
+                                    <th>Legal Location</th>
+                                    <th>Town</th>
+                                    <th>RM/LGD</th>
+                                    <th>Sample Latitude</th>
+                                    <th>Sample Longitude</th>
+                                    <th>UTM X</th>
+                                    <th>UTM Y</th>
+                                    <th>UTM Zone</th>
+                                    <th>Coliforms</th>
+                                    <th>Ecoli</th>
+                                    <th>Units</th>
+                                    <th>Submitted Date</th>
+                                    <th>Collect Date</th>
+                                    <th>Collect Time</th>
+                                    <th>Received Date</th>
+                                    <th>Test Date</th>
+                                    <th>Report Date</th>
+                                    <th>Coupon ID</th>
+                                    <th>Paid By Coupon</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.monthly_subsidy_transaction_list != null && Model.monthly_subsidy_transaction_list.Count > 0)
+                                {
+                                    int prev_trans_id = 0, total_coliform_id = 9, ecoli_id = 2;
+                                    string collect_date = "", collect_time = "", received_date = "", test_date = "", report_date = "", coliform_result="", ecoli_result="";
+                                    foreach (var item in Model.monthly_subsidy_transaction_list)
+                                    {
+                                        collect_date = ""; collect_time = ""; received_date = ""; test_date = ""; report_date = "";
+                                        coliform_result = ""; ecoli_result = "";
+                                        if (prev_trans_id != item.trans_id)
+                                        {
+                                            <tr>
+                                                <td>@item.customer_id</td>
+                                                <td>@item.project</td>
+                                                <td>@item.first_name</td>
+                                                <td>@item.last_name</td>
+                                                <td>@item.street</td>
+                                                <td>@item.city</td>
+                                                <td>@item.province</td>
+                                                <td>@item.postal_code</td>
+                                                <td>@item.phone</td>
+                                                <td><i>n/a</i></td>
+                                                <td>@item.email</td>
+                                                <td><i>n/a</i></td>
+                                                <td><i>n/a</i></td>
+                                                <td>@item.idnty_location</td>
+                                                <td>@item.sample_type</td>
+                                                <td>@item.sample_legal_loc</td>
+                                                <td>@item.town</td>
+                                                <td>@item.municipality</td>
+                                                <td>@item.latitude</td>
+                                                <td>@item.longitude</td>
+                                                <td>@item.utm_x</td>
+                                                <td>@item.utm_y</td>
+                                                <td>@item.zone</td>
+
+                                                @{
+                                                    var results = Model.monthly_subsidy_transaction_list.Where(x => x.trans_id == item.trans_id).ToList();
+                                                    if (results != null && results.Count > 0)
+                                                    {
+                                                        if(results.Where(x => x.param_id == total_coliform_id).FirstOrDefault() != null)
+                                                        {
+                                                            coliform_result = results.Where(x => x.param_id == total_coliform_id).FirstOrDefault().result;
+                                                            results.Where(x => x.param_id == total_coliform_id).FirstOrDefault().result = "**processed**";
+                                                        }
+
+                                                        if (results.Where(x => x.param_id == ecoli_id).FirstOrDefault()!=null)
+                                                        {
+                                                            ecoli_result = results.Where(x => x.param_id == ecoli_id).FirstOrDefault().result;
+                                                            results.Where(x => x.param_id == ecoli_id).FirstOrDefault().result = "**processed**";
+                                                        }
+                                                    }
+                                                 }
+                                                <td>@coliform_result</td>
+                                                <td>@ecoli_result</td>
+                                                <td>@item.unit_of_measurement</td>
+                                                <td>@item.submtd_by</td>
+
+                                                @if (item.collect_datetime != null)
+                                                {
+                                                collect_date = item.collect_datetime.Value.ToString("yyyy-MM-dd");
+                                                collect_time = item.collect_datetime.Value.ToString("HH:mm");
+                                            }
+
+                                            @if (item.rcv_date != null)
+                                                {
+                                                received_date = item.rcv_date.Value.ToString("yyyy-MM-dd");
+                                            }
+
+                                            @if (item.test_date != null)
+                                                {
+                                                test_date = item.test_date.Value.ToString("yyyy-MM-dd");
+                                            }
+
+                                            @if (item.work_date != null)
+                                                {
+                                                report_date = item.work_date.Value.ToString("yyyy-MM-dd");
+                                            }
+
+                                                <td>@collect_date</td>
+                                                <td>@collect_time</td>
+                                                <td>@received_date</td>
+                                                <td>@test_date</td>
+                                                <td>@report_date</td>
+                                                <td>@item.gen_coupon</td>
+                                                <td>@item.assigned_coupon</td>
+                                                @*@foreach (var others in Model.monthly_subsidy_transaction_list.Where(x => x.trans_id == item.trans_id && x.result != "**processed**"))
+                                                {
+                                                    <td>@others.param_name : @others.result</td>
+                                                }*@
+                                            </tr>
+                                        }
+                                        prev_trans_id = item.trans_id;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

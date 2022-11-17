@@ -1,0 +1,184 @@
+﻿@{
+    ViewData["PageTitle"] = "Test Package Settings";
+    Layout = "~/Views/Shared/_HlabWebAdminLayout.cshtml";
+}
+<link href="~/css/jquery-ui.css" rel="stylesheet" />
+<script src="~/js/jquery-ui.js"></script>
+<script src="~/js/test_package_events.js"></script>
+<script src="~/js/general_functions.js"></script>
+@model HorizonLabAdmin.Models.Forms.TestPackage
+<div clsss="row">
+    @{ if (!string.IsNullOrEmpty(ViewBag.Message))
+        {
+            var msg_details = ViewBag.Message.Split(':');
+            if (msg_details[0] == "success")
+            {
+                <p style="color:green;font-size:.75em;">@msg_details[1]</p>
+            }
+            else
+            {
+                <p style="color:red;font-size:.75em;">@msg_details[1]</p>
+            }
+        }
+    }
+
+    <div class="col-sm-12" style="height:700px; overflow:auto;">
+        <form asp-action="UpdateTestPackage" asp-controller="Settings" method="post" class="" id="">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-sm-8">Test Categories Table</div>
+                        <div class="col-sm-4" style="text-align:right;">
+                            <button type="submit" class="btn btn-sm btn-outline-success" value="" id="" data-toggle='tooltip' title='save changes'>
+                                <span class="glyphicon glyphicon-floppy-disk" style="font-size:1.7rem;"></span>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-success open_modal" value="addnewtestpackage" id="" data-toggle='tooltip' title='add new category'>
+                                <span class="glyphicon glyphicon-plus" style="font-size:1.7rem;"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th style="width:8%;">&nbsp;</th>
+                                <th style="width:7%;">Test Package</th>
+                                <th style="width:6%;">Price</th>
+                                @*<th style="width:6%;">Lab fee</th>*@
+                                <th style="width:17%;">Analysis</th>
+                                @*<th style="width:12%;">Sample Container</th>*@
+                                <th style="width:15%;">Description</th>
+                                <th style="width:10%;">Class</th>
+                                <th style="width:6%;">GL Accnt#</th>
+                                <th style="width:9%;">FORM</th>
+                                <th style="width:5%;">U.I.D.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.test_packages.Count; i++)
+                            {
+                            <tr>
+                                <td class="text-right">
+                                    <a type="button" class="btn btn-sm btn-outline-success" value="" id="" data-toggle='tooltip' title='default parameters' href="@Url.Action("TestPackageDefaultParameters", "Settings", new { packageid=@Model.test_packages[i].id})">
+                                        <span class="glyphicon glyphicon-cog" style="font-size:1.25rem;"></span>
+                                    </a>
+                                    @if (Model.test_packages[i].status)
+                                    {
+                                        <button type="button" class="btn btn-sm btn-outline-success category_status_button" value="status_@Model.test_packages[i].id" id="" data-toggle='tooltip' title='disable category'>
+                                            <span class="glyphicon glyphicon-check" style="font-size:1.25rem;"></span>
+                                        </button>
+                                        <input asp-for="@Model.test_packages[i].status" type="hidden" class="form-control" id="status_@Model.test_packages[i].id">
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-sm btn-outline-success category_status_button" value="status_@Model.test_packages[i].id" id="" data-toggle="tooltip" title="enable category" style="color:#CCCECC;border-color:#CCCECC;">
+                                            <span class="glyphicon glyphicon-check" style="font-size:1.25rem;"></span>
+                                        </button>
+                                        <input asp-for="@Model.test_packages[i].status" type="hidden" class="form-control" id="status_@Model.test_packages[i].id">
+                                    }
+                                </td>
+                                <td style="font-size:1.25rem;"><input asp-for="@Model.test_packages[i].lab_code" type="text" class="form-control"></td>
+                                <td><input asp-for="@Model.test_packages[i].price" type="text" class="form-control decimal_only"></td>
+                                @*<td><input asp-for="@Model.test_packages[i].lab_fee" type="text" class="form-control decimal_only"></td>*@
+                                <td><input asp-for="@Model.test_packages[i].analysis" type="text" class="form-control"></td>
+                                @*<td><input asp-for="@Model.test_packages[i].sample_container" type="text" class="form-control"></td>*@
+                                <td><input asp-for="@Model.test_packages[i].description" type="text" class="form-control"></td>
+                                <td>
+                                    <input asp-for="@Model.test_packages[i].id" type="hidden" class="form-control">
+                                    @foreach (var item in ViewBag.selectClassList)
+                                    {
+                                        if (item.Value == Model.test_packages[i].pkg_class_id.ToString())
+                                        {
+                                            item.Selected = true;
+                                        }
+                                    }
+                                    <select asp-for="@Model.test_packages[i].pkg_class_id" asp-items="@ViewBag.selectClassList" class="form-control"></select>
+                                </td>
+                                <td><input asp-for="@Model.test_packages[i].gl_accnt_num" type="text" class="form-control"></td>
+                                <td>
+                                    @{ int formid = Model.test_packages[i].form_id;}
+                                    @foreach (var item in @Model.selectTestPackageForm)
+                                    {
+                                        if (formid == null){break;}
+                                        if (item.Value == Model.test_packages[i].form_id.ToString())
+                                        {
+                                            Model.selectTestPackageForm.Where(x => x.Value.ToLower() == formid.ToString().ToLower()).First().Selected = true;
+                                        }
+                                    }
+                                    <select asp-for="@Model.test_packages[i].form_id" asp-items="@Model.selectTestPackageForm" class="form-control"></select>
+                                </td>
+                                <td><input asp-for="@Model.test_packages[i].hl_code_prefix" type="text" class="form-control"></td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="addnewtestpackage" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content" style="width:25%;">
+        <div><h3><span id="service" style="float:left;">Add New Test Package</span></h3><button class="close close_modal" value="addnewtestpackage" onclick="">&times;</button></div>
+        <br />
+        <form asp-action="AddTestPackage" asp-controller="Settings" method="post" class="" id="new_package_form">
+            <div class="row">
+                <div class="col-sm-3 text-right">Name:</div>
+                <div class="col-sm-9">
+                    <input asp-for="@Model.test_package.lab_code" type="text" class="form-control " value="" id="pkg_name">
+                    <input asp-for="@Model.test_package.status" type="hidden" class="form-control " value="True" id="">
+                </div>
+            </div>
+
+            <div class="row" style="margin-top:10px;">
+                <div class="col-sm-3 text-right">Category:</div>
+                <div class="col-sm-9">
+                    <select asp-for="@Model.test_package.pkg_class_id" asp-items="@ViewBag.selectClassList" class="form-control"></select>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top:10px;">
+                <div class="col-sm-3 text-right">Price:</div>
+                <div class="col-sm-3"><input asp-for="@Model.test_package.price" type="text" class="form-control decimal_only" value="" id=""></div>
+
+                <div class="col-sm-3 text-right">Lab Fee:</div>
+                <div class="col-sm-3"><input asp-for="@Model.test_package.lab_fee" type="text" class="form-control decimal_only" value="" id=""></div>
+            </div>
+
+            <div class="row" style="margin-top:10px;">
+                <div class="col-sm-12">
+                    Analysis:<br />
+                    <textarea asp-for="@Model.test_package.analysis" class="form-control"></textarea>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top:10px;">
+                <div class="col-sm-12">
+                    Sample Container:<br />
+                    <textarea asp-for="@Model.test_package.sample_container" class="form-control"></textarea>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top:10px;">
+                <div class="col-sm-12">
+                    Description:<br />
+                    <textarea asp-for="@Model.test_package.description" class="form-control"></textarea>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top:10px;">
+                <div class="col-sm-12">
+                    General Ledger Account Number:<br />
+                    <textarea asp-for="@Model.test_package.gl_accnt_num" class="form-control"></textarea>
+                </div>
+            </div>
+
+            <div class="row allownace_top">
+                <div class="col-sm-12 text-right"><button type="button" class="btn btn-success" id="save_new_package">SAVE</button></div>
+            </div>
+        </form>
+    </div>
+</div>
