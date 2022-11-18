@@ -32,7 +32,7 @@ namespace HorizonLabAdmin.Helpers.Utilities
                 //var userName = _httpContextAccessor.HttpContext.User.Identity.Name.Split("\\");
                 // hlabUser = _hlabUserRepo.GetUserAuthentication(userName[1], "");
 
-                hlab_users hlabUser = _hlabUserRepo.GetUserAuthentication("labtech02", "");
+                hlab_users hlabUser = _hlabUserRepo.GetUserAuthentication("labtech02", "D@iryM1lk");
 
                 return hlabUser;
             }
