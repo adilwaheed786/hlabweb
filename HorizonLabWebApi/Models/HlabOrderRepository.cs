@@ -303,7 +303,7 @@ namespace HorizonLabWebApi.Models
                 if (log.customer_id != 0) certlist = _hlab_Db_Context.watercertificatesummaryview.Where(x => x.customer_id == log.customer_id && x.record_status == true).ToList();
                 if (log.order_id != 0) certlist = _hlab_Db_Context.watercertificatesummaryview.Where(x => x.order_id == log.order_id && x.record_status == true).ToList();
                 
-                //if (log.Project_id != 0) certlist = _hlab_Db_Context.watercertificatesummaryview.Where(x => x. == log.Project_id && x.record_status == true).ToList();
+                if (log.Project_id != 0) certlist = _hlab_Db_Context.watercertificatesummaryview.Where(x => x.project_id == log.Project_id && x.record_status == true).ToList();
 
                 //if (!string.IsNullOrEmpty(log.received_by)) orderlist = _hlab_Db_Context.ordersummaryview.Where(x => x.received_by.ToLower() == log.received_by.ToLower()).ToList();
                 if (!string.IsNullOrEmpty(log.first_name)) certlist = _hlab_Db_Context.watercertificatesummaryview.Where(x => x.first_name.ToLower().Contains(log.first_name.ToLower()) && x.record_status == true).ToList();
@@ -334,10 +334,15 @@ namespace HorizonLabWebApi.Models
                 if (log.test_date_start != DateTime.MinValue && log.test_date_end != DateTime.MinValue && log.test_date_start != null && log.test_date_end != null)
                     certlist = _hlab_Db_Context.watercertificatesummaryview.Where(
                     x => x.test_date >= log.test_date_start
-                    && x.rcv_date < AddDayToNullableDateTime(log.test_date_end, 1)
+                    && x.test_date < AddDayToNullableDateTime(log.test_date_end, 1)
                     && x.record_status).ToList();
-                
-                
+                //Project date
+                if (log.proj_date_start != DateTime.MinValue && log.proj_date_end != DateTime.MinValue && log.proj_date_start != null && log.proj_date_end != null)
+                    certlist = _hlab_Db_Context.watercertificatesummaryview.Where(
+                    x => x.date_insert >= log.proj_date_start
+                    && x.date_insert < AddDayToNullableDateTime(log.proj_date_end, 1)
+                    && x.record_status).ToList();
+
                 return certlist;
             }
             catch (Exception exc)

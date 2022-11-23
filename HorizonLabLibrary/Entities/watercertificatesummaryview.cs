@@ -8,7 +8,8 @@ namespace HorizonLabLibrary.Entities
     {
         public int order_id { get; set; }
         public int customer_id { get; set; }
-        public int project_id { get; set; }
+
+         public int project_id { get; set; }
         public int test_pkg_id { get; set; }
         public string first_name { get; set; }
         public string last_name { get; set; }
@@ -18,7 +19,8 @@ namespace HorizonLabLibrary.Entities
         public DateTime? submtd_datetime { get; set; }
         public DateTime? test_date { get; set; }
         public DateTime? min_work_date { get; set; }
-        public DateTime? proj_date { get; set; }
+
+        public DateTime? date_insert { get; set; }
         public string date_email_sent { get; set; }
         public string received_by { get; set; }
         public bool proc_status { get; set; }

@@ -62,7 +62,12 @@
             {
                 <div class="col-sm-2"><b>Requested Date :</b> <br />@Model.str_searchTestDateStart - @Model.str_searchTestDateEnd</div>
             }
-
+            
+            @if (!string.IsNullOrEmpty(Model.str_searchProjectDateStart) || !string.IsNullOrEmpty(Model.str_searchProjectDateEnd))
+            {
+                <div class="col-sm-2"><b>Project Date :</b> <br />@Model.str_searchProjectDateStart - @Model.str_searchProjectDateEnd</div>
+            }
+           
             <div class="col-sm-2"><b>Sort By :</b> <br />@Model.sortByString @Model.sortByOption</div>
 
             <div class="col-sm-2">
