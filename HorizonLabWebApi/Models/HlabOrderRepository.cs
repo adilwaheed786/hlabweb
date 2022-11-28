@@ -3,6 +3,7 @@ using HorizonLabLibrary.Interfaces;
 using HorizonLabLibrary.Parameters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using NLog.Fluent;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -294,7 +295,23 @@ namespace HorizonLabWebApi.Models
                 return false;
             }
         }
+        public List<watercertificatesummaryview> GetAllCertificateWithCustomerId(int id)
+        {
+            try
+            {
+                List<watercertificatesummaryview> certlist = new List<watercertificatesummaryview>();
+            
+                if (id != 0) certlist = _hlab_Db_Context.watercertificatesummaryview.Where(x => x.order_id == id).ToList();
+                certlist = _hlab_Db_Context.watercertificatesummaryview.Where(x => x.customer_id == certlist[0].customer_id).ToList();
 
+                return certlist;
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return null;
+            }
+        }
         public IEnumerable<watercertificatesummaryview> GetAllWaterCertificates(ordersearch log)
         {
             try

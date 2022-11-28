@@ -4,6 +4,7 @@ using HorizonLabLibrary.Interfaces;
 using HorizonLabLibrary.Parameters;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using NLog.Fluent;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -176,6 +177,13 @@ namespace HorizonLabAdmin.Models
             var jsonList = _hllOrderLibrary.CountTodaysRequests(request, _webApibaseUrl, _hlabApiKey, _ApiHeader);
             var count = JsonConvert.DeserializeObject<int>(jsonList);
             return count;
+        }
+
+        public List<watercertificatesummaryview> GetAllCertificateWithCustomerId(int id)
+        {
+            var jsonList = _hllOrderLibrary.GetAllCertificateWithCustomerId(id, _webApibaseUrl, _hlabApiKey, _ApiHeader);
+            var watercertlist = JsonConvert.DeserializeObject<List<watercertificatesummaryview>>(jsonList);
+            return watercertlist;
         }
     }
 }

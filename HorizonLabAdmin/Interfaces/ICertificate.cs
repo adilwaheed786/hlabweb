@@ -13,6 +13,7 @@ namespace HorizonLabAdmin.Interfaces
 {
     public interface ICertificate
     {
+        WaterCertificateListWithCustomerId GetCustomerCertificateWithId(int id);
         List<watercertificatesummaryview> BatchCertificateRecordList(List<watercertificatesummaryview> request_records, int rec_start = 0, int rec_end = 0);
         List<watercertificatesummaryview> SortCertificatetRecordList(List<watercertificatesummaryview> requestlist);
         TestResultPageViewModel GenerateB1NSCertificate(TestResultPageViewModel page_model, List<int> request_ids);

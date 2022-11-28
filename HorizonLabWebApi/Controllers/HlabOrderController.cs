@@ -40,7 +40,21 @@ namespace HorizonLabWebApi.Controllers
                 return null;
             }
         }
-
+        [HttpGet("getallcertificatewithcustomerid")]
+        public List<watercertificatesummaryview> getallcertificatewithcustomerid(int custid)
+        {
+            try
+            {
+                List<watercertificatesummaryview> certlist = new List<watercertificatesummaryview>();
+                certlist = _hlabOrders.GetAllCertificateWithCustomerId(custid).ToList();
+                return certlist;
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return null;
+            }
+        }
         [HttpPost("getvatercertificatelist")]
         public List<watercertificatesummaryview> getvatercertificatelist(ordersearch order)
         {

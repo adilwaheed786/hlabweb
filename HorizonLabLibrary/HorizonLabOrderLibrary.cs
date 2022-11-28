@@ -20,10 +20,17 @@ namespace HorizonLabLibrary
 
         public string GetWaterCertificateList(ordersearch order, string baseUrl, string ApiKey, string ApiHeader)
         {
+
             var dataAsString = JsonConvert.SerializeObject(order);
             return _hllWebApi.GetRecordsPost(dataAsString, baseUrl + hlab_api_controller_name + "/getvatercertificatelist/", ApiKey, ApiHeader);
         }
+        public string GetAllCertificateWithCustomerId(int id, string baseUrl, string ApiKey, string ApiHeader)
+        {
+            return _hllWebApi.GetRecords(baseUrl + hlab_api_controller_name + "/getallcertificatewithcustomerid?custid=" + id, ApiKey, ApiHeader);
 
+           // var dataAsString = JsonConvert.SerializeObject(id);
+            //return _hllWebApi.GetRecordsPost(dataAsString, baseUrl + hlab_api_controller_name + "/getallcertificatewithcustomerid/", ApiKey, ApiHeader);
+        }
         public string CountTodaysRequests(orderdetailsview param, string baseUrl, string ApiKey, string ApiHeader)
         {
             var dataAsString = JsonConvert.SerializeObject(param);

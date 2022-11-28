@@ -9,6 +9,8 @@ namespace HorizonLabLibrary.Interfaces
     public interface Interface_hlab_orders
     {
         IEnumerable<ordersummaryview> GetAllOrders(ordersearch log);
+        List<watercertificatesummaryview> GetAllCertificateWithCustomerId(int id);
+
         IEnumerable<watercertificatesummaryview> GetAllWaterCertificates(ordersearch log);
         ordersummaryview GetOrderInfo(int order_id);
         IEnumerable<orderdetailsview> GetOrderItems(orderdetailsview log);        

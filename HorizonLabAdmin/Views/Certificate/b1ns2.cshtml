@@ -1,4 +1,5 @@
-﻿@model HorizonLabAdmin.Models.Forms.TestResultPageViewModel
+﻿@*@model <List HorizonLabAdmin.Models.Forms.TestResultPageViewModel>*@
+@model HorizonLabAdmin.Helpers.Containers.MultipleB1CertificateObject
 @{
     Layout = null;
 }
@@ -69,287 +70,294 @@
 </head>
 <body style="padding-left:30px; padding-right:30px;padding-top:20px;">
 
-    @if (Model.b1ns_details.Count > 0)
+    @if (Model.page_model.Count > 0)
     {
-        var report = Model.b1ns_details.FirstOrDefault();
-        <div class="">
-            <div class="content">
-                <div class="container-fluid" style="width:100%;font-size:0.9em;">
-                    <div class="row">
-                        <div class="col-sm-2"><img src="~/images/horizonlab_logo.png" class="img-fluid" alt="" width="130" height="70" /></div>
-                        <div class="col-sm-4"></div>
-                    </div>
-                    <div class="text-center" style="padding:5px 5px 5px 5px;color:#6E6E6E;">
-                        <center>
-                            <h3>
-                                <b>Certificate of Analysis</b><br />
-                                <b>Water Samples</b>
-                            </h3>
-                        </center>
-                    </div>
+        @foreach (var certificate in Model.page_model)
+        {
+            var report = certificate.b1ns_details.FirstOrDefault();
+            <div class="">
+                <div class="content">
+                    <div class="container-fluid" style="width:100%;font-size:0.9em;">
+                        <div class="row">
+                            <div class="col-sm-2"><img src="~/images/horizonlab_logo.png" class="img-fluid" alt="" width="130" height="70" /></div>
+                            <div class="col-sm-4"></div>
+                        </div>
+                        <div class="text-center" style="padding:5px 5px 5px 5px;color:#6E6E6E;">
+                            <center>
+                                <h3>
+                                    <b>Certificate of Analysis</b><br />
+                                    <b>Water Samples</b>
+                                </h3>
+                            </center>
+                        </div>
 
-                    <div style="width:690px; margin-left:auto; margin-right:auto;">
-                        <table style="width:100%;">
-                            <tr>
-                                <td width="60%">
-                                    <table>
-                                        <tr>
-                                            <td>@report.customer_info.first_name @report.customer_info.last_name</td>
-                                        </tr>
+                        <div style="width:690px; margin-left:auto; margin-right:auto;">
+                            <table style="width:100%;">
+                                <tr>
+                                    <td width="60%">
+                                        <table>
+                                            <tr>
+                                                <td>@report.customer_info.first_name @report.customer_info.last_name</td>
+                                            </tr>
 
-                                        <tr>
-                                            <td>@report.customer_info.street </td>
-                                        </tr>
+                                            <tr>
+                                                <td>@report.customer_info.street </td>
+                                            </tr>
 
-                                        <tr>
-                                            <td>@report.customer_info.city, @report.customer_info.province</td>
-                                        </tr>
+                                            <tr>
+                                                <td>@report.customer_info.city, @report.customer_info.province</td>
+                                            </tr>
 
-                                        <tr>
-                                            <td>
-                                                @{
-                                                    string postal_code = "";
-                                                    if (!string.IsNullOrEmpty(report.customer_info.postal_code))
-                                                    {
-                                                        postal_code = report.customer_info.postal_code.ToUpper();
-                                                        if (postal_code.Length > 3)
+                                            <tr>
+                                                <td>
+                                                    @{
+                                                        string postal_code = "";
+                                                        if (!string.IsNullOrEmpty(report.customer_info.postal_code))
                                                         {
-                                                            char mid = postal_code[3];
-                                                            if (mid != ' ')
+                                                            postal_code = report.customer_info.postal_code.ToUpper();
+                                                            if (postal_code.Length > 3)
                                                             {
-                                                                postal_code = postal_code.Insert(3, " ");
+                                                                char mid = postal_code[3];
+                                                                if (mid != ' ')
+                                                                {
+                                                                    postal_code = postal_code.Insert(3, " ");
+                                                                }
                                                             }
                                                         }
                                                     }
-                                                }
 
-                                                @if (!string.IsNullOrEmpty(postal_code))
-                                                {
-                                                    @postal_code
-                                                }
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>&nbsp;</td>
-                                        </tr>
-
-                                        @{
-                                            string phone_number = "";
-                                            if (report.phone_list != null && report.phone_list.Count > 0)
-                                            {
-                                                phone_number = report.phone_list.FirstOrDefault().phone;
-                                            }
-                                        }
-
-                                        <tr>
-                                            <td>@phone_number</td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>
-                                                @if (report.email_list != null && report.email_list.Count > 0)
-                                                {
-                                                    foreach (var email in report.email_list)
+                                                    @if (!string.IsNullOrEmpty(postal_code))
                                                     {
-                                                        <div>@email.email</div>
+                                                        @postal_code
                                                     }
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>&nbsp;</td>
+                                            </tr>
+
+                                            @{
+                                                string phone_number = "";
+                                                if (report.phone_list != null && report.phone_list.Count > 0)
+                                                {
+                                                    phone_number = report.phone_list.FirstOrDefault().phone;
                                                 }
-                                            </td>
-                                        </tr>
+                                            }
+
+                                            <tr>
+                                                <td>@phone_number</td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>
+                                                    @if (report.email_list != null && report.email_list.Count > 0)
+                                                    {
+                                                        foreach (var email in report.email_list)
+                                                        {
+                                                            <div>@email.email</div>
+                                                        }
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>&nbsp;</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td>
+                                        <table style="width:100%;">
+                                            <tr>
+                                                <td width="40%" style="font-weight:bold; text-align:left;" class="label_info print_grey">Customer ID:</td>
+                                                <td style="text-align:left;">
+                                                    @*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*@
+                                                    @string.Format("{0:00000000}", report.customer_info.customer_id)
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight:bold; text-align:left;" class="label_info print_grey">Date Received:</td>
+                                                <td style="text-align:left;">
+                                                    @*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*@
+                                                    @if (report.trans_details.rcv_date != null)
+                                                    {
+                                                        @report.trans_details.rcv_date?.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight:bold; text-align:left;" class="label_info print_grey">Date Sampled:</td>
+                                                <td style="text-align:left;">
+                                                    @*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*@
+                                                    @if (report.trans_details.collect_datetime != null)
+                                                    {
+                                                        @report.trans_details.collect_datetime?.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight:bold; text-align:left;" class="label_info print_grey">Test Date:</td>
+                                                <td style="text-align:left;">
+                                                    @*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*@
+                                                    @if (report.trans_details.test_date != null)
+                                                    {
+                                                        @report.trans_details.test_date?.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight:bold; text-align:left;" class="label_info print_grey">Report Date:</td>
+                                                <td style="text-align:left;">
+                                                    @*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*@
+                                                    @if (report.trans_details.work_date != null)
+                                                    {
+                                                        @report.trans_details.work_date?.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                            </tr>
+
+                                            <tr>
+                                                <td style="font-weight:bold; text-align:left;" class="label_info print_grey">Test Package:</td>
+                                                <td style="text-align:left;"> &nbsp;<span class="print_grey">@report.trans_details.lab_code</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight:bold; text-align:left;" class="label_info print_grey">Project:</td>
+                                                <td style="text-align:left;"> &nbsp;<span class="print_grey">@report.trans_details.project</span></td>
+                                            </tr>
+
+
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="width:15px;"><hr class="print_grey" style="border-top:1px dotted; color:#CCCECF;" /></div>
+
+
+                        <div style="width:660px; margin-left:auto; margin-right:auto;">
+                            <table style="width:100%;">
+                                <thead>
+                                    <tr>
+                                        <td class="row_result print_grey" width="30%" align="center">Sample ID</td>
+                                        <td class="row_result print_grey" width="13%" align="center">Analysis</td>
+                                        <td class="row_result" width="22%" align="center">Results</td>
+                                        <td class="row_result print_grey" width="17%" align="center">Units</td>
+                                        <td width="18%">&nbsp;</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int row_counter = 0, rows_with_value = 0, blank_rows = 0, max_rows = 12, row_span = 2, Heterotrophic_bacteria = 3;
+                                    }
+                                    @{
+                                        string pass_fail = "";
+                                    }
+                                    @foreach (var sample in certificate.b1ns_details)
+                                    {
+                                        row_span = 2;
+                                        foreach (var result in sample.result_list)
+                                        {
+                                            if (sample.testpackage.id == 2)
+                                            {
+                                                row_span = 3;
+                                            }
+                                            <tr>
+                                                @if (row_counter == 0)
+                                                {
+                                                    <td rowspan="@row_span" class="row_result bordered_cell" align="center">@result.idnty_location</td>
+                                                }
+
+                                                <td class="row_result bordered_cell"><span class="print_grey">@result.param_name</span></td>
+                                                <td class="row_result bordered_cell" align="center">@result.result</td>
+                                                <td class="row_result bordered_cell" align="center"><span class="print_grey">@result.unit_of_measurement</span></td>
+                                                <td class="row_result" style="text-align:right;">
+                                                    @if (result.result == "0" || result.result.ToLower() == "absent")
+                                                    {
+                                                        pass_fail = "Acceptable *";
+                                                    }
+                                                    else
+                                                    {
+                                                        pass_fail = "UnAcceptable *";
+                                                    }
+
+                                                    @if (result.param_id == Heterotrophic_bacteria)
+                                                    {
+                                                        pass_fail = "";
+                                                    }
+                                                    <span class="print_grey">@pass_fail</span>
+                                                </td>
+                                            </tr>
+                                            row_counter++;
+                                            rows_with_value++;
+                                        }
+                                        row_counter = 0;
+                                    }
+
+                                    @{
+                                        blank_rows = max_rows - rows_with_value;
+                                    }
+
+                                    @for (int x = 0; x < blank_rows; x++)
+                                    {
                                         <tr>
+                                            <td class="row_result">&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
                                             <td>&nbsp;</td>
                                         </tr>
-                                    </table>
+                                    }
+                                </tbody>
+                            </table>
+                            <span style="text-align:center; font-size:1.0rem;" class="print_grey">The test results reported relate only to the samples identified in the “Sample ID” section of the Analysis Certificate.</span>
+                        </div>
+
+                        <p>
+                            <div style="font-size:0.84rem;" class="print_grey">
+                                @Html.Raw(report.testpackage.description)
+                            </div>
+                        </p>
+
+                        <table style="width:100%;">
+                            <tr>
+                                <td width="50%">
+                                    <span class="print_grey bottom_font">Issued By:<br /></span>
+                                    <img src="~/images/admin_signatures/@ViewBag.SignatureImage" class="img-fluid" alt="" width="70" height="50" /><br />
+                                    <span class="print_grey bottom_font" bottom_font>@ViewBag.UserFirstName @ViewBag.UserLastName</span><br />
+                                    <span class="print_grey bottom_font" bottom_font>@ViewBag.UserRole</span>
                                 </td>
-                                <td>
-                                    <table style="width:100%;">
-                                        <tr>
-                                            <td width="40%" style="font-weight:bold; text-align:left;" class="label_info print_grey">Customer ID:</td>
-                                            <td style="text-align:left;">
-                                                @*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*@
-                                                @string.Format("{0:00000000}", report.customer_info.customer_id)
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-weight:bold; text-align:left;" class="label_info print_grey">Date Received:</td>
-                                            <td style="text-align:left;">
-                                                @*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*@
-                                                @if (report.trans_details.rcv_date != null)
-                                                {
-                                                    @report.trans_details.rcv_date?.ToString("dd/MM/yyyy")
-                                                }
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-weight:bold; text-align:left;" class="label_info print_grey">Date Sampled:</td>
-                                            <td style="text-align:left;">
-                                                @*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*@
-                                                @if (report.trans_details.collect_datetime != null)
-                                                {
-                                                    @report.trans_details.collect_datetime?.ToString("dd/MM/yyyy")
-                                                }
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-weight:bold; text-align:left;" class="label_info print_grey">Test Date:</td>
-                                            <td style="text-align:left;">
-                                                @*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*@
-                                                @if (report.trans_details.test_date != null)
-                                                {
-                                                    @report.trans_details.test_date?.ToString("dd/MM/yyyy")
-                                                }
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-weight:bold; text-align:left;" class="label_info print_grey">Report Date:</td>
-                                            <td style="text-align:left;">
-                                                @*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*@
-                                                @if (report.trans_details.work_date != null)
-                                                {
-                                                    @report.trans_details.work_date?.ToString("dd/MM/yyyy")
-                                                }
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>&nbsp;</td>
-                                            <td>&nbsp;</td>
-                                        </tr>
-
-                                        <tr>
-                                            <td style="font-weight:bold; text-align:left;" class="label_info print_grey">Test Package:</td>
-                                            <td style="text-align:left;"> &nbsp;<span class="print_grey">@report.trans_details.lab_code</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-weight:bold; text-align:left;" class="label_info print_grey">Project:</td>
-                                            <td style="text-align:left;"> &nbsp;<span class="print_grey">@report.trans_details.project</span></td>
-                                        </tr>
-
-
-                                    </table>
+                                <td style="text-align:right;">
+                                    <div class="print_grey bottom_font small_line_height">
+                                        Horizon Lab Ltd. <br />
+                                        4055 Portage Avenue
+                                        Winnipeg, MB R3K 2E8<br />
+                                        (204) 488-2035<br />
+                                        customerservice@horizonlab.ca<br />
+                                        <span class="blue_font">www.horizonlab.ca</span>
+                                    </div>
                                 </td>
                             </tr>
                         </table>
-                    </div>
-                    <div style="width:15px;"><hr class="print_grey" style="border-top:1px dotted; color:#CCCECF;" /></div>
-
-
-                    <div style="width:660px; margin-left:auto; margin-right:auto;">
-                        <table style="width:100%;">
-                            <thead>
-                                <tr>
-                                    <td class="row_result print_grey" width="30%" align="center">Sample ID</td>
-                                    <td class="row_result print_grey" width="13%" align="center">Analysis</td>
-                                    <td class="row_result" width="22%" align="center">Results</td>
-                                    <td class="row_result print_grey" width="17%" align="center">Units</td>
-                                    <td width="18%">&nbsp;</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @{ int row_counter = 0, rows_with_value = 0, blank_rows = 0, max_rows = 12, row_span = 2, Heterotrophic_bacteria = 3;}
-                                @{ string pass_fail = "";}
-                                @foreach (var sample in Model.b1ns_details)
-                                {
-                                    row_span = 2;
-                                    foreach (var result in sample.result_list)
-                                    {
-                                        if (sample.testpackage.id == 2)
-                                        {
-                                            row_span = 3;
-                                        }
-                                        <tr>
-                                            @if (row_counter == 0)
-                                            {
-                                                <td rowspan="@row_span" class="row_result bordered_cell" align="center">@result.idnty_location</td>
-                                            }
-
-                                            <td class="row_result bordered_cell"><span class="print_grey">@result.param_name</span></td>
-                                            <td class="row_result bordered_cell" align="center">@result.result</td>
-                                            <td class="row_result bordered_cell" align="center"><span class="print_grey">@result.unit_of_measurement</span></td>
-                                            <td class="row_result" style="text-align:right;">
-                                                @if (result.result == "0" || result.result.ToLower() == "absent")
-                                                {
-                                                    pass_fail = "Acceptable *";
-                                                }
-                                                else
-                                                {
-                                                    pass_fail = "UnAcceptable *";
-                                                }
-
-                                                @if(result.param_id== Heterotrophic_bacteria)
-                                                {
-                                                    pass_fail = "";
-                                                }
-                                                <span class="print_grey">@pass_fail</span>
-                                            </td>
-                                        </tr>
-                                        row_counter++;
-                                        rows_with_value++;
-                                    }
-                                    row_counter = 0;
-                                }
-
-                                @{
-                                    blank_rows = max_rows - rows_with_value;
-                                }
-
-                                @for (int x = 0; x < blank_rows; x++)
-                                {
+                        <div class="footer pagebreak">
+                            <footer>
+                                <table style="width:100%;">
                                     <tr>
-                                        <td class="row_result">&nbsp;</td>
-                                        <td>&nbsp;</td>
-                                        <td>&nbsp;</td>
-                                        <td>&nbsp;</td>
+                                        <td style="padding-left:10px;" align="left"><span class="footer_font">F100</span></td>
+                                        <td align="center"><span class="footer_font"> 1  of 1</span></td>
+                                        <td style="padding-right:10px;" align="right"><span class="footer_font">REV 2.0</span></td>
                                     </tr>
-                                }
-                            </tbody>
-                        </table>
-                        <span style="text-align:center; font-size:1.0rem;" class="print_grey">The test results reported relate only to the samples identified in the “Sample ID” section of the Analysis Certificate.</span>
-                    </div>
-
-                    <p>
-                        <div style="font-size:0.84rem;" class="print_grey">
-                            @Html.Raw(report.testpackage.description)
+                                </table>
+                            </footer>
                         </div>
-                    </p>
 
-                    <table style="width:100%;">
-                        <tr>
-                            <td width="50%">
-                                <span class="print_grey bottom_font">Issued By:<br /></span>
-                                <img src="~/images/admin_signatures/@ViewBag.SignatureImage" class="img-fluid" alt="" width="70" height="50" /><br />
-                                <span class="print_grey bottom_font" bottom_font>@ViewBag.UserFirstName @ViewBag.UserLastName</span><br />
-                                <span class="print_grey bottom_font" bottom_font>@ViewBag.UserRole</span>
-                            </td>
-                            <td style="text-align:right;">
-                                <div class="print_grey bottom_font small_line_height">
-                                    Horizon Lab Ltd. <br />
-                                    4055 Portage Avenue
-                                    Winnipeg, MB R3K 2E8<br />
-                                    (204) 488-2035<br />
-                                    customerservice@horizonlab.ca<br />
-                                    <span class="blue_font">www.horizonlab.ca</span>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                    <div class="footer pagebreak">
-                        <footer>
-                            <table style="width:100%;">
-                                <tr>
-                                    <td style="padding-left:10px;" align="left"><span class="footer_font">F100</span></td>
-                                    <td align="center"><span class="footer_font"> 1  of 1</span></td>
-                                    <td style="padding-right:10px;" align="right"><span class="footer_font">REV 2.0</span></td>
-                                </tr>
-                            </table>
-                        </footer>
                     </div>
-
                 </div>
             </div>
-        </div>
-        @*<span style="page-break-after: always;" class="pagebreak"></span>*@
+            @*<span style="page-break-after: always;" class="pagebreak"></span>*@
+        }
     }
     else
     {

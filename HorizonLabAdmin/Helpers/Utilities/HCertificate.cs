@@ -158,7 +158,23 @@ namespace HorizonLabAdmin.Helpers.Utilities
                 throw exc.InnerException;
             }
         }
-
+        public WaterCertificateListWithCustomerId GetCustomerCertificateWithId(int id)
+        {
+            try
+            {
+                WaterCertificateListWithCustomerId certificatelist= new WaterCertificateListWithCustomerId();
+                List<watercertificatesummaryview> requestlist = new List<watercertificatesummaryview>();
+                
+                requestlist = _hlabOrderRepo.GetAllCertificateWithCustomerId(id);
+                certificatelist.certificateList = requestlist;
+                return certificatelist;
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError($"HCertificate > GetCustomerCertificateWithId(): {exc.Message}");
+                throw exc.InnerException;
+            }
+        }
         public TestTransactionSearchParameters PrepareWaterTestCertificatePageData(string filter="all")
         {
             try

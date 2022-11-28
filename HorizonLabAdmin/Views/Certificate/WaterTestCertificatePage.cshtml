@@ -85,6 +85,7 @@
     <div class="col-sm-3" style="text-align:right;">
         <button type="button" class="btn btn-sm btn-outline-success open_modal" value="search_modal"><span class="glyphicon glyphicon-search" style="font-size:2rem;"></span></button>
         <button type="button" class="btn btn-sm btn-outline-success" id="multi_report" value=""><span class="glyphicon glyphicon-print" style="font-size:2rem;"></span></button>
+        
         @*<button type="button" class="btn btn-sm btn-outline-success" id="download_multi_report" value=""><span class="glyphicon glyphicon-download-alt" style="font-size:2rem;"></span></button>*@
         <button type="button" class="btn btn-sm btn-outline-success" id="email_documents" value=""><span class="glyphicon glyphicon-envelope" style="font-size:2rem;"></span></button>
     </div>
@@ -155,6 +156,8 @@
                         <td>@(Model.watercertificatelist[i].CountWithTrans)</td>
                         <td>
                             @{
+                                //var count =Model.watercertificatelist[i].customer_id.Find
+                                   // <a class="btn btn-sm btn-outline-info" href="@Url.Action("b1ns2", "Certificate", new { requestid = Model.watercertificatelist[i].order_id, test_pkg_id = Model.watercertificatelist[i].test_pkg_id })" target="_blank" title="water certificate"><span class="glyphicon glyphicon-certificate" style="font-size:1.3rem;color:#8FB5FD;"></span></a>
                                 if (nonwaterbacteria == "") //if non water bacteria package class was detected
                                 {
                                     <a class="btn btn-sm btn-outline-info" href="@Url.Action("b1ns2", "Certificate", new { requestid = Model.watercertificatelist[i].order_id, test_pkg_id = Model.watercertificatelist[i].test_pkg_id })" target="_blank" title="water certificate"><span class="glyphicon glyphicon-certificate" style="font-size:1.3rem;color:#8FB5FD;"></span></a>
@@ -165,7 +168,7 @@
                                     <a class="btn btn-sm btn-outline-info" href="@Url.Action("CouponCertificate", "Certificate", new { coupons = Model.watercertificatelist[i].gen_coupon })" target="_blank" title="coupon"><span class="glyphicon glyphicon-barcode" style="font-size:1.3rem;color:#8FB5FD;"></span></a>
                                 }
 
-                                if (Model.watercertificatelist[i].max_subsidy_img_id != 0 && !string.IsNullOrEmpty(Model.watercertificatelist[i].scan_image_filename))
+                                if  (Model.watercertificatelist[i].max_subsidy_img_id != 0 && !string.IsNullOrEmpty(Model.watercertificatelist[i].scan_image_filename))
                                 {
                                     string[] arr_filenames = Model.watercertificatelist[i].scan_image_filename.Split(',');
                                     foreach (var name in arr_filenames)
@@ -327,7 +330,9 @@
                 <div class="row">
                     <div class="col-sm-3 text-right">NAME</div>
                     <div class="col-sm-3">
-                        <select asp-for="@Model.selectprojectid" asp-items="@Model.projectName" class="form-control"></select>
+                        <select asp-for="@Model.selectprojectid" asp-items="@Model.projectName" class="form-control">
+                            <option disabled selected>--- SELECT ---</option>
+                        </select>
                         @*<input asp-for="@Model.projectName" class="form-control input-sm number_only clear_field" type="text" id="projectName" value="@customer_id">*@
                     </div>
                 </div>

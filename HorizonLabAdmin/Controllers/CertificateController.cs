@@ -17,6 +17,13 @@ using Microsoft.Extensions.Logging;
 using System.Net.Mail;
 using HorizonLabAdmin.Interfaces;
 using HorizonLabAdmin.Interfaces.Session;
+//using iTextSharp.text;
+//using iTextSharp.text.pdf;
+//using iTextSharp.tool.xml;
+//using iTextSharp.text.html.simpleparser;
+using SelectPdf;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+
 
 namespace HorizonLabAdmin.Controllers
 {
@@ -273,10 +280,15 @@ namespace HorizonLabAdmin.Controllers
         {
             //B1NS2 Certificate can handle 10 samples / 2 results per sample
             //more than that, certificate layout will be mess up.
+             MultipleB1CertificateObject view_object = new MultipleB1CertificateObject();
+          // List<TestResultPageViewModel> page_model=new List<TestResultPageViewModel>();
+            view_object.page_model = new List<TestResultPageViewModel>();
 
-            TestResultPageViewModel page_model = new TestResultPageViewModel();
-            page_model.b1ns_details = new List<b1ns_details>();
-            page_model.selected_test_pkg_id = test_pkg_id;
+
+           // TestResultPageViewModel page_model = new TestResultPageViewModel();
+            WaterCertificateListWithCustomerId waterCertificateListWithCustomerId = new WaterCertificateListWithCustomerId();
+           // page_model.b1ns_details = new List<b1ns_details>();
+           // page_model.selected_test_pkg_id = test_pkg_id;
             int int_request_id = 0;
 
             try
@@ -284,9 +296,23 @@ namespace HorizonLabAdmin.Controllers
                 if (_requestHelper.IsRequestIdNotEmpty(requestid))
                 {
                     int_request_id = Convert.ToInt32(requestid);
-                    List<int> request_id_list = new List<int>();
-                    request_id_list.Add(int_request_id);
-                    page_model = _certificateHelper.GenerateB1NSCertificate(page_model, request_id_list);
+                    waterCertificateListWithCustomerId = _certificateHelper.GetCustomerCertificateWithId(int_request_id);
+                    // List<int> requestids = new List<int>();
+                    var count = waterCertificateListWithCustomerId.certificateList.Count;
+                    //requestids
+                   foreach (var index in waterCertificateListWithCustomerId.certificateList)
+                   {
+                        TestResultPageViewModel certificate = new TestResultPageViewModel();
+                        List<int> request_id_list = new List<int>();
+                        certificate.b1ns_details = new List<b1ns_details>();
+                        certificate.selected_test_pkg_id = index.test_pkg_id;
+                        request_id_list.Add(index.order_id);
+                        certificate = _certificateHelper.GenerateB1NSCertificate(certificate, request_id_list);
+                        view_object.page_model.Add(certificate);
+
+                    }
+                    
+                   
                 }
 
                 ViewData["UserName"] = _sessionHelper.GetSessionUserName();
@@ -303,12 +329,43 @@ namespace HorizonLabAdmin.Controllers
             {
                 _logger.LogError(exc.Message);
             }
-            return View(page_model);
+            return View(view_object);
         }
 
         [HttpPost]
+        public FileResult ExportToPDF(String Html)
+        {            
+            try
+            {
+                HtmlToPdf htmltopdf = new HtmlToPdf();
+                htmltopdf.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
+                htmltopdf.Options.PdfPageSize = PdfPageSize.A5;
+                htmltopdf.Options.MarginTop = 25;
+                htmltopdf.Options.MarginLeft = 3;
+                htmltopdf.Options.MarginRight = 3;
+               // htmltopdf.Options.AutoFitWidth = HtmlToPdfPageFitMode.ShrinkOnly;
+               // htmltopdf.Options.AutoFitHeight= HtmlToPdfPageFitMode.ShrinkOnly;
+               // htmltopdf.Options.WebPageWidth = 760;
+               // htmltopdf.Options.WebPageHeight = 500;
+                htmltopdf.Options.WebPageWidth = 760;
+                htmltopdf.Options.WebPageHeight = 1050;                
+
+                PdfDocument pdfDocument = htmltopdf.ConvertHtmlString(Html);
+                byte[] pdf = pdfDocument.Save();
+                //convert to memory stream
+                MemoryStream stream = new MemoryStream(pdf);
+                pdfDocument.Close();
+                return File(stream, "application/pdf", "Certificate.pdf");
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError($"HtmlToPDF > ConvertHtmlURLToPDFMemoryStream() : {exc.Message} ");
+                throw exc.InnerException;
+            }
+        }
         public IActionResult MultipleB1nsReport(TestTransactionSearchParameters transactions, List<int> requestids)
         {            
+            
             MultipleB1CertificateObject view_object = new MultipleB1CertificateObject();
             view_object.page_model = new List<TestResultPageViewModel>();            
             try
@@ -342,8 +399,9 @@ namespace HorizonLabAdmin.Controllers
                 _logger.LogError(exc.Message);
             }
             return View(view_object);
-        }    
-
+        }
+       
+        
         [HttpPost]
         public IActionResult SendEmailDocuments(TestTransactionSearchParameters transactions, List<int> requestids)
         {

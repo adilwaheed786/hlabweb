@@ -9,7 +9,7 @@ namespace HorizonLabLibrary.Entities
         public int order_id { get; set; }
         public int customer_id { get; set; }
 
-         public int project_id { get; set; }
+        public int project_id { get; set; }
         public int test_pkg_id { get; set; }
         public string first_name { get; set; }
         public string last_name { get; set; }
