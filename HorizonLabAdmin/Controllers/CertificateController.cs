@@ -23,6 +23,7 @@ using HorizonLabAdmin.Interfaces.Session;
 //using iTextSharp.text.html.simpleparser;
 using SelectPdf;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure;
 
 
 namespace HorizonLabAdmin.Controllers
@@ -51,7 +52,8 @@ namespace HorizonLabAdmin.Controllers
         private readonly IHostingEnvironment _hosting_environment;
         private readonly ILogger<CertificateController> _logger;
         private readonly IWaterBacteria _waterBacteriaHelper;
-        private readonly Interface_hlab_test_coupon_logs _hlabTestCouponLogs;        
+        private readonly Interface_hlab_test_coupon_logs _hlabTestCouponLogs;
+        private readonly ISelectHtmlToPDFConverter _HtmlToPDF;
 
         public CertificateController(
             IConfiguration appConfig,
@@ -72,7 +74,8 @@ namespace HorizonLabAdmin.Controllers
             IUtility utility,
             ITestProjectForm testProjForm,
             IWaterBacteria waterBacteriaHelper,
-            IHttpContextAccessor httpContextAccessor
+            IHttpContextAccessor httpContextAccessor,
+             ISelectHtmlToPDFConverter HtmlToPDF
             )
         {
             _httpContextAccessor = httpContextAccessor;
@@ -94,6 +97,7 @@ namespace HorizonLabAdmin.Controllers
             _utility = utility;
             _testProjForm = testProjForm;
             _waterBacteriaHelper = waterBacteriaHelper;
+            _HtmlToPDF = HtmlToPDF;
         }
 
         [HttpPost]
@@ -332,6 +336,27 @@ namespace HorizonLabAdmin.Controllers
             return View(view_object);
         }
 
+        [HttpGet]
+        public IActionResult PrintToPdf(string requestid, int test_pkg_id = 0, string SignatureImage = "", string UserFirstName = "", string UserLastName = "")
+        {
+            try
+            {
+                MemoryStream memory_stream = new MemoryStream();
+                int int_request_id = 0;
+                string certificatename = "", CertRequestURL = "";
+                int_request_id = Convert.ToInt32(requestid);
+                certificatename = $"water_sample_certificate_{int_request_id}";
+                CertRequestURL = _certificateHelper.GenerateB1NSCertificateRequestURL(Request.Scheme, Request.Host.ToString(), int_request_id, test_pkg_id);
+                memory_stream = _HtmlToPDF.ConvertHtmlURLToPDFMemoryStream(CertRequestURL);
+                memory_stream.Position = 0;
+                return File(memory_stream, "application/pdf", $"{certificatename}.pdf");
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError($"HtmlToPDF > ConvertHtmlURLToPDFMemoryStream() : {exc.Message} ");
+                throw exc.InnerException;
+            }
+        }
         [HttpPost]
         public FileResult ExportToPDF(String Html)
         {            

@@ -162,7 +162,10 @@
                                 {
                                     <a class="btn btn-sm btn-outline-info" href="@Url.Action("b1ns2", "Certificate", new { requestid = Model.watercertificatelist[i].order_id, test_pkg_id = Model.watercertificatelist[i].test_pkg_id })" target="_blank" title="water certificate"><span class="glyphicon glyphicon-certificate" style="font-size:1.3rem;color:#8FB5FD;"></span></a>
                                 }
-
+                                if (nonwaterbacteria == "") //if non water bacteria package class was detected
+                                {
+                                        <a class="btn btn-sm btn-outline-info" href="@Url.Action("PrintToPdf", "Certificate", new { requestid = Model.watercertificatelist[i].order_id, test_pkg_id = Model.watercertificatelist[i].test_pkg_id })" target="_self" title="Print to Pdf"><span class="glyphicon glyphicon-print" style="font-size:1.3rem;color:#8FB5FD;"></span></a>
+                                }
                                 if (!string.IsNullOrEmpty(Model.watercertificatelist[i].gen_coupon))
                                 {
                                     <a class="btn btn-sm btn-outline-info" href="@Url.Action("CouponCertificate", "Certificate", new { coupons = Model.watercertificatelist[i].gen_coupon })" target="_blank" title="coupon"><span class="glyphicon glyphicon-barcode" style="font-size:1.3rem;color:#8FB5FD;"></span></a>
